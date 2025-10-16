@@ -1,0 +1,4 @@
+"Title","Description","BiocVersion","SourceType","SourceURL","SourceVersion","Species","TaxonomyID","DataProvider","Maintainer"
+"GSE41197","Differentially Expressed Genes Regulating the Progression of Ductal Carcinoma In Situ to Invasive Breast Cancer","3.2","tsv.gz","https://osf.io/pdc8h","April 22, 2025","Homo Sapiens",9606,"OSF","Bioconductor Package Maintainer <maintainer@bioconductor.org>"
+"GSE59772","Analysis of compartment-specific gene expression in breast cancer tumors","3.2","tsv.gz","https://osf.io/ps2kb","April 22, 2025","Homo Sapiens",9606,"OSF","Bioconductor Package Maintainer <maintainer@bioconductor.org>"
+"GSE10797","Transcriptomes of breast epithelium and stroma in normal reduction mammoplasty and invasive breast cancer patients.","3.2","tsv.gz","https://osf.io/ebycg","April 22, 2025","Homo Sapiens",9606,"OSF","Bioconductor Package Maintainer <maintainer@bioconductor.org>"

@@ -1,0 +1,15 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.RDataTmp
+.RDataTmp1
+*.Rproj
+dev/
+inst/doc
+vignettes/*.html
+vignettes/*.R
+.quarto
+.DS_Store
+.httr-oauth
+dev
