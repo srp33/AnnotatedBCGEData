@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# RPracticePackage
+# AnnotatedBCGEData
 
 <!-- badges: start -->
 
@@ -99,14 +99,6 @@ objects.
 ``` r
 data('identifiers')
 identifiers
-#> $GSE41197
-#> [1] "pdc8h" "u7x9k"
-#> 
-#> $GSE10797
-#> [1] "ebycg" "vmhuj"
-#> 
-#> $GSE59772
-#> [1] "ps2kb" "dc3qh"
 ```
 
 To load the SummarizedExperiment object for a data set included in

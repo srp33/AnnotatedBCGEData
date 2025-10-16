@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# RPracticePackage
+# AnnotatedBCGEData
 
 <!-- badges: start -->
 [![GitHub issues](https://img.shields.io/github/issues/srp33/annotated_breast_cancer_ge_data)](https://github.com/srp33/annotated_breast_cancer_ge_data/issues)
