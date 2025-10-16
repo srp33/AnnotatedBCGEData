@@ -6,7 +6,7 @@ Authors@R:
     c(person("Heidi", "Steadman", email = "hstead05@byu.edu", role = "aut"), 
     person("Sophie", "Lo", email = "shufeilo@byu.edu", role = c("aut", "cre")))
 Description: Package that gives users access to 100+ tidied data sets from Gene Expression Omnibus in the form of SummarizedExperiment objects. 
-License: Artistic-2.0
+License: file LICENSE
 URL: https://github.com/srp33/annotated_breast_cancer_ge_data
 BugReports: https://github.com/srp33/annotated_breast_cancer_ge_data//issues
 biocViews: Experiment Data
@@ -26,7 +26,9 @@ Depends:
 Imports: 
     SummarizedExperiment,
     tidyverse,
-    Biobase,
-    methods,
-    roxygen2
+    stringr,
+    readr,
+    dplyr,
+    utils,
+    tibble
 LazyData: true

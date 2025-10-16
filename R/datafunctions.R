@@ -1,6 +1,24 @@
 library(SummarizedExperiment)
 library(tidyverse)
 
+#' @importFrom dplyr filter %>% select distinct
+#' @importFrom utils download.file
+#' @importFrom stringr str_c str_starts
+#' @importFrom readr read_tsv
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' @importFrom tibble column_to_rownames
+#' @import tidyverse
+
+utils::globalVariables(c(
+    'Chromosome',
+    'Dataset_ID',
+    'Ensembl_Gene_ID',
+    'Entrez_Gene_ID',
+    'Gene_Biotype',
+    'HGNC_Symbol'
+))
+
+
 #download file from OSF
 downloadOSFFile = function(identifier, out_file_path) {
     tmp_file_path = str_c(tempdir(), "/", identifier, ".tsv.gz")
