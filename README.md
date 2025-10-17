@@ -6,14 +6,23 @@
 <!-- badges: start -->
 
 [![GitHub
-issues](https://img.shields.io/github/issues/srp33/annotated_breast_cancer_ge_data)](https://github.com/srp33/annotated_breast_cancer_ge_data/issues)
+issues](https://img.shields.io/github/issues/srp33/AnnotatedBCGEData)](https://github.com/srp33/AnnotatedBCGEData/issues)
 [![GitHub
-pulls](https://img.shields.io/github/issues-pr/srp33/annotated_breast_cancer_ge_data)](https://github.com/srp33/annotated_breast_cancer_ge_data/pulls)
+pulls](https://img.shields.io/github/issues-pr/srp33/AnnotatedBCGEData)](https://github.com/srp33/AnnotatedBCGEData/pulls)
 <!-- badges: end -->
 
-The goal of `AnnotatedBCGEData` is to provide users with easy access to
-100+ tidied breast cancer gene expression data sets from the Gene
-Expression Omnibus.
+`AnnotatedBCGEData` is an R package that uses the ExperimentHub
+infrastructure in [Bioconductor](https://bioconductor.org/). To create
+this package, we gathered more than 100 gene-expression data sets
+(microarray and RNA-Sequencing) from public repositories, including
+[Gene Expression Omnibus](http://www.ncbi.nlm.nih.gov/geo/),
+[ArrayExpress](https://www.ebi.ac.uk/biostudies/arrayexpress), and [The
+Cancer Genome
+Atlas](https://www.cancer.gov/ccg/research/genome-sequencing/tcga).
+Where feasible, we obtained raw data and reprocessed the data using
+modern computational pipelines. Additionally, we provide metadata in an
+easy-to-use format. Our goal is to provide researchers with easier
+access to these data with the goal of accelerating biomedical discovery.
 
 ## Installation instructions
 
@@ -34,10 +43,10 @@ the if statement is required to install the package as it is dependent
 on BiocManager to load.
 
 Download the development version from
-[GitHub](https://github.com/srp33/annotated_breast_cancer_ge_data) with:
+[GitHub](https://github.com/srp33/AnnotatedBCGEData) with:
 
 ``` r
-BiocManager::install("srp33/annotated_breast_cancer_ge_data")
+BiocManager::install("srp33/AnnotatedBCGEData")
 ```
 
 ## Data Info
@@ -45,9 +54,9 @@ BiocManager::install("srp33/annotated_breast_cancer_ge_data")
 The data used in this package was accessed through Open Science
 Framework (OSF). This database allowed us to use data that was already
 neat and ready to be analyzed. However, the original data came from Gene
-Expression Omnibus (GEO). The name of every item in identifier_list is
-the data set name in GEO. Learn more about the data at the following
-links:
+Expression Omnibus (GEO), ArrayExpress, and The Cancer Genome Atlas. The
+name of every item in the named list identifiers is the data set name in
+its respective source. Learn more about the data at the following links:
 
 - GSE41197:
   <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41197>
@@ -60,7 +69,7 @@ The package itself includes a metadata file as required by Bioconductor.
 This file is a table that lists the name of each object and more
 information about where it came from and how it was accessed. See
 inst/extdata/metadata.csv. When the package is available in
-ExperimentHub, using the query() function will show available objects.
+ExperimentHub, using the query() function will show available data sets.
 
 ``` r
 #library(ExperimentHub)
@@ -73,14 +82,12 @@ ExperimentHub, using the query() function will show available objects.
 ## Examples
 
 The following is the code required to access the objects within the
-package, as well as additional packages we used to analyze the data. The
-SummarizedExperiment package is required for both building the package
-and accessing the data.
+package. Other packages were used in the creation of the package, but
+they should be automatically loaded when the package is installed. These
+packages are included in the NAMESPACE file.
 
 ``` r
 library(AnnotatedBCGEData)
-library(SummarizedExperiment)
-library(tidyverse)
 ```
 
 Downloading this package does not download the data sets onto the user’s
@@ -90,22 +97,15 @@ named list object called identifiers. The second is a function called
 makeObject. identifiers contains the unique URL identifiers for the
 expression data file and the metadata file. Calling each data set in the
 named list returns a vector with these values. These values are passed
-to makeObject, which returns the SummarizedExperiment. To see the
-contents of the named list, run the following code. Note that we have
-suppressed the output of the code for readability. Additionally, this
-code is not required in order to create the SummarizedExperiment
-objects.
-
-``` r
-data('identifiers')
-identifiers
-```
-
-To load the SummarizedExperiment object for a data set included in
+to makeObject, which returns the SummarizedExperiment. <br> <br> To load
+the SummarizedExperiment object for a data set included in
 AnnotatedBCGEData, the user chooses the name of the data set from the
 identifiers named list object and passes it to the function makeObject.
 This function downloads the data and creates the SummarizedExperiment
-object that is accessible to the user. <br> <br> The
+object that is accessible to the user. To see a comprehensive list of
+all data sets included and where they came from, see the metadata.csv
+file in inst/extdata/metadata.csv. This will be accessible in the code
+when the package is available in ExperimentHub. <br> <br> The
 SummarizedExperiment object for each data set includes 3 matrices. The
 first, which we load as expression_data, is a matrix with the samples as
 columns and genes as rows. The Ensembl gene ID is used as the row names.
@@ -216,8 +216,8 @@ exp_tib
 
 <img src="man/figures/README-plot_example-1.png" width="100%" />
 
-Here, we first accessed the matrices for 3 data sets included in the
-RPracticePackage.
+Here, we first accessed the matrices for 3 data sets included in
+AnnotatedBCGEData.
 
 ``` r
 GSE10797_SE = makeObject(identifiers$GSE10797)
@@ -548,7 +548,7 @@ print(citation('AnnotatedBCGEData'), bibtex = TRUE)
 #> 
 #>   Steadman H, Lo S (2025). _AnnotatedBCGEData: 100+ Breast Cancer Gene
 #>   Expression Data sets_. R package version 0.99.0,
-#>   <https://github.com/srp33/annotated_breast_cancer_ge_data>.
+#>   <https://github.com/srp33/AnnotatedBCGEData>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -557,7 +557,7 @@ print(citation('AnnotatedBCGEData'), bibtex = TRUE)
 #>     author = {Heidi Steadman and Sophie Lo},
 #>     year = {2025},
 #>     note = {R package version 0.99.0},
-#>     url = {https://github.com/srp33/annotated_breast_cancer_ge_data},
+#>     url = {https://github.com/srp33/AnnotatedBCGEData},
 #>   }
 ```
 
