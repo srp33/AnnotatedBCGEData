@@ -4,7 +4,7 @@ author:
   - name: "Heidi Steadman"
     affiliation:
       - &id "Brigham Young University"
-  - name: "Sophie Lo"
+  - name: "Shu-Fei Lo"
     affiliation: *id
   - name: "Stephen Piccolo"
     affiliation: *id
@@ -47,7 +47,7 @@ BiocManager::install("srp33/AnnotatedBCGEData")
 ```
 
 # Data Info
-The data used in this package was accessed through Open Science Framework (OSF). This database allowed us to use data that was already neat and ready to be analyzed. However, the original data came from Gene Expression Omnibus (GEO), ArrayExpress, and The Cancer Genome Atlas. The name of every item in the named list identifiers is the data set name in its respective source. Learn more about the data at the following links:
+The data used in this package was accessed through [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records?q=&l=list&p=1&s=10&sort=newest). This database allowed us to use data that was already neat and ready to be analyzed. However, the original data came from Gene Expression Omnibus (GEO), ArrayExpress, and The Cancer Genome Atlas. The name of every item in the named list identifiers is the data set name in its respective source. Learn more about the data at the following links:
 
  - GSE41197: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41197 
  - GSE10797: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE10797 
