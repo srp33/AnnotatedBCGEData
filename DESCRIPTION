@@ -4,12 +4,14 @@ Version: 0.99.0
 Date: 2025-10-16
 Authors@R: 
     c(person("Heidi", "Steadman", email = "hstead05@byu.edu", role = "aut"), 
-    person("Sophie", "Lo", email = "shufeilo@byu.edu", role = c("aut", "cre")))
+    person("Sophie", "Lo", email = "shufeilo@byu.edu", role = "aut"),
+    person("Stephen", "Piccolo", email = "stephen_piccolo@byu.edu", role = "cre")
+    )
 Description: Package that gives users access to 100+ tidied data sets from public data repositories in the form of SummarizedExperiment objects. 
 License: file LICENSE
 URL: https://github.com/srp33/AnnotatedBCGEData
 BugReports: https://github.com/srp33/AnnotatedBCGEData//issues
-biocViews: Experiment Data
+biocViews: ExperimentData
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
@@ -22,7 +24,7 @@ Suggests:
     testthat
 VignetteBuilder: knitr
 Depends: 
-    R (>= 3.5)
+    R (>= 4.5)
 Imports: 
     SummarizedExperiment,
     tidyverse,

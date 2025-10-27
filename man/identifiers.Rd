@@ -7,9 +7,9 @@
 \format{
 a named list with data sets as names and a vector with URL identifiers as value
 \describe{
-\item{GSE41197}{c(data identifier, metadata identifier)}
-\item{GSE10797}{c(data identifier, metadata identifier)}
-\item{GSE59772}{c(data identifier, metadata identifier)}
+\item{GSE41197}{c(data identifiers, metadata identifiers)}
+\item{GSE10797}{c(data identifiers, metadata identifiers)}
+\item{GSE59772}{c(data identifiers, metadata identifiers)}
 }
 }
 \source{

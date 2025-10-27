@@ -1,13 +1,18 @@
 ---
-title: Get started
-author: '<h4>Authors: <i>`r auths <- eval(parse(text = gsub("person","c",read.dcf("../DESCRIPTION",
-  fields = "Authors@R"))));paste(auths[names(auths)=="given"],auths[names(auths)=="family"],
-  collapse = ", ")`</i></h4>'
-date: '<h4>Vignette updated: <i>`r format( Sys.Date(), "%b-%d-%Y")`</i></h4>'
+title: "AnnotatedBCGEData"
+author:
+  - name: "Heidi Steadman"
+    affiliation:
+      - &id "Brigham Young University"
+  - name: "Sophie Lo"
+    affiliation: *id
+  - name: "Stephen Piccolo"
+    affiliation: *id
+package: "AnnotatedBCGEData"
 output: BiocStyle::html_document
-vignette: |
+vignette: >
   %\VignetteIndexEntry{AnnotatedBCGEData}
-   %\usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
@@ -17,17 +22,276 @@ pkg <- read.dcf("../DESCRIPTION", fields = "Package")[1]
 library(pkg, character.only = TRUE)
 ```
 
+# Abstract
+`AnnotatedBCGEData` is an R package that uses the ExperimentHub infrastructure in [Bioconductor](https://bioconductor.org/). To create this package, we gathered more than 100 gene-expression data sets (microarray and RNA-Sequencing) from public repositories, including [Gene Expression Omnibus](http://www.ncbi.nlm.nih.gov/geo/), [ArrayExpress](https://www.ebi.ac.uk/biostudies/arrayexpress), and [The Cancer Genome Atlas](https://www.cancer.gov/ccg/research/genome-sequencing/tcga). Where feasible, we obtained raw data and reprocessed the data using modern computational pipelines. Additionally, we provide metadata in an easy-to-use format. Our goal is to provide researchers with easier access to these data with the goal of accelerating biomedical discovery.
 
-```R
-library(`r pkg`)
+
+# Installation Instructions
+
+Get the latest stable `R` release from [CRAN](http://cran.r-project.org/). Then install `AnnotatedBCGEData` from [Bioconductor](http://bioconductor.org/) using the following code:
+
+```{r 'install', eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+
+BiocManager::install("AnnotatedBCGEData")
 ```
+
+This code installs BiocManager if it is not already installed. Running the if statement is required to install the package as it is dependent on BiocManager to load. 
+
+Download the development version from [GitHub](https://github.com/srp33/AnnotatedBCGEData) with:
+
+```{r 'install_dev', eval = FALSE}
+BiocManager::install("srp33/AnnotatedBCGEData")
+```
+
+# Data Info
+The data used in this package was accessed through Open Science Framework (OSF). This database allowed us to use data that was already neat and ready to be analyzed. However, the original data came from Gene Expression Omnibus (GEO), ArrayExpress, and The Cancer Genome Atlas. The name of every item in the named list identifiers is the data set name in its respective source. Learn more about the data at the following links:
+
+ - GSE41197: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41197 
+ - GSE10797: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE10797 
+ - GSE59772: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE59772 
+
+The package itself includes a metadata file as required by Bioconductor. This file is a table that lists the name of each object and more information about where it came from and how it was accessed. See inst/extdata/metadata.csv.
+
+We will soon include functionality to allow users to look at the data with greater depth.
 
 # Examples
+``` {r load_tidyverse, include = FALSE}
+library(tidyverse)
+library(SummarizedExperiment)
+```
 
-```{r}
+The following is the code required to access the objects within the package. Other packages were used in the creation of the package, but they should be automatically loaded when the package is installed. These packages are included in the NAMESPACE file. 
+
+```{r load_packages, message=FALSE, warning=FALSE}
+library(AnnotatedBCGEData)
+```
+
+```{r load_data, include=FALSE}
+data("identifiers", package = "AnnotatedBCGEData")
+```
+Downloading this package does not download the data sets onto the user's machine. This package contains 2 code objects the user needs to create and access the SummarizedExperiment object for each data set. First is a named list object called identifiers. The second is a function called makeObject. identifiers contains the unique URL identifiers for the expression data file and the metadata file. Calling each data set in the named list returns a vector with these values. These values are passed to makeObject, which returns the SummarizedExperiment. <br>
+<br>
+To load the SummarizedExperiment object for a data set included in AnnotatedBCGEData, the user chooses the name of the data set from the identifiers named list object and passes it to the function makeObject. This function downloads the data and creates the SummarizedExperiment object that is accessible to the user. To see a comprehensive list of all data sets included and where they came from, see the metadata.csv file in inst/extdata/metadata.csv. This will be accessible in the code when the package is available in ExperimentHub. <br>
+<br>
+The SummarizedExperiment object for each data set includes 3 matrices. The first, which we load as expression_data, is a matrix with the samples as columns and genes as rows. The Ensembl gene ID is used as the row names. The data in the actual matrix is the expression level of the gene for the sample. <br>
+<br>
+The second matrix we load as sample_metadata. This is information about the samples themselves, such as demographics for the patient the sample came from. The samples are rows and the information is in the columns. <br>
+<br>
+The third matrix we load as feature_data. This is the information about the genes that were tested for each sample. This includes information like the chromosome the gene is located on, the Entrez gene ID, and the gene name. The genes are the rows and the information about the samples is in the columns.
+
+```{r example, eval = requireNamespace('AnnotatedBCGEData')}
+GSE41197_SE = makeObject(identifiers$GSE41197)
+expression_data = assay(GSE41197_SE)
+sample_metadata = colData(GSE41197_SE)
+feature_data = rowData(GSE41197_SE)
+```
+
+## Example 1: Plotting Expression Values
+In the following example, we first access the matrix of gene expression values. To make it easier to analyze, we convert it into a tibble and select the first 10 rows. We then used ggplot() to create a bar plot showing the gene expression levels for one sample across 10 genes.
+
+```{r plot_example}
+GSE41197 = makeObject(identifiers$GSE41197)
+gene_expression_values = assay(GSE41197)
+
+exp_tib = as_tibble(gene_expression_values, rownames='Ensembl_Gene_ID')[1:10,] %>%
+    ggplot(aes(x=Ensembl_Gene_ID, y=GSM1010328)) +
+    geom_col() +
+    labs(x='Ensembl Gene ID',y='Sample ID GSM1010328') +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+exp_tib
+```
+
+## Example 2: Expression Box Plot
+Here, we first accessed the matrices for 3 data sets included in AnnotatedBCGEData. 
+
+```{r plot_example_2, message=FALSE, warning=FALSE}
+GSE10797_SE = makeObject(identifiers$GSE10797)
+GSE41197_SE = makeObject(identifiers$GSE41197)
+GSE59772_SE = makeObject(identifiers$GSE59772)
+
+GSE10197 = assay(GSE10797_SE)
+GSE41197 = assay(GSE41197_SE)
+GSE59772 = assay(GSE59772_SE)
+```
+
+Next, we converted each to a tibble and selected one row, representing one gene that we knew each data set had in common. We rotated the tibbles to have one column (the gene) and many rows (the sample). Then, we added the 'group' column, which was necessary for the function used in the next step.
+
+```{r plot_example_2_part_2}
+GSE10197_gene = GSE10197 %>%
+    as_tibble(rownames='Ensembl_Gene_ID') %>%
+    filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
+    pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
+    mutate(group = 'GSE10197')
+GSE41197_gene = GSE41197 %>%
+    as_tibble(rownames='Ensembl_Gene_ID') %>%
+    filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
+    pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
+    mutate(group = 'GSE41197')
+GSE59772_gene = GSE59772 %>%
+    as_tibble(rownames='Ensembl_Gene_ID') %>%
+    filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
+    pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
+    mutate(group = 'GSE59772')
+```
+
+We then joined the 3 tibbles into one tibble with the bind_rows() function. We now have one tibble with one column (the gene) and many rows (the samples). <br>
+<br>
+Finally, we used ggplot() to visualize the expression levels for the gene across the three data sets.
+
+```{r plot_example_2_part_3}
+combined_samples = bind_rows(GSE10197_gene, GSE41197_gene, GSE59772_gene)
+
+ggplot(combined_samples, aes(x = group, y = Expression_Level, fill = group)) +
+    geom_boxplot() +
+    labs(x = "Dataset", y = "Expression Level") +
+    theme_bw()
+```
+
+## Example 3: Using Metadata
+In this example, we combine using both the metadata and the expression data to create a heat map of gene expression levels.<br>
+First, we load the data sets, turn them into tibbles, and extract both the metadata and expression data. We then filter the expression to only include the samples that are identified as stroma cells. Finally, we create two vectors with all the gene names in each tibble to set them up for comparison. 
+
+``` {r heat_map, message=FALSE, warning=FALSE}
+GSE59772 = makeObject(identifiers$GSE59772)
+GSE59772_metadata = colData(GSE59772) %>%
+    as_tibble(rownames = 'Sample_ID')
+
+GSE59772_stroma_samples = filter(GSE59772_metadata, tissue == 'Stroma') %>%
+    pull(Sample_ID)
+
+GSE59772_gene_names = assay(GSE59772) %>%
+    as_tibble(rownames="Ensembl_Gene_ID") %>%
+    pull(Ensembl_Gene_ID)
+
+
+GSE10797 = makeObject(identifiers$GSE10797)
+GSE10797_metadata = colData(GSE10797) %>%
+    as_tibble(rownames = 'Sample_ID')
+
+GSE10797_gene_names = assay(GSE10797) %>%
+    as_tibble(rownames="Ensembl_Gene_ID") %>%
+    pull(Ensembl_Gene_ID)
+
+GSE10797_stroma_samples = filter(GSE10797_metadata, tissue_source == 'stromal cells from breast cancer patient')%>%
+    pull(Sample_ID)
+```
+
+Next, we create a vector that has only the names of the genes the data sets have in common. We use this vector to filter the expression tibbles again to only include rows with genes in the vector. 
+
+``` {r heat_map_2}
+common_genes = c()
+for (gene in GSE59772_gene_names) {
+    if (gene %in% GSE10797_gene_names) {
+        common_genes = c(common_genes, gene)
+    }
+}
+
+GSE59772_stroma_expressions = assay(GSE59772) %>%
+    as_tibble(rownames= 'Ensembl_Gene_ID') %>%
+    select(Ensembl_Gene_ID, all_of(GSE59772_stroma_samples)) %>%
+    filter(Ensembl_Gene_ID %in% common_genes)
+    
+GSE10797_stroma_expressions = assay(GSE10797) %>%
+    as_tibble(rownames = 'Ensembl_Gene_ID') %>%
+    select(Ensembl_Gene_ID, all_of(GSE10797_stroma_samples)) %>% 
+    filter(Ensembl_Gene_ID %in% common_genes)
 
 ```
 
+Finally, we combine the data into one tibble called combined_data. We make a new row called variance that calculates the variance across the 5 samples. We select the top 10 rows, those with greatest variance. We then use ggplot to create a heat map of the genes with the top variance, displayed below. 
+
+``` {r heat_map_3}
+combined_data = full_join(GSE10797_stroma_expressions, GSE59772_stroma_expressions)
+top_variance_genes = combined_data %>%
+    rowwise() %>%
+    mutate(variance = var(c_across(starts_with('GSM')))) %>%
+    ungroup() %>%
+    arrange(desc(variance)) %>%
+    slice_head(n=10)
+
+top_variance_map = top_variance_genes %>%
+    select(-variance) %>%
+    pivot_longer(cols = starts_with('GSM'), names_to = 'Sample_ID', values_to = 'Expression') %>%
+    ggplot(aes(x = Sample_ID, y = Ensembl_Gene_ID, fill = Expression)) +
+    geom_tile()+
+    labs(x = 'Sample', y = 'Gene', fill = 'Expression', title = 'Top 10 Genes in Stroma Samples with Highest Variance') + 
+    theme_bw() + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5, face = "bold"))
+top_variance_map
+
+
+```
+
+## Example 4: Using Feature Data
+In this final example, we use aspects of the feature data along with the expression data. <br> <br>
+
+First, we get the feature data and convert it to a tibble. We then filter this data for each data set to only include genes on chromosome 16. Similar to the last example, we also make a vector with the gene names the data sets have in common. 
+``` {r chr16_boxplot, message=FALSE, warning=FALSE}
+GSE59772 = makeObject(identifiers$GSE59772)
+GSE59772_featuredata = rowData(GSE59772) %>%
+    as_tibble(rownames = 'Ensembl_Gene_ID')
+
+GSE59772_chr16 = GSE59772_featuredata %>%
+    filter(Chromosome == '16') %>%
+    pull(Ensembl_Gene_ID)
+
+GSE59772_gene_names = assay(GSE59772) %>%
+    as_tibble(rownames="Ensembl_Gene_ID") %>%
+    pull(Ensembl_Gene_ID)
+
+
+GSE10797 = makeObject(identifiers$GSE10797)
+GSE10797_featuredata = rowData(GSE10797) %>%
+    as_tibble(rownames = 'Ensembl_Gene_ID')
+
+GSE10797_chr16 = GSE10797_featuredata %>%
+    filter(Chromosome == '16') %>%
+    pull(Ensembl_Gene_ID)
+
+GSE10797_gene_names = assay(GSE10797) %>%
+    as_tibble(rownames="Ensembl_Gene_ID") %>%
+    pull(Ensembl_Gene_ID)
+
+
+common_genes = c()
+for (gene in GSE59772_gene_names) {
+    if (gene %in% GSE10797_gene_names) {
+        common_genes = c(common_genes, gene)
+    }
+}
+```
+
+Next, we filter the expression data to include only genes on chromosome 16, then filter again to only include genes the data sets have in common. We pivot and mutate to make the data ready for the boxplot. 
+``` {r chr16_boxplot_2}
+GSE10797_chr16_common = assay(GSE10797) %>%
+    as_tibble(rownames = 'Ensembl_Gene_ID') %>%
+    filter(Ensembl_Gene_ID %in% GSE10797_chr16) %>%
+    filter(Ensembl_Gene_ID %in% common_genes) %>%
+    pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
+    mutate(Dataset = 'GSE10797')
+
+GSE59772_chr16_common = assay(GSE59772) %>%
+    as_tibble(rownames = 'Ensembl_Gene_ID') %>%
+    filter(Ensembl_Gene_ID %in% GSE59772_chr16) %>%
+    filter(Ensembl_Gene_ID %in% common_genes) %>%
+    pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
+    mutate(Dataset = 'GSE59772')
+```
+
+Finally, we combine the data sets using bind_rows() and read it into a ggplot. 
+``` {r chr16_boxplot_3}
+combined_data = bind_rows(GSE10797_chr16_common, GSE59772_chr16_common) %>%
+    ggplot(aes(x = Dataset, y = Expression_Level, fill = Dataset)) +
+    geom_boxplot() +
+    theme_bw() +
+    labs(x = 'Dataset', y='Gene Expression Level', title = 'Gene Expression Levels in Chromosome 16') 
+combined_data
+```
 
 # Session Info 
 

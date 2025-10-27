@@ -7,7 +7,7 @@
 makeObject(identifiers)
 }
 \arguments{
-\item{identifiers}{vector of identifiers found in identifier_list}
+\item{identifiers}{vector of identifiers found in identifiers}
 }
 \value{
 a SummarizedExperiment object for the data set

@@ -1,6 +1,3 @@
-library(SummarizedExperiment)
-library(tidyverse)
-
 #' @importFrom dplyr filter %>% select distinct
 #' @importFrom utils download.file
 #' @importFrom stringr str_c str_starts
@@ -19,36 +16,37 @@ utils::globalVariables(c(
 ))
 
 
-#download file from OSF
-downloadOSFFile = function(identifier, out_file_path) {
-    tmp_file_path = str_c(tempdir(), "/", identifier, ".tsv.gz")
+##  download file from Zenodo
+downloadZenodoFile <- function(identifier) {
+    tmp_file_path = str_c(tempdir(), "/", identifier[2], ".tsv.gz")
     
     if (!file.exists(tmp_file_path)) {
-        download.file(paste0("https://osf.io/download/", identifier), tmp_file_path, mode='wb')
+        download.file(paste0("https://zenodo.org/records/", identifier[1], "/files/", identifier[2], "?download=1"), tmp_file_path, mode='wb')
     }
     
     return(read_tsv(tmp_file_path))
 }
 
 
-#filter out repeat rows
-filterRepeatRows = function(expression_matrix) {
+##  filter out repeat rows
+filterRepeatRows <- function(expression_matrix) {
     expression_matrix = expression_matrix %>%
         filter(!str_starts(Chromosome, 'H'))
     
     return(expression_matrix)
 }
 
-# get metadata
-getMetadata = function(identifier) {
-    sample_metadata = downloadOSFFile(identifier) %>%
+##  get metadata
+getMetadata <- function(identifier) {
+    metadata_identifier = identifier[3:4]
+    sample_metadata = downloadZenodoFile(metadata_identifier) %>%
         column_to_rownames('Sample_ID')
     
     return(sample_metadata)
 }
 
-# make feature data
-makeFeatureData = function(expression_matrix) {
+##  make feature data
+makeFeatureData <- function(expression_matrix) {
     feature_data = select(expression_matrix, Dataset_ID, Entrez_Gene_ID, 
                           HGNC_Symbol, Ensembl_Gene_ID, Chromosome, Gene_Biotype) %>%
         distinct(Ensembl_Gene_ID, .keep_all=TRUE) %>%
@@ -58,8 +56,8 @@ makeFeatureData = function(expression_matrix) {
 }
 
 
-# creating expression data matrix
-makeDataMatrix = function(dataset, start_col, end_col) {
+##  creating expression data matrix
+makeDataMatrix <- function(dataset, start_col, end_col) {
     expressions = select(dataset, Ensembl_Gene_ID, start_col:end_col)
     expression_matrix = expressions %>%
         column_to_rownames('Ensembl_Gene_ID') %>%
@@ -68,8 +66,8 @@ makeDataMatrix = function(dataset, start_col, end_col) {
     return(expression_matrix)
 }
 
-#build SummarizedExperiment
-makeSummarizedExperiment = function(expressions, features, meta) {
+##  build SummarizedExperiment
+makeSummarizedExperiment <- function(expressions, features, meta) {
     se = SummarizedExperiment(
         assays = list(counts=expressions),
         rowData = features,
