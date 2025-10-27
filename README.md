@@ -1,51 +1,4 @@
 
-``` r
-library(AnnotatedBCGEData)
-```
-
-# Examples
-
-# Session Info
-
-<details>
-
-``` r
-utils::sessionInfo()
-```
-
-    ## R version 4.5.1 (2025-06-13 ucrt)
-    ## Platform: x86_64-w64-mingw32/x64
-    ## Running under: Windows 11 x64 (build 26100)
-    ## 
-    ## Matrix products: default
-    ##   LAPACK version 3.12.1
-    ## 
-    ## locale:
-    ## [1] LC_COLLATE=English_United States.utf8 
-    ## [2] LC_CTYPE=English_United States.utf8   
-    ## [3] LC_MONETARY=English_United States.utf8
-    ## [4] LC_NUMERIC=C                          
-    ## [5] LC_TIME=English_United States.utf8    
-    ## 
-    ## time zone: America/Denver
-    ## tzcode source: internal
-    ## 
-    ## attached base packages:
-    ## [1] stats     graphics  grDevices utils     datasets  methods   base     
-    ## 
-    ## other attached packages:
-    ## [1] AnnotatedBCGEData_0.99.0
-    ## 
-    ## loaded via a namespace (and not attached):
-    ##  [1] compiler_4.5.1    fastmap_1.2.0     cli_3.6.5         tools_4.5.1      
-    ##  [5] htmltools_0.5.8.1 rstudioapi_0.17.1 yaml_2.3.10       rmarkdown_2.30   
-    ##  [9] knitr_1.50        xfun_0.53         digest_0.6.37     rlang_1.1.6      
-    ## [13] evaluate_1.0.5
-
-</details>
-
-<br>
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # AnnotatedBCGEData
@@ -98,12 +51,13 @@ BiocManager::install("srp33/AnnotatedBCGEData")
 
 ## Data Info
 
-The data used in this package was accessed through Open Science
-Framework (OSF). This database allowed us to use data that was already
-neat and ready to be analyzed. However, the original data came from Gene
-Expression Omnibus (GEO), ArrayExpress, and The Cancer Genome Atlas. The
-name of every item in the named list identifiers is the data set name in
-its respective source. Learn more about the data at the following links:
+The data used in this package was accessed through
+[Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records?q=&l=list&p=1&s=10&sort=newest).
+This database allowed us to use data that was already neat and ready to
+be analyzed. However, the original data came from Gene Expression
+Omnibus (GEO), ArrayExpress, and The Cancer Genome Atlas. The name of
+every item in the named list identifiers is the data set name in its
+respective source. Learn more about the data at the following links:
 
 - GSE41197:
   <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41197>
@@ -621,21 +575,15 @@ either in the vignettes and/or the paper(s) describing this package.
   *[rcmdcheck](https://CRAN.R-project.org/package=rcmdcheck)* customized
   to use [Bioconductor’s docker
   containers](https://www.bioconductor.org/help/docker/) and
-  *[BiocCheck](https://bioconductor.org/packages/3.21/BiocCheck)*.
+  *[BiocCheck](https://bioconductor.org/packages/3.22/BiocCheck)*.
 - Code coverage assessment is possible thanks to
   [codecov](https://codecov.io/gh) and
   *[covr](https://CRAN.R-project.org/package=covr)*.
-- The [documentation
-  website](http://heidisteadman.github.io/RPracticePackage) is
-  automatically updated thanks to
-  *[pkgdown](https://CRAN.R-project.org/package=pkgdown)*.
 - The code is styled automatically thanks to
   *[styler](https://CRAN.R-project.org/package=styler)*.
 - The documentation is formatted thanks to
   *[devtools](https://CRAN.R-project.org/package=devtools)* and
   *[roxygen2](https://CRAN.R-project.org/package=roxygen2)*.
 
-For more details, check the `dev` directory.
-
 This package was developed using
-*[biocthis](https://bioconductor.org/packages/3.21/biocthis)*.
+*[biocthis](https://bioconductor.org/packages/3.22/biocthis)*.
