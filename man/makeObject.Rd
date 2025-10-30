@@ -2,16 +2,20 @@
 % Please edit documentation in R/make-data.R
 \name{makeObject}
 \alias{makeObject}
-\title{Function that creates downloads data and creates SummarizedExperiment object for user to access}
+\title{Function that creates downloads data and creates SummarizedExperiment object}
 \usage{
-makeObject(identifiers)
+makeObject(identifier, identifier_list = identifiers)
 }
 \arguments{
-\item{identifiers}{vector of identifiers found in identifiers}
+\item{identifier}{name of data set}
 }
 \value{
 a SummarizedExperiment object for the data set
 }
 \description{
-Takes a vector with the identifiers for the download URL in the form c(expression data, metadata)
+Takes a name of data set and passes to identifiers named list
+Uses the vector of identifiers in the list to get URL and download
+}
+\examples{
+makeObject(GSE41197)
 }

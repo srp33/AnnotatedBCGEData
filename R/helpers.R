@@ -18,10 +18,17 @@ utils::globalVariables(c(
 
 ##  download file from Zenodo
 downloadZenodoFile <- function(identifier) {
-    tmp_file_path = str_c(tempdir(), "/", identifier[2], ".tsv.gz")
+    tmp_file_path <- str_c(tempdir(), "/", identifier[2], ".tsv.gz")
     
     if (!file.exists(tmp_file_path)) {
-        download.file(paste0("https://zenodo.org/records/", identifier[1], "/files/", identifier[2], "?download=1"), tmp_file_path, mode='wb')
+        download.file(paste0(
+            "https://zenodo.org/records/", 
+            identifier[1], 
+            "/files/", 
+            identifier[2], 
+            "?download=1"), 
+            tmp_file_path, 
+            mode='wb')
     }
     
     return(read_tsv(tmp_file_path))
@@ -30,7 +37,7 @@ downloadZenodoFile <- function(identifier) {
 
 ##  filter out repeat rows
 filterRepeatRows <- function(expression_matrix) {
-    expression_matrix = expression_matrix %>%
+    expression_matrix <- expression_matrix %>%
         filter(!str_starts(Chromosome, 'H'))
     
     return(expression_matrix)
@@ -38,8 +45,8 @@ filterRepeatRows <- function(expression_matrix) {
 
 ##  get metadata
 getMetadata <- function(identifier) {
-    metadata_identifier = identifier[3:4]
-    sample_metadata = downloadZenodoFile(metadata_identifier) %>%
+    metadata_identifier <- identifier[3:4]
+    sample_metadata <- downloadZenodoFile(metadata_identifier) %>%
         column_to_rownames('Sample_ID')
     
     return(sample_metadata)
@@ -47,8 +54,10 @@ getMetadata <- function(identifier) {
 
 ##  make feature data
 makeFeatureData <- function(expression_matrix) {
-    feature_data = select(expression_matrix, Dataset_ID, Entrez_Gene_ID, 
-                          HGNC_Symbol, Ensembl_Gene_ID, Chromosome, Gene_Biotype) %>%
+    feature_data <- select(expression_matrix, 
+                           Dataset_ID, Entrez_Gene_ID, 
+                          HGNC_Symbol, Ensembl_Gene_ID, 
+                          Chromosome, Gene_Biotype) %>%
         distinct(Ensembl_Gene_ID, .keep_all=TRUE) %>%
         column_to_rownames('Ensembl_Gene_ID')
     
@@ -58,8 +67,8 @@ makeFeatureData <- function(expression_matrix) {
 
 ##  creating expression data matrix
 makeDataMatrix <- function(dataset, start_col, end_col) {
-    expressions = select(dataset, Ensembl_Gene_ID, start_col:end_col)
-    expression_matrix = expressions %>%
+    expressions <- select(dataset, Ensembl_Gene_ID, start_col:end_col)
+    expression_matrix <- expressions %>%
         column_to_rownames('Ensembl_Gene_ID') %>%
         as.matrix()
     
@@ -68,7 +77,7 @@ makeDataMatrix <- function(dataset, start_col, end_col) {
 
 ##  build SummarizedExperiment
 makeSummarizedExperiment <- function(expressions, features, meta) {
-    se = SummarizedExperiment(
+    se <- SummarizedExperiment(
         assays = list(counts=expressions),
         rowData = features,
         colData = meta
@@ -76,3 +85,13 @@ makeSummarizedExperiment <- function(expressions, features, meta) {
     
     return(se)
 }
+
+## make list of identifiers
+identifiers <- list(
+    GSE41197 = c('17428998','GSE41197.tsv.gz', 
+                 '17429158', "GSE41197_metadata.tsv"),
+    GSE10797 = c('17429390','GSE10797.tsv.gz', 
+                 '17429390', 'GSE10797_metadata.tsv'),
+    GSE59772 = c('17429395','GSE59772.tsv.gz', 
+                 '17429395', 'GSE59772_metadata.tsv')
+)

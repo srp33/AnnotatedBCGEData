@@ -11,7 +11,16 @@ Description: Package that gives users access to 100+ tidied data sets from publi
 License: file LICENSE
 URL: https://github.com/srp33/AnnotatedBCGEData
 BugReports: https://github.com/srp33/AnnotatedBCGEData//issues
-biocViews: ExperimentData
+biocViews: 
+    ExperimentData, 
+    CancerData,
+    ExpressionData,
+    Homo_sapiens_Data,
+    GEO,
+    ArrayExpress,
+    Tissue, 
+    MicroarrayData, 
+    SequencingData
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
@@ -33,4 +42,4 @@ Imports:
     dplyr,
     utils,
     tibble
-LazyData: true
+LazyData: false
