@@ -55,9 +55,8 @@ The data used in this package was accessed through
 [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records?q=&l=list&p=1&s=10&sort=newest).
 This database allowed us to use data that was already neat and ready to
 be analyzed. However, the original data came from Gene Expression
-Omnibus (GEO), ArrayExpress, and The Cancer Genome Atlas. The name of
-every item in the named list identifiers is the data set name in its
-respective source. Learn more about the data at the following links:
+Omnibus (GEO), ArrayExpress, and The Cancer Genome Atlas. Learn more
+about the data at the following links:
 
 - GSE41197:
   <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41197>
@@ -92,21 +91,14 @@ library(AnnotatedBCGEData)
 ```
 
 Downloading this package does not download the data sets onto the user’s
-machine. This package contains 2 code objects the user needs to create
-and access the SummarizedExperiment object for each data set. First is a
-named list object called identifiers. The second is a function called
-makeObject. identifiers contains the unique URL identifiers for the
-expression data file and the metadata file. Calling each data set in the
-named list returns a vector with these values. These values are passed
-to makeObject, which returns the SummarizedExperiment. <br> <br> To load
-the SummarizedExperiment object for a data set included in
-AnnotatedBCGEData, the user chooses the name of the data set from the
-identifiers named list object and passes it to the function makeObject.
-This function downloads the data and creates the SummarizedExperiment
-object that is accessible to the user. To see a comprehensive list of
-all data sets included and where they came from, see the metadata.csv
-file in inst/extdata/metadata.csv. This will be accessible in the code
-when the package is available in ExperimentHub. <br> <br> The
+machine. To load the SummarizedExperiment object for a data set included
+in AnnotatedBCGEData, the user chooses the name of the data set and
+passes it as a string to the function makeObject. This function
+downloads the data and creates the SummarizedExperiment object that is
+accessible to the user. To see a comprehensive list of all data sets
+included and where they came from, see the metadata.csv file in
+inst/extdata/metadata.csv. This will be accessible in the code when the
+package is available in ExperimentHub. <br> <br> The
 SummarizedExperiment object for each data set includes 3 matrices. The
 first, which we load as expression_data, is a matrix with the samples as
 columns and genes as rows. The Ensembl gene ID is used as the row names.
@@ -121,7 +113,9 @@ is located on, the Entrez gene ID, and the gene name. The genes are the
 rows and the information about the samples is in the columns.
 
 ``` r
-GSE41197_SE = makeObject(identifiers$GSE41197)
+GSE41197_SE = makeObject("GSE41197")
+#> [1] "17428998"              "GSE41197.tsv.gz"       "17429158"             
+#> [4] "GSE41197_metadata.tsv"
 #> Rows: 9593 Columns: 22
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
@@ -142,52 +136,15 @@ sample_metadata = colData(GSE41197_SE)
 feature_data = rowData(GSE41197_SE)
 ```
 
-This is a simple example of using a built-in function to get a general
-idea of the data. The summary() function includes data points for each
-sample, like the minimum or maximum expression levels across all the
-genes. Generally, this isn’t particularly relevant, but does give an
-idea of how many samples are in the matrix.
-
-``` r
-gene_expression_values = assay(GSE41197_SE)
-summary(gene_expression_values)
-#>    GSM1010328         GSM1010329         GSM1010330        GSM1010331      
-#>  Min.   :-0.58807   Min.   :-0.67193   Min.   :-0.6275   Min.   :-0.67947  
-#>  1st Qu.:-0.02803   1st Qu.:-0.02844   1st Qu.:-0.0254   1st Qu.:-0.02467  
-#>  Median : 0.17679   Median : 0.17441   Median : 0.1930   Median : 0.20735  
-#>  Mean   : 0.35001   Mean   : 0.31648   Mean   : 0.3605   Mean   : 0.38279  
-#>  3rd Qu.: 0.51888   3rd Qu.: 0.49118   3rd Qu.: 0.5426   3rd Qu.: 0.58618  
-#>  Max.   : 5.89482   Max.   : 5.60029   Max.   : 5.6386   Max.   : 5.22921  
-#>    GSM1010332         GSM1010333         GSM1010335         GSM1010336      
-#>  Min.   :-0.65721   Min.   :-0.68931   Min.   :-0.80612   Min.   :-0.76911  
-#>  1st Qu.:-0.02692   1st Qu.:-0.02032   1st Qu.:-0.01329   1st Qu.:-0.01469  
-#>  Median : 0.19357   Median : 0.19358   Median : 0.18998   Median : 0.19855  
-#>  Mean   : 0.38505   Mean   : 0.35555   Mean   : 0.34023   Mean   : 0.34292  
-#>  3rd Qu.: 0.57769   3rd Qu.: 0.53875   3rd Qu.: 0.50096   3rd Qu.: 0.54229  
-#>  Max.   : 5.53771   Max.   : 5.48663   Max.   : 5.15454   Max.   : 5.49399  
-#>    GSM1010337         GSM1010338         GSM1010339        GSM1010340      
-#>  Min.   :-0.62034   Min.   :-0.73287   Min.   :-0.7865   Min.   :-0.68037  
-#>  1st Qu.:-0.02902   1st Qu.:-0.01651   1st Qu.:-0.0320   1st Qu.:-0.01358  
-#>  Median : 0.16572   Median : 0.19661   Median : 0.1650   Median : 0.23907  
-#>  Mean   : 0.34074   Mean   : 0.35117   Mean   : 0.3178   Mean   : 0.42135  
-#>  3rd Qu.: 0.49122   3rd Qu.: 0.53256   3rd Qu.: 0.4736   3rd Qu.: 0.65615  
-#>  Max.   : 7.47123   Max.   : 5.35866   Max.   : 6.0962   Max.   : 5.20654  
-#>    GSM1010341         GSM1010342          GSM1010344          GSM1010345      
-#>  Min.   :-0.71538   Min.   :-0.727634   Min.   :-0.745922   Min.   :-0.73491  
-#>  1st Qu.:-0.02971   1st Qu.:-0.004102   1st Qu.:-0.009581   1st Qu.:-0.01498  
-#>  Median : 0.19966   Median : 0.228113   Median : 0.199796   Median : 0.22331  
-#>  Mean   : 0.39275   Mean   : 0.408147   Mean   : 0.361049   Mean   : 0.38596  
-#>  3rd Qu.: 0.59964   3rd Qu.: 0.624571   3rd Qu.: 0.527265   3rd Qu.: 0.62029  
-#>  Max.   : 4.58676   Max.   : 4.715135   Max.   : 5.045097   Max.   : 4.98164
-```
-
 In the following example, we first access the matrix of gene expression
 values. To make it easier to analyze, we convert it into a tibble and
 select the first 10 rows. We then used ggplot() to create a bar plot
 showing the gene expression levels for one sample across 10 genes.
 
 ``` r
-GSE41197 = makeObject(identifiers$GSE41197)
+GSE41197 = makeObject("GSE41197")
+#> [1] "17428998"              "GSE41197.tsv.gz"       "17429158"             
+#> [4] "GSE41197_metadata.tsv"
 #> Rows: 9593 Columns: 22
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
@@ -221,7 +178,9 @@ Here, we first accessed the matrices for 3 data sets included in
 AnnotatedBCGEData.
 
 ``` r
-GSE10797_SE = makeObject(identifiers$GSE10797)
+GSE10797_SE = makeObject("GSE10797")
+#> [1] "17429390"              "GSE10797.tsv.gz"       "17429390"             
+#> [4] "GSE10797_metadata.tsv"
 #> Rows: 13744 Columns: 31
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
@@ -237,7 +196,9 @@ GSE10797_SE = makeObject(identifiers$GSE10797)
 #> 
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-GSE41197_SE = makeObject(identifiers$GSE41197)
+GSE41197_SE = makeObject("GSE41197")
+#> [1] "17428998"              "GSE41197.tsv.gz"       "17429158"             
+#> [4] "GSE41197_metadata.tsv"
 #> Rows: 9593 Columns: 22
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
@@ -253,7 +214,9 @@ GSE41197_SE = makeObject(identifiers$GSE41197)
 #> 
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-GSE59772_SE = makeObject(identifiers$GSE59772)
+GSE59772_SE = makeObject("GSE59772")
+#> [1] "17429395"              "GSE59772.tsv.gz"       "17429395"             
+#> [4] "GSE59772_metadata.tsv"
 #> Rows: 21659 Columns: 15
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
@@ -324,7 +287,9 @@ vectors with all the gene names in each tibble to set them up for
 comparison.
 
 ``` r
-GSE59772 = makeObject(identifiers$GSE59772)
+GSE59772 = makeObject("GSE59772")
+#> [1] "17429395"              "GSE59772.tsv.gz"       "17429395"             
+#> [4] "GSE59772_metadata.tsv"
 #> Rows: 21659 Columns: 15
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
@@ -351,7 +316,9 @@ GSE59772_gene_names = assay(GSE59772) %>%
     pull(Ensembl_Gene_ID)
 
 
-GSE10797 = makeObject(identifiers$GSE10797)
+GSE10797 = makeObject("GSE10797")
+#> [1] "17429390"              "GSE10797.tsv.gz"       "17429390"             
+#> [4] "GSE10797_metadata.tsv"
 #> Rows: 13744 Columns: 31
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
@@ -439,7 +406,9 @@ filter this data for each data set to only include genes on chromosome
 names the data sets have in common.
 
 ``` r
-GSE59772 = makeObject(identifiers$GSE59772)
+GSE59772 = makeObject("GSE59772")
+#> [1] "17429395"              "GSE59772.tsv.gz"       "17429395"             
+#> [4] "GSE59772_metadata.tsv"
 #> Rows: 21659 Columns: 15
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
@@ -467,7 +436,9 @@ GSE59772_gene_names = assay(GSE59772) %>%
     pull(Ensembl_Gene_ID)
 
 
-GSE10797 = makeObject(identifiers$GSE10797)
+GSE10797 = makeObject("GSE10797")
+#> [1] "17429390"              "GSE10797.tsv.gz"       "17429390"             
+#> [4] "GSE10797_metadata.tsv"
 #> Rows: 13744 Columns: 31
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
@@ -555,7 +526,7 @@ print(citation('AnnotatedBCGEData'), bibtex = TRUE)
 #> 
 #>   @Manual{,
 #>     title = {AnnotatedBCGEData: 100+ Breast Cancer Gene Expression Data sets},
-#>     author = {Heidi Steadman and Sophie Lo},
+#>     author = {Heidi Steadman and Shu-Fei Lo},
 #>     year = {2025},
 #>     note = {R package version 0.99.0},
 #>     url = {https://github.com/srp33/AnnotatedBCGEData},
