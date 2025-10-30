@@ -89,10 +89,12 @@ feature_data = rowData(GSE41197_SE)
 
 In the following example, we first access the matrix of gene expression values. To make it easier to analyze, we convert it into a tibble and select the first 10 rows. We then used ggplot() to create a bar plot showing the gene expression levels for one sample across 10 genes.
 
-```{r plot_example}
+```{r plot_example, message=FALSE, warning=FALSE}
 GSE41197 = makeObject("GSE41197")
 gene_expression_values = assay(GSE41197)
+```
 
+```{r plot_example_p_2}
 exp_tib = as_tibble(gene_expression_values, rownames='Ensembl_Gene_ID')[1:10,] %>%
     ggplot(aes(x=Ensembl_Gene_ID, y=GSM1010328)) +
     geom_col() +
@@ -106,7 +108,7 @@ exp_tib
 
 Here, we first accessed the matrices for 3 data sets included in AnnotatedBCGEData. 
 
-```{r plot_example_2}
+```{r plot_example_2, message=FALSE, warning=FALSE}
 GSE10797_SE = makeObject("GSE10797")
 GSE41197_SE = makeObject("GSE41197")
 GSE59772_SE = makeObject("GSE59772")
@@ -152,7 +154,7 @@ ggplot(combined_samples, aes(x = group, y = Expression_Level, fill = group)) +
 In this example, we combine using both the metadata and the expression data to create a heat map of gene expression levels.<br>
 First, we load the data sets, turn them into tibbles, and extract both the metadata and expression data. We then filter the expression to only include the samples that are identified as stroma cells. Finally, we create two vectors with all the gene names in each tibble to set them up for comparison. 
 
-``` {r heat_map}
+``` {r heat_map, message=FALSE, warning=FALSE}
 GSE59772 = makeObject("GSE59772")
 GSE59772_metadata = colData(GSE59772) %>%
     as_tibble(rownames = 'Sample_ID')
@@ -226,7 +228,7 @@ top_variance_map
 In this final example, we use aspects of the feature data along with the expression data. <br> <br>
 
 First, we get the feature data and convert it to a tibble. We then filter this data for each data set to only include genes on chromosome 16. Similar to the last example, we also make a vector with the gene names the data sets have in common. 
-``` {r chr16_boxplot}
+``` {r chr16_boxplot, message=FALSE, warning=FALSE}
 GSE59772 = makeObject("GSE59772")
 GSE59772_featuredata = rowData(GSE59772) %>%
     as_tibble(rownames = 'Ensembl_Gene_ID')

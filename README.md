@@ -114,8 +114,6 @@ rows and the information about the samples is in the columns.
 
 ``` r
 GSE41197_SE = makeObject("GSE41197")
-#> [1] "17428998"              "GSE41197.tsv.gz"       "17429158"             
-#> [4] "GSE41197_metadata.tsv"
 #> Rows: 9593 Columns: 22
 #> ── Column specification ────────────────────────────────────────────────────────
 #> Delimiter: "\t"
@@ -143,25 +141,10 @@ showing the gene expression levels for one sample across 10 genes.
 
 ``` r
 GSE41197 = makeObject("GSE41197")
-#> [1] "17428998"              "GSE41197.tsv.gz"       "17429158"             
-#> [4] "GSE41197_metadata.tsv"
-#> Rows: 9593 Columns: 22
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr  (5): Dataset_ID, HGNC_Symbol, Ensembl_Gene_ID, Chromosome, Gene_Biotype
-#> dbl (17): Entrez_Gene_ID, GSM1010328, GSM1010329, GSM1010330, GSM1010331, GS...
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> Rows: 16 Columns: 5
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr (5): Dataset_ID, Sample_ID, Platform_ID, Patient_ID, disease_state
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 gene_expression_values = assay(GSE41197)
+```
 
+``` r
 exp_tib = as_tibble(gene_expression_values, rownames='Ensembl_Gene_ID')[1:10,] %>%
     ggplot(aes(x=Ensembl_Gene_ID, y=GSM1010328)) +
     geom_col() +
@@ -172,66 +155,15 @@ exp_tib = as_tibble(gene_expression_values, rownames='Ensembl_Gene_ID')[1:10,] %
 exp_tib
 ```
 
-<img src="man/figures/README-plot_example-1.png" width="100%" />
+<img src="man/figures/README-plot_example_p_2-1.png" width="100%" />
 
 Here, we first accessed the matrices for 3 data sets included in
 AnnotatedBCGEData.
 
 ``` r
 GSE10797_SE = makeObject("GSE10797")
-#> [1] "17429390"              "GSE10797.tsv.gz"       "17429390"             
-#> [4] "GSE10797_metadata.tsv"
-#> Rows: 13744 Columns: 31
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr  (5): Dataset_ID, HGNC_Symbol, Ensembl_Gene_ID, Chromosome, Gene_Biotype
-#> dbl (26): Entrez_Gene_ID, GSM272671, GSM272673, GSM272675, GSM272677, GSM272...
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> Rows: 25 Columns: 5
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr (5): Dataset_ID, Sample_ID, Platform_ID, replicate, tissue_source
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 GSE41197_SE = makeObject("GSE41197")
-#> [1] "17428998"              "GSE41197.tsv.gz"       "17429158"             
-#> [4] "GSE41197_metadata.tsv"
-#> Rows: 9593 Columns: 22
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr  (5): Dataset_ID, HGNC_Symbol, Ensembl_Gene_ID, Chromosome, Gene_Biotype
-#> dbl (17): Entrez_Gene_ID, GSM1010328, GSM1010329, GSM1010330, GSM1010331, GS...
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> Rows: 16 Columns: 5
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr (5): Dataset_ID, Sample_ID, Platform_ID, Patient_ID, disease_state
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 GSE59772_SE = makeObject("GSE59772")
-#> [1] "17429395"              "GSE59772.tsv.gz"       "17429395"             
-#> [4] "GSE59772_metadata.tsv"
-#> Rows: 21659 Columns: 15
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr  (5): Dataset_ID, HGNC_Symbol, Ensembl_Gene_ID, Chromosome, Gene_Biotype
-#> dbl (10): Entrez_Gene_ID, GSM1446286, GSM1446287, GSM1446288, GSM1446289, GS...
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> Rows: 9 Columns: 5
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr (5): Dataset_ID, Sample_ID, Platform_ID, replicate, tissue
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
 GSE10197 = assay(GSE10797_SE)
 GSE41197 = assay(GSE41197_SE)
@@ -288,23 +220,6 @@ comparison.
 
 ``` r
 GSE59772 = makeObject("GSE59772")
-#> [1] "17429395"              "GSE59772.tsv.gz"       "17429395"             
-#> [4] "GSE59772_metadata.tsv"
-#> Rows: 21659 Columns: 15
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr  (5): Dataset_ID, HGNC_Symbol, Ensembl_Gene_ID, Chromosome, Gene_Biotype
-#> dbl (10): Entrez_Gene_ID, GSM1446286, GSM1446287, GSM1446288, GSM1446289, GS...
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> Rows: 9 Columns: 5
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr (5): Dataset_ID, Sample_ID, Platform_ID, replicate, tissue
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 GSE59772_metadata = colData(GSE59772) %>%
     as_tibble(rownames = 'Sample_ID')
 
@@ -317,23 +232,6 @@ GSE59772_gene_names = assay(GSE59772) %>%
 
 
 GSE10797 = makeObject("GSE10797")
-#> [1] "17429390"              "GSE10797.tsv.gz"       "17429390"             
-#> [4] "GSE10797_metadata.tsv"
-#> Rows: 13744 Columns: 31
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr  (5): Dataset_ID, HGNC_Symbol, Ensembl_Gene_ID, Chromosome, Gene_Biotype
-#> dbl (26): Entrez_Gene_ID, GSM272671, GSM272673, GSM272675, GSM272677, GSM272...
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> Rows: 25 Columns: 5
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr (5): Dataset_ID, Sample_ID, Platform_ID, replicate, tissue_source
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 GSE10797_metadata = colData(GSE10797) %>%
     as_tibble(rownames = 'Sample_ID')
 
@@ -407,23 +305,6 @@ names the data sets have in common.
 
 ``` r
 GSE59772 = makeObject("GSE59772")
-#> [1] "17429395"              "GSE59772.tsv.gz"       "17429395"             
-#> [4] "GSE59772_metadata.tsv"
-#> Rows: 21659 Columns: 15
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr  (5): Dataset_ID, HGNC_Symbol, Ensembl_Gene_ID, Chromosome, Gene_Biotype
-#> dbl (10): Entrez_Gene_ID, GSM1446286, GSM1446287, GSM1446288, GSM1446289, GS...
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> Rows: 9 Columns: 5
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr (5): Dataset_ID, Sample_ID, Platform_ID, replicate, tissue
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 GSE59772_featuredata = rowData(GSE59772) %>%
     as_tibble(rownames = 'Ensembl_Gene_ID')
 
@@ -437,23 +318,6 @@ GSE59772_gene_names = assay(GSE59772) %>%
 
 
 GSE10797 = makeObject("GSE10797")
-#> [1] "17429390"              "GSE10797.tsv.gz"       "17429390"             
-#> [4] "GSE10797_metadata.tsv"
-#> Rows: 13744 Columns: 31
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr  (5): Dataset_ID, HGNC_Symbol, Ensembl_Gene_ID, Chromosome, Gene_Biotype
-#> dbl (26): Entrez_Gene_ID, GSM272671, GSM272673, GSM272675, GSM272677, GSM272...
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> Rows: 25 Columns: 5
-#> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: "\t"
-#> chr (5): Dataset_ID, Sample_ID, Platform_ID, replicate, tissue_source
-#> 
-#> ℹ Use `spec()` to retrieve the full column specification for this data.
-#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 GSE10797_featuredata = rowData(GSE10797) %>%
     as_tibble(rownames = 'Ensembl_Gene_ID')
 
