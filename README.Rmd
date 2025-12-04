@@ -65,7 +65,9 @@ The following code is required to access the tools and data included in Annotate
 ```{r load_packages, message=FALSE, warning=FALSE}
 library(AnnotatedBCGEData)
 ```
-This package contains several functions that are designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchDefs`. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. 
+This package contains several functions that are designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchDefs`. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. The code field that is returned from this function can then be passed to `searchForDatasets`. <br>
+<br>
+The second important function is `searchForDatasets`. This function takes two parameters: the code to search by and the type of term it is. The options are field or value. If no term is specified, it defaults to field. This function returns a tibble with all the data sets that are associated with the ontology code, as well as data set-level metadata.
 
 ## Example: Searching for a data set by ontology term name
 In this first example of using the `searchDefs` function, we search for a particular ontology term, "Progesterone Receptor Status". 
@@ -75,8 +77,12 @@ searchDefs("Progesterone Receptor Status")
 
 ```
 
-The output of calling this function is a tibble containing the URI, the name of the term, synonyms, the definition, and the NCIT code associated with it. When the correct term is identified, the user can then pass the URI to the `searchForDatasets` function, which identifies data sets that contain the chosen ontology term.
+The output of calling this function is a tibble containing the URI, the name of the term, synonyms, the definition, and the NCIT code associated with it. When the correct term is identified, the user can then pass the code to the `searchForDatasets` function, which identifies data sets that contain the chosen ontology term.
 
+```{r PR_example_p2}
+searchForDatasets("C16149", "field")
+
+```
 ## Example: Searching for a data set by ontology term definition
 In this example, we search for the ontology term by an associated definition. Because the definitions are more vague, this may identify several similar terms. It is important that the user is able to identify the exact term they are looking for.
 
@@ -86,6 +92,10 @@ searchDefs("Progesterone receptor", "Definition")
 ```
 
 Again, when the chosen term is identified, it can be passed to the `searchForDatasets` function. 
+```{r PR_example2_p2}
+searchForDatasets("C16149", "field")
+
+```
 
 # Examples
 

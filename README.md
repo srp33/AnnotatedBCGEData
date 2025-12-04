@@ -84,7 +84,13 @@ filter the included data sets based on their associated ontology terms.
 The first function is `searchDefs`. This function takes two parameters:
 the term to search by and the type of term it is. The options for terms
 are Name, URI, Code, and Definition. If no term type is specified, the
-function defaults to Name.
+function defaults to Name. The code field that is returned from this
+function can then be passed to `searchForDatasets`. <br> <br> The second
+important function is `searchForDatasets`. This function takes two
+parameters: the code to search by and the type of term it is. The
+options are field or value. If no term is specified, it defaults to
+field. This function returns a tibble with all the data sets that are
+associated with the ontology code, as well as data set-level metadata.
 
 ## Example: Searching for a data set by ontology term name
 
@@ -93,24 +99,66 @@ a particular ontology term, “Progesterone Receptor Status”.
 
 ``` r
 searchDefs("Progesterone Receptor Status")
-#> Rows: 198 Columns: 5
+#> Rows: 518 Columns: 5
 #> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: ","
+#> Delimiter: "\t"
 #> chr (5): URI, Preferred Label, Synonyms, Definitions, code
 #> 
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> # A tibble: 1 × 5
+#> # A tibble: 5 × 5
 #>   URI                               `Preferred Label` Synonyms Definitions code 
 #>   <chr>                             <chr>             <chr>    <chr>       <chr>
-#> 1 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… Progest… Indicates … C161…
+#> 1 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… Progest… An immunoh… C147…
+#> 2 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… Progest… Indicates … C161…
+#> 3 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… Progest… An immunoh… C147…
+#> 4 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… Progest… An immunoh… C147…
+#> 5 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… PgR Sta… An immunoh… C147…
 ```
 
 The output of calling this function is a tibble containing the URI, the
 name of the term, synonyms, the definition, and the NCIT code associated
 with it. When the correct term is identified, the user can then pass the
-URI to the `searchForDatasets` function, which identifies data sets that
-contain the chosen ontology term.
+code to the `searchForDatasets` function, which identifies data sets
+that contain the chosen ontology term.
+
+``` r
+searchForDatasets("C16149", "field")
+#> Rows: 6079 Columns: 9
+#> ── Column specification ────────────────────────────────────────────────────────
+#> Delimiter: "\t"
+#> chr (9): dataset, orig_field, NCIT_field, NCIT_values, orig_values, NCIT_fie...
+#> 
+#> ℹ Use `spec()` to retrieve the full column specification for this data.
+#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+#> Rows: 6 Columns: 11
+#> ── Column specification ────────────────────────────────────────────────────────
+#> Delimiter: "\t"
+#> chr (11): geo_accession, study_location, contact_institute, available_date, ...
+#> 
+#> ℹ Use `spec()` to retrieve the full column specification for this data.
+#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+#> Joining with `by = join_by(dataset)`
+#> # A tibble: 150 × 19
+#>    dataset       orig_field   NCIT_field NCIT_values orig_values NCIT_field_code
+#>    <chr>         <chr>        <chr>      <chr>       <chr>       <chr>          
+#>  1 GSE2603       path_pr_sta… Progester… Progestero… N           C16149         
+#>  2 GSE2603       path_pr_sta… Progester… Not Applic… <NA>        C16149         
+#>  3 GSE2603       path_pr_sta… Progester… Progestero… P           C16149         
+#>  4 GSE61304      pgr          Progester… Progestero… 0           C16149         
+#>  5 GSE61304      pgr          Progester… Progestero… 1           C16149         
+#>  6 GSE61304      pgr          Progester… Equivocal … EV          C16149         
+#>  7 GSE61304      pgr          Progester… Not Applic… <NA>        C16149         
+#>  8 GSE6532_U133A pgr          Progester… Progestero… 0           C16149         
+#>  9 GSE6532_U133A pgr          Progester… Progestero… 1           C16149         
+#> 10 GSE6532_U133A pgr          Progester… Not Applic… <NA>        C16149         
+#> # ℹ 140 more rows
+#> # ℹ 13 more variables: NCIT_value_code <chr>, data_type <chr>,
+#> #   remapped_values <chr>, study_location <chr>, contact_institute <chr>,
+#> #   available_date <chr>, last_update_date <chr>, overall_design <chr>,
+#> #   summary <chr>, platform_id <chr>, publishing_platform <chr>, title <chr>,
+#> #   experiment_type <chr>
+```
 
 ## Example: Searching for a data set by ontology term definition
 
@@ -121,22 +169,67 @@ the exact term they are looking for.
 
 ``` r
 searchDefs("Progesterone receptor", "Definition")
-#> Rows: 198 Columns: 5
+#> Rows: 518 Columns: 5
 #> ── Column specification ────────────────────────────────────────────────────────
-#> Delimiter: ","
+#> Delimiter: "\t"
 #> chr (5): URI, Preferred Label, Synonyms, Definitions, code
 #> 
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-#> # A tibble: 2 × 5
+#> # A tibble: 9 × 5
 #>   URI                               `Preferred Label` Synonyms Definitions code 
 #>   <chr>                             <chr>             <chr>    <chr>       <chr>
-#> 1 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… Progest… Indicates … C161…
-#> 2 http://ncicb.nci.nih.gov/xml/owl… Triple-Negative … Triple … An invasiv… C717…
+#> 1 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… Progest… An immunoh… C147…
+#> 2 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… Progest… Indicates … C161…
+#> 3 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… PR Nega… An indicat… C154…
+#> 4 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… PR Posi… An indicat… C154…
+#> 5 http://ncicb.nci.nih.gov/xml/owl… Basal-Like Breas… Basal-L… A biologic… C535…
+#> 6 http://ncicb.nci.nih.gov/xml/owl… Triple-Negative … Triple … An invasiv… C717…
+#> 7 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… Progest… An immunoh… C147…
+#> 8 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… Progest… An immunoh… C147…
+#> 9 http://ncicb.nci.nih.gov/xml/owl… Progesterone Rec… PgR Sta… An immunoh… C147…
 ```
 
 Again, when the chosen term is identified, it can be passed to the
 `searchForDatasets` function.
+
+``` r
+searchForDatasets("C16149", "field")
+#> Rows: 6079 Columns: 9
+#> ── Column specification ────────────────────────────────────────────────────────
+#> Delimiter: "\t"
+#> chr (9): dataset, orig_field, NCIT_field, NCIT_values, orig_values, NCIT_fie...
+#> 
+#> ℹ Use `spec()` to retrieve the full column specification for this data.
+#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+#> Rows: 6 Columns: 11
+#> ── Column specification ────────────────────────────────────────────────────────
+#> Delimiter: "\t"
+#> chr (11): geo_accession, study_location, contact_institute, available_date, ...
+#> 
+#> ℹ Use `spec()` to retrieve the full column specification for this data.
+#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+#> Joining with `by = join_by(dataset)`
+#> # A tibble: 150 × 19
+#>    dataset       orig_field   NCIT_field NCIT_values orig_values NCIT_field_code
+#>    <chr>         <chr>        <chr>      <chr>       <chr>       <chr>          
+#>  1 GSE2603       path_pr_sta… Progester… Progestero… N           C16149         
+#>  2 GSE2603       path_pr_sta… Progester… Not Applic… <NA>        C16149         
+#>  3 GSE2603       path_pr_sta… Progester… Progestero… P           C16149         
+#>  4 GSE61304      pgr          Progester… Progestero… 0           C16149         
+#>  5 GSE61304      pgr          Progester… Progestero… 1           C16149         
+#>  6 GSE61304      pgr          Progester… Equivocal … EV          C16149         
+#>  7 GSE61304      pgr          Progester… Not Applic… <NA>        C16149         
+#>  8 GSE6532_U133A pgr          Progester… Progestero… 0           C16149         
+#>  9 GSE6532_U133A pgr          Progester… Progestero… 1           C16149         
+#> 10 GSE6532_U133A pgr          Progester… Not Applic… <NA>        C16149         
+#> # ℹ 140 more rows
+#> # ℹ 13 more variables: NCIT_value_code <chr>, data_type <chr>,
+#> #   remapped_values <chr>, study_location <chr>, contact_institute <chr>,
+#> #   available_date <chr>, last_update_date <chr>, overall_design <chr>,
+#> #   summary <chr>, platform_id <chr>, publishing_platform <chr>, title <chr>,
+#> #   experiment_type <chr>
+```
 
 # Examples
 

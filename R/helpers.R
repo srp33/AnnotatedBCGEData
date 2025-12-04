@@ -18,7 +18,7 @@ utils::globalVariables(c(
 
 ##  download file from Zenodo
 downloadZenodoFile <- function(identifier) {
-    tmp_file_path <- str_c(tempdir(), "/", identifier[2], ".tsv.gz")
+    tmp_file_path <- str_c(tempdir(), "/", identifier[2])
     
     if (!file.exists(tmp_file_path)) {
         download.file(paste0(
