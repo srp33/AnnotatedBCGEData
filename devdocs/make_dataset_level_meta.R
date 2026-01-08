@@ -16,7 +16,13 @@ get_gse_metadata <- function(gse_id) {
     # Create a single-row tibble
     return(tibble::as_tibble_row(meta_collapsed))
 }
-gse_ids <- c("GSE41197", "GSE10797", "GSE59772", "GSE10281", "GSE10780", "GSE96058")
+gse_ids <- c("GSE41197", "GSE10797", "GSE59772", "GSE10281", "GSE10780", 
+             "GSE96058", "GSE10810", "GSE11001", "GSE11121", "GSE9574",
+             "GSE111662", "GSE93332", "GSE118432", "GSE120129", "GSE12093",
+             "GSE12276", "GSE12763", "GSE13787", "GSE9195", "GSE14017",
+             "GSE90521", "GSE14018", "GSE8977", "GSE1456", "GSE1561",
+             "GSE86374", "GSE8193", "GSE16391", "GSE16446", "GSE167213", 
+             "GSE16873", "GSE17705")
 
 all_data <- map(gse_ids, get_gse_metadata)
 combined <- bind_rows(all_data) %>%
