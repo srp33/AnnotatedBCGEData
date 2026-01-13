@@ -30,7 +30,12 @@ gse_ids <- c("GSE41197", "GSE10797", "GSE59772", "GSE10281", "GSE10780",
              "GSE25065", "GSE25407", "GSE2603", "GSE26910", "GSE27562",
              "GSE28821", "GSE29431", "GSE2990", "GSE31138", "GSE31192",
              "GSE31448", "GSE31519", "GSE32518", "GSE32646", "GSE33692",
-             "GSE3494", "GSE41194", "GSE41196", "GSE42568")
+             "GSE3494", "GSE41194", "GSE41196", "GSE42568", "GSE43365",
+             "GSE45255", "GSE4611", "GSE46184", "GSE47109", "GSE48390",
+             "GSE4922", "GSE50948", "GSE5327", "GSE5460", "GSE5764", 'GSE57968',
+             "GSE5847", "GSE58644", "GSE58984", "GSE61304", "GSE62944",
+             "GSE6434", "GSE6532", "GSE7378", "GSE7390", "GSE76275", "GSE7904",
+             "GSE81538", "GSE81838")
 
 all_data <- map(gse_ids, get_gse_metadata)
 combined <- bind_rows(all_data) %>%
