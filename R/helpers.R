@@ -300,6 +300,7 @@ identifiers <- list(
                  '17872046', 'GSE81538_metadata.tsv'),
     GSE81838 = c('17871833', 'GSE81838.tsv.gz',
                  '17871833', 'GSE81838_metadata.tsv'),
-    
+    E_TABM_158 = c('18126092', 'E_TABM_158.tsv.gz',
+                   '18126092', 'E_TABM_158_metadata.tsv')
     
 )

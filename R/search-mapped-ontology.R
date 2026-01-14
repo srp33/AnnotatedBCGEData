@@ -1,7 +1,9 @@
 #' @importFrom dplyr rename %>% left_join filter
 
 utils::globalVariables(c(
-    "geo_accession"
+    "geo_accession",
+    "NCIT_field_code",
+    "NCIT_value_code"
 ))
 
 filtered_data_url <- "https://zenodo.org/records/17603341/files/filtered_mapped_data.tsv.gz?download=1"

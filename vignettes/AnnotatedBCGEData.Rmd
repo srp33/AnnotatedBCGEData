@@ -49,22 +49,20 @@ BiocManager::install("srp33/AnnotatedBCGEData")
 # Data Info
 The data used in this package was accessed through [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records?q=&l=list&p=1&s=10&sort=newest). This database allowed us to use data that was already neat and ready to be analyzed. However, the original data came from Gene Expression Omnibus (GEO), ArrayExpress, and The Cancer Genome Atlas. Learn more about the data at the following links:
 
- - GSE41197: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41197 
- - GSE10797: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE10797 
- - GSE59772: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE59772 
+ - GEO: https://www.ncbi.nlm.nih.gov/geo/ 
+ - ArrayExpress: https://www.ebi.ac.uk/biostudies/arrayexpress 
+ - TCGA: https://www.cancer.gov/ccg/research/genome-sequencing/tcga  
 
-The package itself includes a metadata file as required by Bioconductor. This file is a table that lists the name of each object and more information about where it came from and how it was accessed. See inst/extdata/metadata.csv.
 
-We will soon include functionality to allow users to look at the data with greater depth.
 
 # Filtering Data by Ontology
 ``` {r load_tidyverse, include = FALSE}
 library(tidyverse)
 library(SummarizedExperiment)
 ```
-This package contains several functions that are designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchDefs`. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. The code field that is returned from this function can then be passed to `searchForDatasets`. <br>
+This package contains several functions that are designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchDefs`. `searchDefs` was created with the intention of helping users become more familiar with the ontology included in this package. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. The function returns a tibble with information about the term searched, including a code unique to each term. The code can then be passed to the `searchForDatasets`function, which returns all data sets that were associated with that term. <br>
 <br>
-The second important function is `searchForDatasets`. This function takes two parameters: the code to search by and the type of term it is. The options are field or value. If no term is specified, it defaults to field. This function returns a tibble with all the data sets that are associated with the ontology code, as well as data set-level metadata.
+`searchForDatasets` takes two parameters: the code to search by and the type of term it is. The options are field or value. If no term is specified, it defaults to field. A field refers to the actual NCIT term code. This would be the code associated with a term such as "ER status" or "Patient age". A value refers to the particular values in the data. This could be "Positive", "Negative", or a range of values in some cases. All codes are accessible with the `searchDefs` function. `searchForDatasets` returns a tibble with all the data sets that are associated with the ontology code, as well as data set-level metadata. The names of the data sets can then be passed to another helper function to create the SummarizedExperiment object available for further analysis. The following examples show how to use the functions. 
 
 ## Example: Searching for a data set by ontology term name
 In this first example of using the `searchDefs` function, we search for a particular ontology term, "Progesterone Receptor Status". 
