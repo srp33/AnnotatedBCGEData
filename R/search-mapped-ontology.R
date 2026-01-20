@@ -7,7 +7,7 @@ utils::globalVariables(c(
 ))
 
 filtered_data_url <- "https://zenodo.org/records/17603341/files/filtered_mapped_data.tsv.gz?download=1"
-dataset_meta_url <- "https://zenodo.org/records/17780658/files/combined_data.tsv?download=1"
+dataset_meta_url <- "https://zenodo.org/records/18318763/files/dataset_meta.tsv?download=1"
 
 #' Function that searches mapped ontology data
 #' 
