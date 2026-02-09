@@ -47,7 +47,7 @@ BiocManager::install("srp33/AnnotatedBCGEData")
 ```
 
 # Data Info
-The data used in this package was accessed through [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records?q=&l=list&p=1&s=10&sort=newest). This database allowed us to use data that was already neat and ready to be analyzed. However, the original data came from Gene Expression Omnibus (GEO), ArrayExpress, and The Cancer Genome Atlas. Learn more about the data at the following links:
+The data used in this package was accessed through [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records?q=&l=list&p=1&s=10&sort=newest). This database allowed us to use data that was already neat and ready to be analyzed. However, the original data came from Gene Expression Omnibus (GEO), ArrayExpress, The Cancer Genome Atlas, METABRIC, and a repository for the International Cancer Genome Atlas that no longer exists. Learn more about the data at the following links, or via the included functions in the package:
 
  - GEO: https://www.ncbi.nlm.nih.gov/geo/ 
  - ArrayExpress: https://www.ebi.ac.uk/biostudies/arrayexpress 
@@ -59,6 +59,8 @@ The data used in this package was accessed through [Zenodo](https://zenodo.org/c
 ``` {r load_tidyverse, include = FALSE}
 library(tidyverse)
 library(SummarizedExperiment)
+library(zen4R)
+library(BiocFileCache)
 ```
 This package contains several functions that are designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchDefs`. `searchDefs` was created with the intention of helping users become more familiar with the ontology included in this package. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. The function returns a tibble with information about the term searched, including a code unique to each term. The code can then be passed to the `searchForDatasets`function, which returns all data sets that were associated with that term. <br>
 <br>
@@ -94,15 +96,15 @@ searchForDatasets("C16149", "field")
 
 ```
 
-# Examples
+# Making SummarizedExperiment Objects
 
-The following is the code required to access the objects within the package. Other packages were used in the creation of the package, but they should be automatically loaded when the package is installed. These packages are included in the NAMESPACE file. 
+The following is the code required to access the objects within the package. Other packages were used in the creation of the package, but they should be automatically loaded when the package is installed. These packages are included in the NAMESPACE and DESCRIPTION files. 
 
 ```{r load_packages, message=FALSE, warning=FALSE}
 library(AnnotatedBCGEData)
 ```
 
-Downloading this package does not download the data sets onto the user's machine. To load the SummarizedExperiment object for a data set included in AnnotatedBCGEData, the user chooses the name of the data set and passes it as string to the function makeObject. This function downloads the data and creates the SummarizedExperiment object that is accessible to the user. To see a comprehensive list of all data sets included and where they came from, see the metadata.csv file in inst/extdata/metadata.csv. <br>
+Downloading this package does not download the data sets onto the user's machine. To load the SummarizedExperiment object for a data set included in AnnotatedBCGEData, the user chooses the name of the data set and passes it as string to the function bcgeData. This function downloads the data and creates the SummarizedExperiment object that is accessible to the user. <br>
 <br>
 The SummarizedExperiment object for each data set includes 3 matrices. The first, which we load as expression_data, is a matrix with the samples as columns and genes as rows. The Ensembl gene ID is used as the row names. The data in the actual matrix is the expression level of the gene for the sample. <br>
 <br>
@@ -110,8 +112,17 @@ The second matrix we load as sample_metadata. This is information about the samp
 <br>
 The third matrix we load as feature_data. This is the information about the genes that were tested for each sample. This includes information like the chromosome the gene is located on, the Entrez gene ID, and the gene name. The genes are the rows and the information about the samples is in the columns.
 
+## bcgeData
+The `bcgeData` function returns the SummarizedExperiment object for the requested data set. The function creates a cache (using BiocFileCache) on the user's machine. All downloaded files are saved to this cache so that files do not need to be redownloaded every time the R session is restarted. By default, the most recent version of the data that is found in the Zenodo repository is downloaded. <br> 
+<br>
+We understand the importance of data versioning and reproducibility. For that reason, there is additional functionality included in the bcgeData function that will allow the user to specify which version of the data they want to download or use. The argument `v` to the function takes an integer that is used to find the specified version. If that version does not exist or needs to be downloaded, the user will see a message in the R console. <br>
+<br>
+While the actual files are stored in the AnnotatedBCGEData cache that is created, for reasons of data version checks, the SummarizedExperiment objects are not stored in the cache and need to be created again when the R session is restarted. This is a fairly quick process as the data already exists. This requires nothing more than calling `bcgeData` on the desired data set at the beginning of every session.<br>
+<br>
+The following is a simple example of creating an object and accessing the data.
+
 ```{r example, eval = requireNamespace('AnnotatedBCGEData')}
-GSE41197_SE = makeObject("GSE41197")
+GSE41197_SE = bcgeData("GSE41197")
 expression_data = assay(GSE41197_SE)
 sample_metadata = colData(GSE41197_SE)
 feature_data = rowData(GSE41197_SE)
@@ -121,7 +132,7 @@ feature_data = rowData(GSE41197_SE)
 In the following example, we first access the matrix of gene expression values. To make it easier to analyze, we convert it into a tibble and select the first 10 rows. We then used ggplot() to create a bar plot showing the gene expression levels for one sample across 10 genes.
 
 ```{r plot_example, message=FALSE, warning=FALSE}
-GSE41197 = makeObject("GSE41197")
+GSE41197 = bcgeData("GSE41197")
 gene_expression_values = assay(GSE41197)
 ```
 
@@ -140,9 +151,9 @@ exp_tib
 Here, we first accessed the matrices for 3 data sets included in AnnotatedBCGEData. 
 
 ```{r plot_example_2, message=FALSE, warning=FALSE}
-GSE10797_SE = makeObject("GSE10797")
-GSE41197_SE = makeObject("GSE41197")
-GSE59772_SE = makeObject("GSE59772")
+GSE10797_SE = bcgeData("GSE10797")
+GSE41197_SE = bcgeData("GSE41197")
+GSE59772_SE = bcgeData("GSE59772")
 
 GSE10197 = assay(GSE10797_SE)
 GSE41197 = assay(GSE41197_SE)
@@ -187,19 +198,18 @@ In this example, we combine using both the metadata and the expression data to c
 First, we load the data sets, turn them into tibbles, and extract both the metadata and expression data. We then filter the expression to only include the samples that are identified as stroma cells. Finally, we create two vectors with all the gene names in each tibble to set them up for comparison. 
 
 ``` {r heat_map, message=FALSE, warning=FALSE}
-GSE59772 = makeObject("GSE59772")
-GSE59772_metadata = colData(GSE59772) %>%
+GSE59772_metadata = colData(GSE59772_SE) %>%
     as_tibble(rownames = 'Sample_ID')
 
 GSE59772_stroma_samples = filter(GSE59772_metadata, tissue == 'Stroma') %>%
     pull(Sample_ID)
 
-GSE59772_gene_names = assay(GSE59772) %>%
+GSE59772_gene_names = assay(GSE59772_SE) %>%
     as_tibble(rownames="Ensembl_Gene_ID") %>%
     pull(Ensembl_Gene_ID)
 
 
-GSE10797 = makeObject("GSE10797")
+GSE10797 = bcgeData("GSE10797")
 GSE10797_metadata = colData(GSE10797) %>%
     as_tibble(rownames = 'Sample_ID')
 
@@ -221,7 +231,7 @@ for (gene in GSE59772_gene_names) {
     }
 }
 
-GSE59772_stroma_expressions = assay(GSE59772) %>%
+GSE59772_stroma_expressions = assay(GSE59772_SE) %>%
     as_tibble(rownames= 'Ensembl_Gene_ID') %>%
     select(Ensembl_Gene_ID, all_of(GSE59772_stroma_samples)) %>%
     filter(Ensembl_Gene_ID %in% common_genes)
@@ -261,21 +271,21 @@ top_variance_map
 In this final example, we use aspects of the feature data along with the expression data. <br> <br>
 
 First, we get the feature data and convert it to a tibble. We then filter this data for each data set to only include genes on chromosome 16. Similar to the last example, we also make a vector with the gene names the data sets have in common. 
-``` {r chr16_boxplot, message=FALSE, warning=FALSE}
-GSE59772 = makeObject("GSE59772")
-GSE59772_featuredata = rowData(GSE59772) %>%
+
+``` {r chr16_boxplot, warning=FALSE}
+GSE59772_featuredata = rowData(GSE59772_SE) %>%
     as_tibble(rownames = 'Ensembl_Gene_ID')
 
 GSE59772_chr16 = GSE59772_featuredata %>%
     filter(Chromosome == '16') %>%
     pull(Ensembl_Gene_ID)
 
-GSE59772_gene_names = assay(GSE59772) %>%
+GSE59772_gene_names = assay(GSE59772_SE) %>%
     as_tibble(rownames="Ensembl_Gene_ID") %>%
     pull(Ensembl_Gene_ID)
 
 
-GSE10797 = makeObject("GSE10797")
+GSE10797 = bcgeData("GSE10797")
 GSE10797_featuredata = rowData(GSE10797) %>%
     as_tibble(rownames = 'Ensembl_Gene_ID')
 
@@ -305,7 +315,7 @@ GSE10797_chr16_common = assay(GSE10797) %>%
     pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
     mutate(Dataset = 'GSE10797')
 
-GSE59772_chr16_common = assay(GSE59772) %>%
+GSE59772_chr16_common = assay(GSE59772_SE) %>%
     as_tibble(rownames = 'Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID %in% GSE59772_chr16) %>%
     filter(Ensembl_Gene_ID %in% common_genes) %>%

@@ -1,9 +1,9 @@
 library(tidyverse)
 library(yaml)
 
-#tar_file <- "C:/Users/heidi/Downloads/geo_2025_04_28.tar"
+tar_file <- "C:/Users/heidi/Downloads/geo_2025_04_28.tar"
 
-#extract <- "C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs"
+extract <- "C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs"
 
 #untar(tar_file, exdir=extract)
 
@@ -76,7 +76,7 @@ copy_files <- function(id_vec, target_dir) {
 
 #copy_files(gse_ids, target) 
 
-zips_to_remove <- list.files(target, pattern="\\.zip$", full.names=TRUE)
+#zips_to_remove <- list.files(target, pattern="\\.zip$", full.names=TRUE)
 #file.remove(zips_to_remove)
 
 meta_tib <- tibble(
@@ -116,7 +116,7 @@ read_yaml_files <- function(target_dir, tib) {
     return(tib)
 }
 
-read_yaml_files(target, meta_tib)
+meta_tib <- read_yaml_files(target, meta_tib)
 
 meta_tib <- add_row(meta_tib, 
                     accession_id="GSE19615",
@@ -232,5 +232,20 @@ meta_tib <- add_row(meta_tib,
                     platform_id=NA,
                     publishing_platform="cBioPortal",
                     title="METABRIC")
+
+meta_tib <- add_row(meta_tib,
+                    accession_id="ICGC_KR",
+                    contact_city=NA,
+                    contact_country="Korea",
+                    contact_institute= NA,
+                    available_date="2012",
+                    last_update_date=NA,
+                    overall_design=paste0("Breast cancer gene expression data",
+                                          " for the International Cancer ",
+                                          "Genome Atlas South Korean Cohort"),
+                    summary=NA,
+                    platform_id=NA,
+                    publishing_platform="ICGC",
+                    title="ICGC_KR")
 
 write_tsv(meta_tib, "C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs/dataset_meta.tsv")
