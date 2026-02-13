@@ -23,7 +23,6 @@ NCIT_identifiers <- c("10.5281/zenodo.17488901", "NCIT_definitions_filtered.tsv.
 #' @param term_type column to search in df, default Name
 #' @param zen arg for ZenodoManager object
 #' @return a dataframe with matching rows to search term
-#' @examples searchDefs("Tumor Size")
 #' @export 
 searchDefs <- function(term, term_type="Name", zen=zenodom) {
     acceptable_terms <- c("Name", "URI", "Code", "Definition")

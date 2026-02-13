@@ -20,6 +20,3 @@ a data frame from the searched file with dataset metadata
 Takes a search code and column to search by
 Returns data frame joined with dataset metadata
 }
-\examples{
-searchForDatasets("C19790", "field")
-}

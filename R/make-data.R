@@ -9,8 +9,8 @@ NULL
 #' @param datasetID the name of the data set, passed as a string
 #' @param identifier list of identifiers, defaults to list included
 #' @param v version of data to download, default to most recent
+#' @param zen ZenodoManager object
 #' @return a SummarizedExperiment object for the data set
-#' @examples bcgeData("GSE41197")
 #' @export
 bcgeData <- function(datasetID, identifier=identifiers, zen=zenodom, v=NULL) {
     makeCache()

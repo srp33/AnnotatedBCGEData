@@ -15,7 +15,6 @@ utils::globalVariables(c(
 #' @param term_type field or value
 #' @param zen arg for ZenodoManager object
 #' @return a data frame from the searched file with dataset metadata
-#' @examples searchForDatasets("C19790", "field")
 #' @export
 searchForDatasets <- function(code, term_type="field", zen=zenodom) {
     acceptable_terms <- c("field", "value", "Field", "Value", "FIELD", "VALUE")

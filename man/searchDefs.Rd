@@ -20,6 +20,3 @@ a dataframe with matching rows to search term
 Takes a search term and the column of the defs file to search by
 Returns a dataframe with all matches to the parameters
 }
-\examples{
-searchDefs("Tumor Size")
-}

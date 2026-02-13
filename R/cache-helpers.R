@@ -3,6 +3,8 @@
 #' @importFrom zen4R ZenodoManager ZenodoRecord
 #' @importFrom readr read_tsv
 #' @importFrom tibble column_to_rownames
+#' @importFrom rappdirs user_config_dir
+#' @importFrom rstudioapi selectDirectory
 
 utils::globalVariables(c(
     "doi"
@@ -11,9 +13,12 @@ utils::globalVariables(c(
 
 ## creates new ZenodoManager object 
 .onLoad <- function(libname, pkgname) {
-    zenodom <<- ZenodoManager$new(
-        token = "bUrBXBEHjZvWHjQ0LKejAhc3Ex8d1utXDUZf4JrOYrhMpykNTcNuP0RzUihd"
-    )
+    suppressMessages({
+        zenodom <<- ZenodoManager$new(
+            token = "bUrBXBEHjZvWHjQ0LKejAhc3Ex8d1utXDUZf4JrOYrhMpykNTcNuP0RzUihd"
+        )
+    })
+    
 
 }
 

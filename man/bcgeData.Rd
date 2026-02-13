@@ -14,6 +14,8 @@ bcgeData(datasetID, identifier = identifiers, zen = zenodom, v = NULL)
 
 \item{identifier}{list of identifiers, defaults to list included}
 
+\item{zen}{ZenodoManager object}
+
 \item{v}{version of data to download, default to most recent}
 }
 \value{
@@ -24,7 +26,4 @@ Function that creates a SummarizedExperiment object
 
 Takes a name of a data set and an optional version of the data, passes
 the identifier vector to get concept DOI for specified data set.
-}
-\examples{
-bcgeData("GSE41197")
 }
