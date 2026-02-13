@@ -14,6 +14,11 @@ NULL
 #' @export
 bcgeData <- function(datasetID, identifier=identifiers, zen=zenodom, v=NULL) {
     makeCache()
+    if (interactive()) {
+        cache_path <- loadCache()
+    } else {
+        cache_path <- tempdir()
+    }
     
     identifier_vec <- identifier[[datasetID]]
     
@@ -25,11 +30,11 @@ bcgeData <- function(datasetID, identifier=identifiers, zen=zenodom, v=NULL) {
         return(se)
     }
     
-    dir_filepath <- paste0('~/AnnotatedBCGEData/',datasetID, 'v', version)
-    exp_filepath <- paste0('~/AnnotatedBCGEData/', datasetID, 'v', version, '/', identifier_vec[2])
+    dir_filepath <- paste0(cache_path, '/', datasetID, 'v', version)
+    exp_filepath <- paste0(cache_path, '/', datasetID, 'v', version, '/', identifier_vec[2])
     
     if (!dir.exists(dir_filepath)) {
-        dir.create(paste0('~/AnnotatedBCGEData/',datasetID, 'v', version))
+        dir.create(paste0(cache_path, '/', datasetID, 'v', version))
     }
     
     if (!file.exists(exp_filepath)) {
@@ -39,7 +44,7 @@ bcgeData <- function(datasetID, identifier=identifiers, zen=zenodom, v=NULL) {
         downloadZenFile(conceptDOI, dir_filepath, zen)
     }
     
-    meta_filepath <- paste0('~/AnnotatedBCGEData/', datasetID, 'v', version, '/', identifier_vec[3])
+    meta_filepath <- paste0(cache_path, '/', datasetID, 'v', version, '/', identifier_vec[3])
     se <- seConstructor(exp_filepath, meta_filepath)
     
     return(se)

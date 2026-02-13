@@ -10,7 +10,6 @@ utils::globalVariables(c(
 
 
 ## creates new ZenodoManager object 
-
 .onLoad <- function(libname, pkgname) {
     zenodom <<- ZenodoManager$new(
         token = "bUrBXBEHjZvWHjQ0LKejAhc3Ex8d1utXDUZf4JrOYrhMpykNTcNuP0RzUihd"
@@ -18,9 +17,57 @@ utils::globalVariables(c(
 
 }
 
+
+##asks the user where to save the cache
+cacheDir <- function() {
+    message(paste0("Data is stored in a cache to prevent repeated downloads.",
+                   "A location needs to be selected for the cache directory."))
+    if (requireNamespace("rstudioapi", quietly=TRUE) &&
+        rstudioapi::isAvailable()) {
+        dir <- rstudioapi::selectDirectory()
+    } else {
+        dir <- readline(prompt="Enter directory path: ")
+        check_valid <- dir.create(dir, recursive=TRUE, showWarnings=FALSE)
+        while (!check_valid) {
+            message(paste0("The directory ", dir, " is invalid. Try again."))
+            dir <- readline(prompt="Enter a directory path: ")
+            check_valid <- dir.create(dir, recursive=TRUE, showWarnings=FALSE)
+        }
+    }
+    
+    config_dir <- file.path(rappdirs::user_config_dir("AnnotatedBCGEData"), "config.txt")
+    dir.create(dirname(config_dir), recursive=TRUE, showWarnings=FALSE)
+    writeLines(dir, config_dir)
+    
+    return(dir)
+}
+
+loadCache <- function() {
+    config_file <- file.path(rappdirs::user_config_dir("AnnotatedBCGEData"), "config.txt")
+    if (file.exists(config_file)) {
+        loc <- readLines(config_file)
+        cache_path <- paste0(loc, '/AnnotatedBCGEData')
+        return(cache_path)
+    } else {
+        return(NULL)
+    }
+}
+
+
 ## creates file cache on user's machine
 makeCache <- function() {
-    cache_file_path <- '~/AnnotatedBCGEData'
+    if (interactive()) {
+        config_file <- file.path(rappdirs::user_config_dir("AnnotatedBCGEData"),
+                                 "config.txt")
+        if (file.exists(config_file)) {
+            cache_file_path <- loadCache()
+        } else {
+            cache_file_path <- paste0(cacheDir(), '/AnnotatedBCGEData')
+        }
+    } else {
+        cache_file_path <- tempdir()
+    }
+    
     if(!file.exists(cache_file_path)) {
         bfc <- BiocFileCache(cache_file_path, ask=FALSE)
         return()
@@ -77,7 +124,13 @@ seConstructor <- function(exp_path, meta_path) {
 
 ## helper called for downloading specified version of Zenodo file
 chooseVersion <- function(datasetID, v, zen, version, conceptDOI) {
-    dir_path <- paste0('~/AnnotatedBCGEData/', datasetID, 'v', v)
+    if (interactive()) {
+        cache_dir <- loadCache()    
+    } else {
+        cache_dir <- tempdir()
+    }
+    
+    dir_path <- paste0(cache_dir, datasetID, 'v', v)
     if (!dir.exists(dir_path)) {
         if (v<version) {
             dir.create(dir_path)
@@ -93,8 +146,8 @@ chooseVersion <- function(datasetID, v, zen, version, conceptDOI) {
         }
     }
     
-    exp_filepath <- paste0('~/AnnotatedBCGEData/', datasetID, 'v', v, '/', datasetID, '.tsv.gz')
-    meta_filepath <- paste0('~/AnnotatedBCGEData/', datasetID, 'v', v, '/', datasetID, '_metadata.tsv')
+    exp_filepath <- paste0(cache_dir, '/', datasetID, 'v', v, '/', datasetID, '.tsv.gz')
+    meta_filepath <- paste0(cache_dir, '/', datasetID, 'v', v, '/', datasetID, '_metadata.tsv')
     se <- seConstructor(exp_filepath, meta_filepath)
     return(se)
 }

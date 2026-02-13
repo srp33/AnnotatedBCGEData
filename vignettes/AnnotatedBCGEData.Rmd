@@ -124,7 +124,7 @@ The following is a simple example of creating an object and accessing the data.
 
 ```{r example, eval = requireNamespace('AnnotatedBCGEData')}
 GSE41197_SE = bcgeData("GSE41197")
-expression_data = assay(GSE41197_SE)
+GSE41197_expression_data = assay(GSE41197_SE)
 sample_metadata = colData(GSE41197_SE)
 feature_data = rowData(GSE41197_SE)
 ```
@@ -132,13 +132,8 @@ feature_data = rowData(GSE41197_SE)
 ## Example 1: Plotting Expression Values
 In the following example, we first access the matrix of gene expression values. To make it easier to analyze, we convert it into a tibble and select the first 10 rows. We then used ggplot() to create a bar plot showing the gene expression levels for one sample across 10 genes.
 
-```{r plot_example, message=FALSE, warning=FALSE}
-GSE41197 = bcgeData("GSE41197")
-gene_expression_values = assay(GSE41197)
-```
-
 ```{r plot_example_part_2}
-exp_tib = as_tibble(gene_expression_values, rownames='Ensembl_Gene_ID')[1:10,] %>%
+exp_tib = as_tibble(GSE41197_expression_data, rownames='Ensembl_Gene_ID')[1:10,] %>%
     ggplot(aes(x=Ensembl_Gene_ID, y=GSM1010328)) +
     geom_col() +
     labs(x='Ensembl Gene ID',y='Sample ID GSM1010328') +
@@ -149,32 +144,30 @@ exp_tib
 ```
 
 ## Example 2: Expression Box Plot
-Here, we first accessed the matrices for 3 data sets included in AnnotatedBCGEData. 
+Here, we first accessed the matrices for 2 more data sets included in AnnotatedBCGEData. 
 
 ```{r plot_example_2, message=FALSE, warning=FALSE}
-GSE10797_SE = bcgeData("GSE10797")
-GSE41197_SE = bcgeData("GSE41197")
-GSE59772_SE = bcgeData("GSE59772")
+GSE59772_SE <- bcgeData("GSE59772")
+GSE10797_SE <- bcgeData("GSE10797")
 
-GSE10197 = assay(GSE10797_SE)
-GSE41197 = assay(GSE41197_SE)
-GSE59772 = assay(GSE59772_SE)
+GSE59772_exp <- assay(GSE59772_SE)
+GSE10797_exp <- assay(GSE10797_SE)
 ```
 
 Next, we converted each to a tibble and selected one row, representing one gene that we knew each data set had in common. We rotated the tibbles to have one column (the gene) and many rows (the sample). Then, we added the 'group' column, which was necessary for the function used in the next step.
 
 ```{r plot_example_2_part_2}
-GSE10197_gene = GSE10197 %>%
+GSE10197_gene = GSE10797_exp %>%
     as_tibble(rownames='Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
     pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
     mutate(group = 'GSE10197')
-GSE41197_gene = GSE41197 %>%
+GSE41197_gene = GSE41197_expression_data %>%
     as_tibble(rownames='Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
     pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
     mutate(group = 'GSE41197')
-GSE59772_gene = GSE59772 %>%
+GSE59772_gene = GSE59772_exp %>%
     as_tibble(rownames='Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
     pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
@@ -205,16 +198,15 @@ GSE59772_metadata = colData(GSE59772_SE) %>%
 GSE59772_stroma_samples = filter(GSE59772_metadata, tissue == 'Stroma') %>%
     pull(Sample_ID)
 
-GSE59772_gene_names = assay(GSE59772_SE) %>%
+GSE59772_gene_names = GSE59772_exp %>%
     as_tibble(rownames="Ensembl_Gene_ID") %>%
     pull(Ensembl_Gene_ID)
 
 
-GSE10797 = bcgeData("GSE10797")
-GSE10797_metadata = colData(GSE10797) %>%
+GSE10797_metadata = colData(GSE10797_SE) %>%
     as_tibble(rownames = 'Sample_ID')
 
-GSE10797_gene_names = assay(GSE10797) %>%
+GSE10797_gene_names = GSE10797_exp %>%
     as_tibble(rownames="Ensembl_Gene_ID") %>%
     pull(Ensembl_Gene_ID)
 
@@ -232,12 +224,12 @@ for (gene in GSE59772_gene_names) {
     }
 }
 
-GSE59772_stroma_expressions = assay(GSE59772_SE) %>%
+GSE59772_stroma_expressions = GSE59772_exp %>%
     as_tibble(rownames= 'Ensembl_Gene_ID') %>%
     select(Ensembl_Gene_ID, all_of(GSE59772_stroma_samples)) %>%
     filter(Ensembl_Gene_ID %in% common_genes)
     
-GSE10797_stroma_expressions = assay(GSE10797) %>%
+GSE10797_stroma_expressions = GSE10797_exp %>%
     as_tibble(rownames = 'Ensembl_Gene_ID') %>%
     select(Ensembl_Gene_ID, all_of(GSE10797_stroma_samples)) %>% 
     filter(Ensembl_Gene_ID %in% common_genes)
@@ -265,7 +257,6 @@ top_variance_map = top_variance_genes %>%
     theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5, face = "bold"))
 top_variance_map
 
-
 ```
 
 ## Example 4: Using Feature Data
@@ -281,19 +272,19 @@ GSE59772_chr16 = GSE59772_featuredata %>%
     filter(Chromosome == '16') %>%
     pull(Ensembl_Gene_ID)
 
-GSE59772_gene_names = assay(GSE59772_SE) %>%
+GSE59772_gene_names = GSE59772_exp %>%
     as_tibble(rownames="Ensembl_Gene_ID") %>%
     pull(Ensembl_Gene_ID)
 
 
-GSE10797_featuredata = rowData(GSE10797) %>%
+GSE10797_featuredata = rowData(GSE10797_SE) %>%
     as_tibble(rownames = 'Ensembl_Gene_ID')
 
 GSE10797_chr16 = GSE10797_featuredata %>%
     filter(Chromosome == '16') %>%
     pull(Ensembl_Gene_ID)
 
-GSE10797_gene_names = assay(GSE10797) %>%
+GSE10797_gene_names = GSE10797_exp %>%
     as_tibble(rownames="Ensembl_Gene_ID") %>%
     pull(Ensembl_Gene_ID)
 
@@ -308,14 +299,14 @@ for (gene in GSE59772_gene_names) {
 
 Next, we filter the expression data to include only genes on chromosome 16, then filter again to only include genes the data sets have in common. We pivot and mutate to make the data ready for the boxplot. 
 ``` {r chr16_boxplot_2}
-GSE10797_chr16_common = assay(GSE10797) %>%
+GSE10797_chr16_common = GSE10797_exp %>%
     as_tibble(rownames = 'Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID %in% GSE10797_chr16) %>%
     filter(Ensembl_Gene_ID %in% common_genes) %>%
     pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
     mutate(Dataset = 'GSE10797')
 
-GSE59772_chr16_common = assay(GSE59772_SE) %>%
+GSE59772_chr16_common = GSE59772_exp %>%
     as_tibble(rownames = 'Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID %in% GSE59772_chr16) %>%
     filter(Ensembl_Gene_ID %in% common_genes) %>%
