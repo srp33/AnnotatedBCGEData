@@ -11,7 +11,8 @@ utils::globalVariables(c(
     "label"
 ))
 
-NCIT_identifiers <- c("17603177", "NCIT_definitions_filtered.tsv.gz")
+NCIT_identifiers <- c("10.5281/zenodo.17488901", "NCIT_definitions_filtered.tsv.gz")
+
 
 #' Function that searches NCIT definitions file
 #' 
@@ -20,10 +21,11 @@ NCIT_identifiers <- c("17603177", "NCIT_definitions_filtered.tsv.gz")
 #' 
 #' @param term string to search df by
 #' @param term_type column to search in df, default Name
+#' @param zen arg for ZenodoManager object
 #' @return a dataframe with matching rows to search term
 #' @examples searchDefs("Tumor Size")
 #' @export 
-searchDefs <- function(term, term_type="Name") {
+searchDefs <- function(term, term_type="Name", zen=zenodom) {
     acceptable_terms <- c("Name", "URI", "Code", "Definition")
     
     if (!(term_type %in% acceptable_terms)) {
@@ -32,7 +34,11 @@ searchDefs <- function(term, term_type="Name") {
                     " Try: Name, URI, Code, or Definition"))
     }
     
-    NCIT_defs <- downloadZenodoFile(NCIT_identifiers)
+    def_path <- file.path(tempdir(), NCIT_identifiers[2])
+    if (!file.exists(def_path)) {
+        downloadZenFile(NCIT_identifiers[1], tempdir(), zen)
+    }
+    NCIT_defs <- read_tsv(def_path)
     
     if (term_type == "Name") {
         df <- searchNames(term, NCIT_defs)

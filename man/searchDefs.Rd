@@ -4,12 +4,14 @@
 \alias{searchDefs}
 \title{Function that searches NCIT definitions file}
 \usage{
-searchDefs(term, term_type = "Name")
+searchDefs(term, term_type = "Name", zen = zenodom)
 }
 \arguments{
 \item{term}{string to search df by}
 
 \item{term_type}{column to search in df, default Name}
+
+\item{zen}{arg for ZenodoManager object}
 }
 \value{
 a dataframe with matching rows to search term

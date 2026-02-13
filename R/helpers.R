@@ -1,6 +1,5 @@
 #' @importFrom dplyr filter %>% select distinct
-#' @importFrom utils download.file
-#' @importFrom stringr str_c str_starts
+#' @importFrom stringr str_starts
 #' @importFrom readr read_tsv
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom tibble column_to_rownames
@@ -16,25 +15,6 @@ utils::globalVariables(c(
 ))
 
 
-##  download file from Zenodo
-downloadZenodoFile <- function(identifier) {
-    tmp_file_path <- str_c(tempdir(), "/", identifier[2])
-    
-    if (!file.exists(tmp_file_path)) {
-        download.file(paste0(
-            "https://zenodo.org/records/", 
-            identifier[1], 
-            "/files/", 
-            identifier[2], 
-            "?download=1"), 
-            tmp_file_path, 
-            mode='wb')
-    }
-    
-    return(read_tsv(tmp_file_path))
-}
-
-
 ##  filter out repeat rows
 filterRepeatRows <- function(expression_matrix) {
     expression_matrix <- expression_matrix %>%
@@ -43,14 +23,6 @@ filterRepeatRows <- function(expression_matrix) {
     return(expression_matrix)
 }
 
-##  get metadata
-getMetadata <- function(identifier) {
-    metadata_identifier <- identifier[3:4]
-    sample_metadata <- downloadZenodoFile(metadata_identifier) %>%
-        column_to_rownames('Sample_ID')
-    
-    return(sample_metadata)
-}
 
 ##  make feature data
 makeFeatureData <- function(expression_matrix) {

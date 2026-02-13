@@ -61,6 +61,7 @@ library(tidyverse)
 library(SummarizedExperiment)
 library(zen4R)
 library(BiocFileCache)
+library(AnnotatedBCGEData)
 ```
 This package contains several functions that are designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchDefs`. `searchDefs` was created with the intention of helping users become more familiar with the ontology included in this package. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. The function returns a tibble with information about the term searched, including a code unique to each term. The code can then be passed to the `searchForDatasets`function, which returns all data sets that were associated with that term. <br>
 <br>
@@ -285,7 +286,6 @@ GSE59772_gene_names = assay(GSE59772_SE) %>%
     pull(Ensembl_Gene_ID)
 
 
-GSE10797 = bcgeData("GSE10797")
 GSE10797_featuredata = rowData(GSE10797) %>%
     as_tibble(rownames = 'Ensembl_Gene_ID')
 

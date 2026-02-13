@@ -12,20 +12,16 @@ NULL
 #' @return a SummarizedExperiment object for the data set
 #' @examples bcgeData("GSE41197")
 #' @export
-bcgeData <- function(datasetID, identifier=identifiers, v=NULL) {
+bcgeData <- function(datasetID, identifier=identifiers, zen=zenodom, v=NULL) {
     makeCache()
-    
-    zenodo <- ZenodoManager$new(
-        token = "bUrBXBEHjZvWHjQ0LKejAhc3Ex8d1utXDUZf4JrOYrhMpykNTcNuP0RzUihd"
-    )
     
     identifier_vec <- identifier[[datasetID]]
     
-    version <- checkVersions(identifier_vec[1], zenodo)
+    version <- checkVersions(identifier_vec[1], zen)
     
     if (!is.null(v)) {
         conceptDOI <- identifier_vec[1]
-        se <- (chooseVersion(datasetID, v, zenodo, version, conceptDOI))
+        se <- (chooseVersion(datasetID, v, zen, version, conceptDOI))
         return(se)
     }
     
@@ -40,7 +36,7 @@ bcgeData <- function(datasetID, identifier=identifiers, v=NULL) {
         conceptDOI <- identifier_vec[1]
         message(paste0("Either the data was not found in the cache or a newer",
                        " version of the data was identified. Downloading now."))
-        downloadZenFile(conceptDOI, dir_filepath, zenodo)
+        downloadZenFile(conceptDOI, dir_filepath, zen)
     }
     
     meta_filepath <- paste0('~/AnnotatedBCGEData/', datasetID, 'v', version, '/', identifier_vec[3])

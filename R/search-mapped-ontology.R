@@ -1,13 +1,10 @@
 #' @importFrom dplyr rename %>% left_join filter
 
 utils::globalVariables(c(
-    "geo_accession",
+    "accession_id",
     "NCIT_field_code",
     "NCIT_value_code"
 ))
-
-filtered_data_url <- "https://zenodo.org/records/17603341/files/filtered_mapped_data.tsv.gz?download=1"
-dataset_meta_url <- "https://zenodo.org/records/18318763/files/dataset_meta.tsv?download=1"
 
 #' Function that searches mapped ontology data
 #' 
@@ -16,10 +13,11 @@ dataset_meta_url <- "https://zenodo.org/records/18318763/files/dataset_meta.tsv?
 #' 
 #' @param code NCIT code that was found from searching defs
 #' @param term_type field or value
+#' @param zen arg for ZenodoManager object
 #' @return a data frame from the searched file with dataset metadata
 #' @examples searchForDatasets("C19790", "field")
 #' @export
-searchForDatasets <- function(code, term_type="field") {
+searchForDatasets <- function(code, term_type="field", zen=zenodom) {
     acceptable_terms <- c("field", "value", "Field", "Value", "FIELD", "VALUE")
     
     if (!(term_type %in% acceptable_terms)) {
@@ -28,8 +26,18 @@ searchForDatasets <- function(code, term_type="field") {
                     " Try 'field' or 'value'"))
     }
     
-    filtered_data <- downloadZenodoFile(c("17603341", "filtered_mapped_data.tsv.gz"))
-    dataset_meta <- downloadZenodoFile(c("17780658", "combined_data.tsv"))
+    filtered_path <- file.path(tempdir(), 'filtered_mapped_data.tsv.gz')
+    dataset_meta_path <- file.path(tempdir(), 'dataset_meta.tsv')
+    
+    if (!file.exists(filtered_path)) {
+        downloadZenFile('10.5281/zenodo.17583904', tempdir(), zen)
+    }
+    if (!file.exists(dataset_meta_path)) {
+        downloadZenFile('10.5281/zenodo.17780657', tempdir(), zen)
+    }
+    
+    filtered_data <- read_tsv(filtered_path)
+    dataset_meta <- read_tsv(dataset_meta_path)
     
     if (term_type %in% c("field", "Field", "FIELD")) {
         df <- searchFields(code, filtered_data)
@@ -39,7 +47,7 @@ searchForDatasets <- function(code, term_type="field") {
         
     }
     
-    dataset_meta <- rename(dataset_meta, dataset = geo_accession)
+    dataset_meta <- rename(dataset_meta, dataset = accession_id)
     df_searched_meta <- left_join(df, dataset_meta)
     
     return(df_searched_meta)

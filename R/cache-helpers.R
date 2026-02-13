@@ -8,6 +8,16 @@ utils::globalVariables(c(
     "doi"
 ))
 
+
+## creates new ZenodoManager object 
+
+.onLoad <- function(libname, pkgname) {
+    zenodom <<- ZenodoManager$new(
+        token = "bUrBXBEHjZvWHjQ0LKejAhc3Ex8d1utXDUZf4JrOYrhMpykNTcNuP0RzUihd"
+    )
+
+}
+
 ## creates file cache on user's machine
 makeCache <- function() {
     cache_file_path <- '~/AnnotatedBCGEData'

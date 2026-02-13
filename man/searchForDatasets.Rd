@@ -4,12 +4,14 @@
 \alias{searchForDatasets}
 \title{Function that searches mapped ontology data}
 \usage{
-searchForDatasets(code, term_type = "field")
+searchForDatasets(code, term_type = "field", zen = zenodom)
 }
 \arguments{
 \item{code}{NCIT code that was found from searching defs}
 
 \item{term_type}{field or value}
+
+\item{zen}{arg for ZenodoManager object}
 }
 \value{
 a data frame from the searched file with dataset metadata

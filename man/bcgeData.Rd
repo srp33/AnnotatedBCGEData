@@ -7,7 +7,7 @@
 Takes a name of a data set and an optional version of the data, passes
 the identifier vector to get concept DOI for specified data set.}
 \usage{
-bcgeData(datasetID, identifier = identifiers, v = NULL)
+bcgeData(datasetID, identifier = identifiers, zen = zenodom, v = NULL)
 }
 \arguments{
 \item{datasetID}{the name of the data set, passed as a string}
