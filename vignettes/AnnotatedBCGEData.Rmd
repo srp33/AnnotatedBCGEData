@@ -30,7 +30,7 @@ library(pkg, character.only = TRUE)
 
 Get the latest stable `R` release from [CRAN](http://cran.r-project.org/). Then install `AnnotatedBCGEData` from [Bioconductor](http://bioconductor.org/) using the following code:
 
-```{r 'install', eval = FALSE}
+```{r install, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
@@ -42,7 +42,7 @@ This code installs BiocManager if it is not already installed. Running the if st
 
 Download the development version from [GitHub](https://github.com/srp33/AnnotatedBCGEData) with:
 
-```{r 'install_dev', eval = FALSE}
+```{r install_dev, eval = FALSE}
 BiocManager::install("srp33/AnnotatedBCGEData")
 ```
 
@@ -133,7 +133,8 @@ feature_data = rowData(GSE41197_SE)
 In the following example, we first access the matrix of gene expression values. To make it easier to analyze, we convert it into a tibble and select the first 10 rows. We then used ggplot() to create a bar plot showing the gene expression levels for one sample across 10 genes.
 
 ```{r plot_example_part_2}
-exp_tib = as_tibble(GSE41197_expression_data, rownames='Ensembl_Gene_ID')[1:10,] %>%
+exp_tib = as_tibble(GSE41197_expression_data, 
+                    rownames='Ensembl_Gene_ID')[1:10,] %>%
     ggplot(aes(x=Ensembl_Gene_ID, y=GSM1010328)) +
     geom_col() +
     labs(x='Ensembl Gene ID',y='Sample ID GSM1010328') +
@@ -160,17 +161,23 @@ Next, we converted each to a tibble and selected one row, representing one gene 
 GSE10197_gene = GSE10797_exp %>%
     as_tibble(rownames='Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
-    pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
+    pivot_longer(cols=-Ensembl_Gene_ID,
+                 names_to='Sample_ID',
+                 values_to='Expression_Level')%>%
     mutate(group = 'GSE10197')
 GSE41197_gene = GSE41197_expression_data %>%
     as_tibble(rownames='Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
-    pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
+    pivot_longer(cols=-Ensembl_Gene_ID,
+                 names_to='Sample_ID',
+                 values_to='Expression_Level')%>%
     mutate(group = 'GSE41197')
 GSE59772_gene = GSE59772_exp %>%
     as_tibble(rownames='Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
-    pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
+    pivot_longer(cols=-Ensembl_Gene_ID,
+                 names_to='Sample_ID',
+                 values_to='Expression_Level')%>%
     mutate(group = 'GSE59772')
 ```
 
@@ -210,7 +217,8 @@ GSE10797_gene_names = GSE10797_exp %>%
     as_tibble(rownames="Ensembl_Gene_ID") %>%
     pull(Ensembl_Gene_ID)
 
-GSE10797_stroma_samples = filter(GSE10797_metadata, tissue_source == 'stromal cells from breast cancer patient')%>%
+GSE10797_stroma_samples = filter(GSE10797_metadata, 
+                tissue_source == 'stromal cells from breast cancer patient')%>%
     pull(Sample_ID)
 ```
 
@@ -239,7 +247,8 @@ GSE10797_stroma_expressions = GSE10797_exp %>%
 Finally, we combine the data into one tibble called combined_data. We make a new row called variance that calculates the variance across the 5 samples. We select the top 10 rows, those with greatest variance. We then use ggplot to create a heat map of the genes with the top variance, displayed below. 
 
 ``` {r heat_map_3}
-combined_data = full_join(GSE10797_stroma_expressions, GSE59772_stroma_expressions)
+combined_data = full_join(GSE10797_stroma_expressions, 
+                          GSE59772_stroma_expressions)
 top_variance_genes = combined_data %>%
     rowwise() %>%
     mutate(variance = var(c_across(starts_with('GSM')))) %>%
@@ -249,12 +258,16 @@ top_variance_genes = combined_data %>%
 
 top_variance_map = top_variance_genes %>%
     select(-variance) %>%
-    pivot_longer(cols = starts_with('GSM'), names_to = 'Sample_ID', values_to = 'Expression') %>%
+    pivot_longer(cols = starts_with('GSM'), 
+                 names_to = 'Sample_ID', 
+                 values_to = 'Expression') %>%
     ggplot(aes(x = Sample_ID, y = Ensembl_Gene_ID, fill = Expression)) +
     geom_tile()+
-    labs(x = 'Sample', y = 'Gene', fill = 'Expression', title = 'Top 10 Genes in Stroma Samples with Highest Variance') + 
+    labs(x = 'Sample', y = 'Gene', fill = 'Expression', 
+         title = 'Top 10 Genes in Stroma Samples with Highest Variance') + 
     theme_bw() + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5, face = "bold"))
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+          plot.title = element_text(hjust = 0.5, face = "bold"))
 top_variance_map
 
 ```
@@ -303,14 +316,18 @@ GSE10797_chr16_common = GSE10797_exp %>%
     as_tibble(rownames = 'Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID %in% GSE10797_chr16) %>%
     filter(Ensembl_Gene_ID %in% common_genes) %>%
-    pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
+    pivot_longer(cols=-Ensembl_Gene_ID,
+                 names_to='Sample_ID',
+                 values_to='Expression_Level')%>%
     mutate(Dataset = 'GSE10797')
 
 GSE59772_chr16_common = GSE59772_exp %>%
     as_tibble(rownames = 'Ensembl_Gene_ID') %>%
     filter(Ensembl_Gene_ID %in% GSE59772_chr16) %>%
     filter(Ensembl_Gene_ID %in% common_genes) %>%
-    pivot_longer(cols=-Ensembl_Gene_ID,names_to='Sample_ID',values_to='Expression_Level')%>%
+    pivot_longer(cols=-Ensembl_Gene_ID,
+                 names_to='Sample_ID',
+                 values_to='Expression_Level')%>%
     mutate(Dataset = 'GSE59772')
 ```
 
@@ -320,7 +337,8 @@ combined_data = bind_rows(GSE10797_chr16_common, GSE59772_chr16_common) %>%
     ggplot(aes(x = Dataset, y = Expression_Level, fill = Dataset)) +
     geom_boxplot() +
     theme_bw() +
-    labs(x = 'Dataset', y='Gene Expression Level', title = 'Gene Expression Levels in Chromosome 16') 
+    labs(x = 'Dataset', y='Gene Expression Level', 
+         title = 'Gene Expression Levels in Chromosome 16') 
 combined_data
 ```
 

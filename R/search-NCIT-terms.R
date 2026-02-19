@@ -11,7 +11,8 @@ utils::globalVariables(c(
     "label"
 ))
 
-NCIT_identifiers <- c("10.5281/zenodo.17488901", "NCIT_definitions_filtered.tsv.gz")
+NCIT_identifiers <- c("10.5281/zenodo.17488901", 
+                      "NCIT_definitions_filtered.tsv.gz")
 
 
 #' Function that searches NCIT definitions file
@@ -96,6 +97,8 @@ searchCodes <- function(term, df) {
 ## helper function 4: searchDefinitions, searches through defs in definitions df
 
 searchDefinition <- function(term, df) {
-    df_searched <- filter(df, str_detect(Definitions, regex(term, ignore_case = TRUE)))
+    df_searched <- filter(df, 
+                          str_detect(Definitions, 
+                                     regex(term, ignore_case = TRUE)))
     return(df_searched)
 }

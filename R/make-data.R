@@ -31,7 +31,8 @@ bcgeData <- function(datasetID, identifier=identifiers, zen=zenodom, v=NULL) {
     }
     
     dir_filepath <- paste0(cache_path, '/', datasetID, 'v', version)
-    exp_filepath <- paste0(cache_path, '/', datasetID, 'v', version, '/', identifier_vec[2])
+    exp_filepath <- paste0(cache_path, '/', 
+                           datasetID, 'v', version, '/', identifier_vec[2])
     
     if (!dir.exists(dir_filepath)) {
         dir.create(paste0(cache_path, '/', datasetID, 'v', version))
@@ -44,7 +45,8 @@ bcgeData <- function(datasetID, identifier=identifiers, zen=zenodom, v=NULL) {
         downloadZenFile(conceptDOI, dir_filepath, zen)
     }
     
-    meta_filepath <- paste0(cache_path, '/', datasetID, 'v', version, '/', identifier_vec[3])
+    meta_filepath <- paste0(cache_path, '/', datasetID, 'v', 
+                            version, '/', identifier_vec[3])
     se <- seConstructor(exp_filepath, meta_filepath)
     
     return(se)

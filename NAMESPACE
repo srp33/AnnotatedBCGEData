@@ -3,7 +3,6 @@
 export(bcgeData)
 export(searchDefs)
 export(searchForDatasets)
-import(tidyverse)
 importFrom(BiocFileCache,BiocFileCache)
 importFrom(SummarizedExperiment,SummarizedExperiment)
 importFrom(dplyr,"%>%")
