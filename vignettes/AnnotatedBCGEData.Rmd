@@ -23,7 +23,7 @@ library(pkg, character.only = TRUE)
 ```
 
 # Abstract
-`AnnotatedBCGEData` is an R package that uses the ExperimentHub infrastructure in [Bioconductor](https://bioconductor.org/). To create this package, we gathered more than 100 gene-expression data sets (microarray and RNA-Sequencing) from public repositories, including [Gene Expression Omnibus](http://www.ncbi.nlm.nih.gov/geo/), [ArrayExpress](https://www.ebi.ac.uk/biostudies/arrayexpress), and [The Cancer Genome Atlas](https://www.cancer.gov/ccg/research/genome-sequencing/tcga). Where feasible, we obtained raw data and reprocessed the data using modern computational pipelines. Additionally, we provide metadata in an easy-to-use format. Our goal is to provide researchers with easier access to these data with the goal of accelerating biomedical discovery.
+`AnnotatedBCGEData` is an R package that uses the ExperimentHub infrastructure in [Bioconductor](https://bioconductor.org/). To create this package, we gathered more than 100 gene-expression data sets (microarray and RNA-Sequencing) from various public repositories, including [Gene Expression Omnibus](http://www.ncbi.nlm.nih.gov/geo/), [ArrayExpress](https://www.ebi.ac.uk/biostudies/arrayexpress), and [The Cancer Genome Atlas](https://www.cancer.gov/ccg/research/genome-sequencing/tcga). Where feasible, we obtained raw data and reprocessed the data using modern computational pipelines. Additionally, we provide metadata in an easy-to-use format. Our goal is to provide researchers with easier access to these data with the goal of accelerating biomedical discovery.
 
 
 # Installation Instructions
@@ -47,12 +47,7 @@ BiocManager::install("srp33/AnnotatedBCGEData")
 ```
 
 # Data Info
-The data used in this package was accessed through [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records?q=&l=list&p=1&s=10&sort=newest). This database allowed us to use data that was already neat and ready to be analyzed. However, the original data came from Gene Expression Omnibus (GEO), ArrayExpress, The Cancer Genome Atlas, METABRIC, and a repository for the International Cancer Genome Atlas that no longer exists. Learn more about the data at the following links, or via the included functions in the package:
-
- - GEO: https://www.ncbi.nlm.nih.gov/geo/ 
- - ArrayExpress: https://www.ebi.ac.uk/biostudies/arrayexpress 
- - TCGA: https://www.cancer.gov/ccg/research/genome-sequencing/tcga  
-
+The data used in this package was accessed through [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records?q=&l=list&p=1&s=10&sort=newest). This database allowed us to use data that was already neat and ready to be analyzed. However, the original data came from Gene Expression Omnibus (GEO), ArrayExpress, The Cancer Genome Atlas, METABRIC, and a repository for the International Cancer Genome Atlas that no longer exists. Learn more about the data by exploring our Zenodo repository, or using the functions included in the package.
 
 
 # Filtering Data by Ontology
@@ -90,7 +85,7 @@ searchDefs("Progesterone receptor", "Definition")
 
 ```
 
-Again, when the chosen term is identified, it can be passed to the `searchForDatasets` function. 
+Again, when the chosen term is identified, it can be passed to the `searchForDatasets` function. When desired datasets are found, they can then be passed to `bcgeData` to download the data and access the SummarizedExperiment object.
 
 ```{r PR_example2_p2}
 searchForDatasets("C16149", "field")
@@ -114,9 +109,9 @@ The second matrix we load as sample_metadata. This is information about the samp
 The third matrix we load as feature_data. This is the information about the genes that were tested for each sample. This includes information like the chromosome the gene is located on, the Entrez gene ID, and the gene name. The genes are the rows and the information about the samples is in the columns.
 
 ## bcgeData
-The `bcgeData` function returns the SummarizedExperiment object for the requested data set. The function creates a cache (using BiocFileCache) on the user's machine. All downloaded files are saved to this cache so that files do not need to be redownloaded every time the R session is restarted. By default, the most recent version of the data that is found in the Zenodo repository is downloaded. <br> 
+The `bcgeData` function returns the SummarizedExperiment object for the requested data set. The function creates a cache (using BiocFileCache) on the user's machine. All downloaded files are saved to this cache so that files do not need to be redownloaded every time the R session is restarted. By default, the most recent version of the data that is found in the Zenodo repository is downloaded. When called for the first time, the user will be prompted to select or enter a location for the cache to be saved.<br> 
 <br>
-We understand the importance of data versioning and reproducibility. For that reason, there is additional functionality included in the bcgeData function that will allow the user to specify which version of the data they want to download or use. The argument `v` to the function takes an integer that is used to find the specified version. If that version does not exist or needs to be downloaded, the user will see a message in the R console. <br>
+We understand the importance of data versioning and reproducibility. For that reason, there is additional functionality included in the bcgeData function that will allow the user to specify which version of the data they want to download or use. The argument `v` to the function takes an integer that is used to find the specified version. If that version does not exist or needs to be downloaded, the user will see a message in the R console. If `v` is not specified, the most recent version is downloaded and used. <br>
 <br>
 While the actual files are stored in the AnnotatedBCGEData cache that is created, for reasons of data version checks, the SummarizedExperiment objects are not stored in the cache and need to be created again when the R session is restarted. This is a fairly quick process as the data already exists. This requires nothing more than calling `bcgeData` on the desired data set at the beginning of every session.<br>
 <br>
@@ -129,8 +124,16 @@ sample_metadata = colData(GSE41197_SE)
 feature_data = rowData(GSE41197_SE)
 ```
 
+Similarly, if the user wanted to access an older version of the same dataset, the function could be used as follows;
+``` {r version_example}
+GSE41197_v2 = bcgeData("GSE41197", v=2)
+GSE41197_v2_expressions = assay(GSE41197_v2)
+v2_metadata = colData(GSE41197_v2)
+v2_feature_data = rowData(GSE41197_v2)
+
+```
 ## Example 1: Plotting Expression Values
-In the following example, we first access the matrix of gene expression values. To make it easier to analyze, we convert it into a tibble and select the first 10 rows. We then used ggplot() to create a bar plot showing the gene expression levels for one sample across 10 genes.
+In the following example, we demonstrate data exploration that can be done easily with the package. We first access the matrix of gene expression values. To make it easier to analyze, we convert it into a tibble and select the first 10 rows. We then used ggplot() to create a bar plot showing the gene expression levels for one sample across 10 genes.
 
 ```{r plot_example_part_2}
 exp_tib = as_tibble(GSE41197_expression_data, 
@@ -144,61 +147,18 @@ exp_tib = as_tibble(GSE41197_expression_data,
 exp_tib
 ```
 
-## Example 2: Expression Box Plot
-Here, we first accessed the matrices for 2 more data sets included in AnnotatedBCGEData. 
 
-```{r plot_example_2, message=FALSE, warning=FALSE}
+## Example 2: Using Metadata
+In this example, we combine using both the metadata and the expression data to create a heat map of gene expression levels.<br>
+First, we load the data sets, turn them into tibbles, and extract both the metadata and expression data. We then filter the expression to only include the samples that are identified as stroma cells. Finally, we create two vectors with all the gene names in each tibble to set them up for comparison. 
+
+``` {r heat_map, message=FALSE, warning=FALSE}
 GSE59772_SE <- bcgeData("GSE59772")
 GSE10797_SE <- bcgeData("GSE10797")
 
 GSE59772_exp <- assay(GSE59772_SE)
 GSE10797_exp <- assay(GSE10797_SE)
-```
 
-Next, we converted each to a tibble and selected one row, representing one gene that we knew each data set had in common. We rotated the tibbles to have one column (the gene) and many rows (the sample). Then, we added the 'group' column, which was necessary for the function used in the next step.
-
-```{r plot_example_2_part_2}
-GSE10197_gene = GSE10797_exp %>%
-    as_tibble(rownames='Ensembl_Gene_ID') %>%
-    filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
-    pivot_longer(cols=-Ensembl_Gene_ID,
-                 names_to='Sample_ID',
-                 values_to='Expression_Level')%>%
-    mutate(group = 'GSE10197')
-GSE41197_gene = GSE41197_expression_data %>%
-    as_tibble(rownames='Ensembl_Gene_ID') %>%
-    filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
-    pivot_longer(cols=-Ensembl_Gene_ID,
-                 names_to='Sample_ID',
-                 values_to='Expression_Level')%>%
-    mutate(group = 'GSE41197')
-GSE59772_gene = GSE59772_exp %>%
-    as_tibble(rownames='Ensembl_Gene_ID') %>%
-    filter(Ensembl_Gene_ID == "ENSG00000171428") %>%
-    pivot_longer(cols=-Ensembl_Gene_ID,
-                 names_to='Sample_ID',
-                 values_to='Expression_Level')%>%
-    mutate(group = 'GSE59772')
-```
-
-We then joined the 3 tibbles into one tibble with the bind_rows() function. We now have one tibble with one column (the gene) and many rows (the samples). <br>
-<br>
-Finally, we used ggplot() to visualize the expression levels for the gene across the three data sets.
-
-```{r plot_example_2_part_3}
-combined_samples = bind_rows(GSE10197_gene, GSE41197_gene, GSE59772_gene)
-
-ggplot(combined_samples, aes(x = group, y = Expression_Level, fill = group)) +
-    geom_boxplot() +
-    labs(x = "Dataset", y = "Expression Level") +
-    theme_bw()
-```
-
-## Example 3: Using Metadata
-In this example, we combine using both the metadata and the expression data to create a heat map of gene expression levels.<br>
-First, we load the data sets, turn them into tibbles, and extract both the metadata and expression data. We then filter the expression to only include the samples that are identified as stroma cells. Finally, we create two vectors with all the gene names in each tibble to set them up for comparison. 
-
-``` {r heat_map, message=FALSE, warning=FALSE}
 GSE59772_metadata = colData(GSE59772_SE) %>%
     as_tibble(rownames = 'Sample_ID')
 
@@ -341,6 +301,7 @@ combined_data = bind_rows(GSE10797_chr16_common, GSE59772_chr16_common) %>%
          title = 'Gene Expression Levels in Chromosome 16') 
 combined_data
 ```
+
 
 # Session Info 
 

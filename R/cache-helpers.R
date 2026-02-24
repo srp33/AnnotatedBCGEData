@@ -24,7 +24,7 @@ utils::globalVariables(c(
 ## creates new ZenodoManager object 
 .onLoad <- function(libname, pkgname) {
     suppressMessages({
-        zenodom <<- ZenodoManager$new(
+        zenodom <<- zen4R::ZenodoManager$new(
             token = 
                 "bUrBXBEHjZvWHjQ0LKejAhc3Ex8d1utXDUZf4JrOYrhMpykNTcNuP0RzUihd"
         )
@@ -148,20 +148,12 @@ chooseVersion <- function(datasetID, v, zen, version, conceptDOI) {
         cache_dir <- tempdir()
     }
     
-    dir_path <- paste0(cache_dir, datasetID, 'v', v)
+    dir_path <- paste0(cache_dir, '/', datasetID, 'v', v)
     if (!dir.exists(dir_path)) {
-        if (v<version) {
-            dir.create(dir_path)
-            message(paste0("Either the data was not found in the cache or a ",
-                           "different version was requested. Downloading now."))
-            downloadZenFile(conceptDOI, dir_path, zen, v)
-            
-            
-        } else {
-            stop(paste0("By default, the most recent version of the data is ",
-                        "downloaded. You do not need to specify a version for ",
-                        "the latest version."))
-        }
+        dir.create(dir_path)
+        message(paste0("Either the data was not found in the cache or a ",
+                    "different version was requested. Downloading now."))
+        downloadZenFile(conceptDOI, dir_path, zen, v)
     }
     
     exp_filepath <- paste0(cache_dir, '/', datasetID, 'v', v, '/', 
