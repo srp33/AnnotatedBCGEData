@@ -25,6 +25,8 @@ library(tidyverse)
 
 `AnnotatedBCGEData` is an R package that uses the ExperimentHub infrastructure in [Bioconductor](https://bioconductor.org/). To create this package, we gathered more than 100 gene-expression data sets (microarray and RNA-Sequencing) from public repositories, including [Gene Expression Omnibus](http://www.ncbi.nlm.nih.gov/geo/), [ArrayExpress](https://www.ebi.ac.uk/biostudies/arrayexpress), and [The Cancer Genome Atlas](https://www.cancer.gov/ccg/research/genome-sequencing/tcga). Where feasible, we obtained raw data and reprocessed the data using modern computational pipelines. Additionally, we provide metadata in an easy-to-use format. Our goal is to provide researchers with easier access to these data with the goal of accelerating biomedical discovery.
 
+This is a test. Please ignore.
+
 ## Installation instructions
 
 Get the latest stable `R` release from [CRAN](http://cran.r-project.org/). Then install `AnnotatedBCGEData` from [Bioconductor](http://bioconductor.org/) using the following code:
