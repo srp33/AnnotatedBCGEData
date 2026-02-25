@@ -16,25 +16,27 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
-
 ```{r, setup, echo=FALSE, include=FALSE}
 pkg <- read.dcf("../DESCRIPTION", fields = "Package")[1]
 library(pkg, character.only = TRUE)
 ```
 
 # Abstract
-`AnnotatedBCGEData` is an R package that uses the ExperimentHub infrastructure in [Bioconductor](https://bioconductor.org/). To create this package, we gathered more than 100 gene-expression data sets (microarray and RNA-Sequencing) from various public repositories, including [Gene Expression Omnibus](http://www.ncbi.nlm.nih.gov/geo/), [ArrayExpress](https://www.ebi.ac.uk/biostudies/arrayexpress), and [The Cancer Genome Atlas](https://www.cancer.gov/ccg/research/genome-sequencing/tcga). Where feasible, we obtained raw data and reprocessed the data using modern computational pipelines. Additionally, we provide metadata in an easy-to-use format. Our goal is to provide researchers with easier access to these data with the goal of accelerating biomedical discovery.
 
+`AnnotatedBCGEData` is an R/[Bioconductor](https://bioconductor.org) package that provides access to more than 100 gene-expression datasets (generated using microarray and RNA-Sequencing technologies). We collected these datasets from public repositories, including [Gene Expression Omnibus](http://www.ncbi.nlm.nih.gov/geo/), [ArrayExpress](https://www.ebi.ac.uk/biostudies/arrayexpress), and [The Cancer Genome Atlas](https://www.cancer.gov/ccg/research/genome-sequencing/tcga). Where feasible, we obtained and reprocessed the raw data using computational pipelines and annotations that are standardized and more updated than those used to process the data originally. Additionally, we annotated the sample metadata using ontology terms from the [National Cancer Institute Thesaurus](https://evsexplore.semantics.cancer.gov/evsexplore/welcome). This was necessary because different data submitters used different terminology to describe the samples. Mapping the metadata to ontology terms makes it possible for users to search our data using these standardized terms.
 
-# Installation Instructions
+# Installation instructions
 
-Get the latest stable `R` release from [CRAN](http://cran.r-project.org/). Then install `AnnotatedBCGEData` from [Bioconductor](http://bioconductor.org/) using the following code:
+Get the latest stable `R` release from [CRAN](http://cran.r-project.org/).
+
+Then install `AnnotatedBCGEData` from [Bioconductor](http://bioconductor.org/) using the following code:
 
 ```{r install, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
 
+# BiocManager::install("magick") # TODO: Not sure if we need this. Need to try a fresh install.
 BiocManager::install("AnnotatedBCGEData")
 ```
 
@@ -43,22 +45,25 @@ This code installs BiocManager if it is not already installed. Running the if st
 Download the development version from [GitHub](https://github.com/srp33/AnnotatedBCGEData) with:
 
 ```{r install_dev, eval = FALSE}
+#BiocManager::install("remotes") #TODO: not sure if need this.
 BiocManager::install("srp33/AnnotatedBCGEData")
 ```
 
-# Data Info
-The data used in this package was accessed through [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records?q=&l=list&p=1&s=10&sort=newest). This database allowed us to use data that was already neat and ready to be analyzed. However, the original data came from Gene Expression Omnibus (GEO), ArrayExpress, The Cancer Genome Atlas, METABRIC, and a repository for the International Cancer Genome Atlas that no longer exists. Learn more about the data by exploring our Zenodo repository, or using the functions included in the package.
+# Technical note
 
+Attempting to store all of the data within this package would not be feasible due to the data's size. Thus, we are using the [ExperimentHub](https://bioconductor.org/packages/release/bioc/html/ExperimentHub.html) infrastructure to store details about the data. Once a user has identified dataset(s) to work with, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. If they prefer, users can access the files directly on Zenodo in TSV format. They can also find details about the data by exploring our Zenodo repository.
 
-# Filtering Data by Ontology
+# Filtering datasets by ontology terms
+
+################## TODO: Please put the other packages back in (SummarizedExperiment, BiocFileCache).
 ``` {r load_tidyverse, include = FALSE}
 library(tidyverse)
-library(SummarizedExperiment)
 library(zen4R)
-library(BiocFileCache)
 library(AnnotatedBCGEData)
 ```
-This package contains several functions that are designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchDefs`. `searchDefs` was created with the intention of helping users become more familiar with the ontology included in this package. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. The function returns a tibble with information about the term searched, including a code unique to each term. The code can then be passed to the `searchForDatasets`function, which returns all data sets that were associated with that term. <br>
+
+#TODO: Make this more clear that we are searching for ontology terms based on strings.
+This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchDefs`. `searchDefs` was created with the intention of helping users become more familiar with the ontology included in this package. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. The function returns a tibble with information about the term searched, including a code unique to each term. The code can then be passed to the `searchForDatasets`function, which returns all data sets that were associated with that term. <br>
 <br>
 `searchForDatasets` takes two parameters: the code to search by and the type of term it is. The options are field or value. If no term is specified, it defaults to field. A field refers to the actual NCIT term code. This would be the code associated with a term such as "ER status" or "Patient age". A value refers to the particular values in the data. This could be "Positive", "Negative", or a range of values in some cases. All codes are accessible with the `searchDefs` function. `searchForDatasets` returns a tibble with all the data sets that are associated with the ontology code, as well as data set-level metadata. The names of the data sets can then be passed to another helper function to create the SummarizedExperiment object available for further analysis. The following examples show how to use the functions. 
 
@@ -66,15 +71,13 @@ This package contains several functions that are designed to help users filter t
 In this first example of using the `searchDefs` function, we search for a particular ontology term, "Progesterone Receptor Status". 
 
 ```{r PR_example}
-searchDefs("Progesterone Receptor Status")
-
+defs <- searchDefs("Progesterone Receptor Status")
 ```
 
 The output of calling this function is a tibble containing the URI, the name of the term, synonyms, the definition, and the NCIT code associated with it. When the correct term is identified, the user can then pass the code to the `searchForDatasets` function, which identifies data sets that contain the chosen ontology term.
 
 ```{r PR_example_p2}
-searchForDatasets("C16149", "field")
-
+datasets <- searchForDatasets("C16149", "field")
 ```
 
 ## Example: Searching for a data set by ontology term definition
