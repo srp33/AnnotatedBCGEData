@@ -153,8 +153,9 @@ In this example, we combine using both the metadata and the expression data to c
 First, we load the data sets, turn them into tibbles, and extract both the metadata and expression data. We then filter the expression to only include the samples that are identified as stroma cells. Finally, we create two vectors with all the gene names in each tibble to set them up for comparison. 
 
 ``` {r heat_map, message=FALSE, warning=FALSE}
-GSE59772_SE <- bcgeData("GSE59772")
 GSE10797_SE <- bcgeData("GSE10797")
+GSE59772_SE <- bcgeData("GSE59772")
+
 
 GSE59772_exp <- assay(GSE59772_SE)
 GSE10797_exp <- assay(GSE10797_SE)
