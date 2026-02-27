@@ -1,4 +1,4 @@
-#' @importFrom dplyr %>% filter select distinct
+#' @importFrom dplyr %>% filter select distinct pull
 #' @importFrom BiocFileCache BiocFileCache
 #' @importFrom zen4R ZenodoManager ZenodoRecord
 #' @importFrom readr read_tsv
@@ -17,16 +17,6 @@ utils::globalVariables(c(
     'Gene_Biotype',
     'HGNC_Symbol'
 ))
-
-
-## creates new ZenodoManager object 
-.onLoad <- function(libname, pkgname) {
-    suppressMessages({
-        zenodom <<- zen4R::ZenodoManager$new()
-    })
-    
-
-}
 
 
 ## checks if the filepath exists and a cache can be made
@@ -60,12 +50,13 @@ makeCache <- function(cacheDirPath) {
 
 
 ## downloads file from Zenodo via zen4R package
-downloadZenFile <- function(conceptDOI, filepath, zen, v=NULL) {
+downloadZenFile <- function(conceptDOI, filepath, v=NULL) {
+    zen <- ZenodoManager$new()
     if (!is.null(v)) {
         record <- zen$getRecordByConceptDOI(conceptDOI)
         versions <- record$getVersions()
         recDOIs <- versions %>%
-            pull(doi)
+            dplyr::pull(doi)
         
         if (v>length(recDOIs)) {
             stop(paste0("Either the requested version of the data does not",
@@ -105,13 +96,14 @@ seConstructor <- function(exp_path, meta_path) {
 
 
 ## helper called for downloading specified version of Zenodo file
-chooseVersion <- function(datasetID, cacheDirPath, v, zen, version, conceptDOI) {
+chooseVersion <- function(datasetID, cacheDirPath, v, version, conceptDOI) {
+    zen <- ZenodoManager$new()
     dir_path <- paste0(cacheDirPath, '/', datasetID, 'v', v)
     if (!dir.exists(dir_path)) {
         dir.create(dir_path)
         message(paste0("Either the data was not found in the cache or a ",
                     "different version was requested. Downloading now."))
-        downloadZenFile(conceptDOI, dir_path, zen, v)
+        downloadZenFile(conceptDOI, dir_path, v)
     }
     
     exp_filepath <- paste0(cacheDirPath, '/', datasetID, 'v', v, '/', 
@@ -124,10 +116,11 @@ chooseVersion <- function(datasetID, cacheDirPath, v, zen, version, conceptDOI) 
 
 
 ## function for checking most recent version of zen file
-checkVersions <- function(conceptDOI, zen) {
+checkVersions <- function(conceptDOI) {
+    zen <- ZenodoManager$new()
     record <- zen$getRecordByConceptDOI(conceptDOI)
     versions <- record$getVersions() %>%
-        pull(version)
+        dplyr::pull(version)
     max_vers <- max(versions)
     return(max_vers)
     

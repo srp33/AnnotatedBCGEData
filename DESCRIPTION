@@ -44,12 +44,12 @@ Depends:
     R (>= 4.5)
 Imports: 
     SummarizedExperiment,
-    tidyverse,
     stringr,
     readr,
     dplyr,
     tibble,
     tidyr,
     zen4R,
-    BiocFileCache
+    BiocFileCache,
+    ggplot2
 LazyData: false

@@ -4,7 +4,7 @@
 \alias{searchForDatasets}
 \title{Function that searches mapped ontology data}
 \usage{
-searchForDatasets(code, term_type = "field", zen = zenodom)
+searchForDatasets(code, term_type = "field")
 }
 \arguments{
 \item{code}{NCIT code that was found from searching defs}

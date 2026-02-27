@@ -16,7 +16,8 @@ utils::globalVariables(c(
 #' @param zen arg for ZenodoManager object
 #' @return a data frame from the searched file with dataset metadata
 #' @export
-searchForDatasets <- function(code, term_type="field", zen=zenodom) {
+searchForDatasets <- function(code, term_type="field") {
+    zen <- ZenodoManager$new()
     acceptable_terms <- c("field", "value", "Field", "Value", "FIELD", "VALUE")
     
     if (!(term_type %in% acceptable_terms)) {
@@ -29,10 +30,10 @@ searchForDatasets <- function(code, term_type="field", zen=zenodom) {
     dataset_meta_path <- file.path(tempdir(), 'dataset_meta.tsv')
     
     if (!file.exists(filtered_path)) {
-        downloadZenFile('10.5281/zenodo.17583904', tempdir(), zen)
+        downloadZenFile('10.5281/zenodo.17583904', tempdir())
     }
     if (!file.exists(dataset_meta_path)) {
-        downloadZenFile('10.5281/zenodo.17780657', tempdir(), zen)
+        downloadZenFile('10.5281/zenodo.17780657', tempdir())
     }
     
     filtered_data <- read_tsv(filtered_path)

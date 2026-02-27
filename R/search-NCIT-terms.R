@@ -22,10 +22,10 @@ NCIT_identifiers <- c("10.5281/zenodo.17488901",
 #' 
 #' @param term string to search df by
 #' @param term_type column to search in df, default Name
-#' @param zen arg for ZenodoManager object
 #' @return a dataframe with matching rows to search term
 #' @export 
-searchDefs <- function(term, term_type="Name", zen=zenodom) {
+searchDefs <- function(term, term_type="Name") {
+    zen <- ZenodoManager$new()
     acceptable_terms <- c("Name", "URI", "Code", "Definition")
     
     if (!(term_type %in% acceptable_terms)) {
@@ -36,7 +36,7 @@ searchDefs <- function(term, term_type="Name", zen=zenodom) {
     
     def_path <- file.path(tempdir(), NCIT_identifiers[2])
     if (!file.exists(def_path)) {
-        downloadZenFile(NCIT_identifiers[1], tempdir(), zen)
+        downloadZenFile(NCIT_identifiers[1], tempdir())
     }
     NCIT_defs <- read_tsv(def_path)
     

@@ -56,8 +56,11 @@ Attempting to store all of the data within this package would not be feasible du
 # Filtering datasets by ontology terms
 
 ################## TODO: Please put the other packages back in (SummarizedExperiment, BiocFileCache).
-``` {r load_tidyverse, include = FALSE}
-library(tidyverse)
+```{r load_packages, include = FALSE}
+library(ggplot2)
+library(dplyr)
+library(tibble)
+library(tidyr)
 library(zen4R)
 library(AnnotatedBCGEData)
 library(SummarizedExperiment)
@@ -97,12 +100,6 @@ searchForDatasets("C16149", "field")
 ```
 
 # Making SummarizedExperiment Objects
-
-The following is the code required to access the objects within the package. Other packages were used in the creation of the package, but they should be automatically loaded when the package is installed. These packages are included in the NAMESPACE and DESCRIPTION files. 
-
-```{r load_packages, message=FALSE, warning=FALSE}
-library(AnnotatedBCGEData)
-```
 
 Downloading this package does not download the data sets onto the user's machine. To load the SummarizedExperiment object for a data set included in AnnotatedBCGEData, the user chooses the name of the data set and passes it as string to the function bcgeData. This function downloads the data and creates the SummarizedExperiment object that is accessible to the user. <br>
 <br>
