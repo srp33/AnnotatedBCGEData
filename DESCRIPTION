@@ -51,7 +51,5 @@ Imports:
     tibble,
     tidyr,
     zen4R,
-    BiocFileCache,
-    rappdirs,
-    rstudioapi
+    BiocFileCache
 LazyData: false

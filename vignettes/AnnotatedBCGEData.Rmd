@@ -60,6 +60,7 @@ Attempting to store all of the data within this package would not be feasible du
 library(tidyverse)
 library(zen4R)
 library(AnnotatedBCGEData)
+library(SummarizedExperiment)
 ```
 
 #TODO: Make this more clear that we are searching for ontology terms based on strings.

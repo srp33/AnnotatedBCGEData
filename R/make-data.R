@@ -1,24 +1,26 @@
 #' @importFrom zen4R ZenodoManager
 NULL
 
-#'  Function that creates a SummarizedExperiment object
+#'  Function that creates a SummarizedExperiment object with breast cancer gene
+#'  expression data.
 #'  
-#'  Takes a name of a data set and an optional version of the data, passes
-#'  the identifier vector to get concept DOI for specified data set.
+#'  Takes a name of the desired data set as a string, an optional file path for
+#'   the data to be saved to, and an optional version number. The function 
+#'   looks for the data either in the specified location or in a temporary 
+#'   directory. If the data is not found, it is downloaded. Returns the desired
+#'   data set in the form of a SummarizedExperiment object. 
 #'  
-#' @param datasetID the name of the data set, passed as a string
-#' @param identifier list of identifiers, defaults to list included
-#' @param v version of data to download, default to most recent
-#' @param zen ZenodoManager object
-#' @return a SummarizedExperiment object for the data set
+#' @param datasetID the name of the data set, passed as a string.
+#' @param cacheDirPath the optional file path to where the cache should be saved.
+#' @param identifier list of identifiers, defaults to list included.
+#' @param v version of data to download, default to most recent.
+#' @return a SummarizedExperiment object for the data set.
 #' @export
-bcgeData <- function(datasetID, identifier=identifiers, zen=zenodom, v=NULL) {
-    makeCache()
-    if (interactive()) {
-        cache_path <- loadCache()
-    } else {
-        cache_path <- tempdir()
+bcgeData <- function(datasetID, cacheDirPath=tempdir(), identifier=identifiers, v=NULL) {
+    if (cacheDirPath != tempdir()) {
+        makeCache(cacheDirPath)
     }
+    zen = ZenodoManager$new() 
     
     identifier_vec <- identifier[[datasetID]]
     
@@ -26,16 +28,16 @@ bcgeData <- function(datasetID, identifier=identifiers, zen=zenodom, v=NULL) {
     
     if (!is.null(v)) {
         conceptDOI <- identifier_vec[1]
-        se <- (chooseVersion(datasetID, v, zen, version, conceptDOI))
+        se <- (chooseVersion(datasetID, cacheDirPath, v, zen, version, conceptDOI))
         return(se)
     }
     
-    dir_filepath <- paste0(cache_path, '/', datasetID, 'v', version)
-    exp_filepath <- paste0(cache_path, '/', 
+    dir_filepath <- paste0(cacheDirPath, '/', datasetID, 'v', version)
+    exp_filepath <- paste0(cacheDirPath, '/', 
                            datasetID, 'v', version, '/', identifier_vec[2])
     
     if (!dir.exists(dir_filepath)) {
-        dir.create(paste0(cache_path, '/', datasetID, 'v', version))
+        dir.create(paste0(cacheDirPath, '/', datasetID, 'v', version))
     }
     
     if (!file.exists(exp_filepath)) {
@@ -45,7 +47,7 @@ bcgeData <- function(datasetID, identifier=identifiers, zen=zenodom, v=NULL) {
         downloadZenFile(conceptDOI, dir_filepath, zen)
     }
     
-    meta_filepath <- paste0(cache_path, '/', datasetID, 'v', 
+    meta_filepath <- paste0(cacheDirPath, '/', datasetID, 'v', 
                             version, '/', identifier_vec[3])
     se <- seConstructor(exp_filepath, meta_filepath)
     

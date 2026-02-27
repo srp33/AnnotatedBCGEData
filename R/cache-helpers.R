@@ -3,8 +3,6 @@
 #' @importFrom zen4R ZenodoManager ZenodoRecord
 #' @importFrom readr read_tsv
 #' @importFrom tibble column_to_rownames
-#' @importFrom rappdirs user_config_dir
-#' @importFrom rstudioapi selectDirectory
 #' @importFrom stringr str_starts
 #' @importFrom readr read_tsv
 #' @importFrom SummarizedExperiment SummarizedExperiment
@@ -24,71 +22,37 @@ utils::globalVariables(c(
 ## creates new ZenodoManager object 
 .onLoad <- function(libname, pkgname) {
     suppressMessages({
-        zenodom <<- zen4R::ZenodoManager$new(
-            token = 
-                "bUrBXBEHjZvWHjQ0LKejAhc3Ex8d1utXDUZf4JrOYrhMpykNTcNuP0RzUihd"
-        )
+        zenodom <<- zen4R::ZenodoManager$new()
     })
     
 
 }
 
 
-##asks the user where to save the cache
-cacheDir <- function() {
-    message(paste0("Data is stored in a cache to prevent repeated downloads.",
-                   "A location needs to be selected for the cache directory."))
-    if (requireNamespace("rstudioapi", quietly=TRUE) &&
-        rstudioapi::isAvailable()) {
-        dir <- rstudioapi::selectDirectory()
-    } else {
-        dir <- readline(prompt="Enter directory path: ")
-        check_valid <- dir.create(dir, recursive=TRUE, showWarnings=FALSE)
-        while (!check_valid) {
-            message(paste0("The directory ", dir, " is invalid. Try again."))
-            dir <- readline(prompt="Enter a directory path: ")
-            check_valid <- dir.create(dir, recursive=TRUE, showWarnings=FALSE)
+## checks if the filepath exists and a cache can be made
+tryPath <- function(path) {
+    tryCatch(
+        {
+            bfc <- BiocFileCache(path, ask=FALSE)
+            return(TRUE)
+        },
+        
+        error = function(cond) {
+            return(FALSE)
         }
-    }
-    
-    config_dir <- file.path(rappdirs::user_config_dir("AnnotatedBCGEData"),
-                            "config.txt")
-    dir.create(dirname(config_dir), recursive=TRUE, showWarnings=FALSE)
-    writeLines(dir, config_dir)
-    
-    return(dir)
+    )
 }
 
-loadCache <- function() {
-    config_file <- file.path(rappdirs::user_config_dir("AnnotatedBCGEData"), 
-                             "config.txt")
-    if (file.exists(config_file)) {
-        loc <- readLines(config_file)
-        cache_path <- paste0(loc, '/AnnotatedBCGEData')
-        return(cache_path)
-    } else {
-        return(NULL)
-    }
-}
 
 
 ## creates file cache on user's machine
-makeCache <- function() {
-    if (interactive()) {
-        config_file <- file.path(rappdirs::user_config_dir("AnnotatedBCGEData"),
-                                 "config.txt")
-        if (file.exists(config_file)) {
-            cache_file_path <- loadCache()
+makeCache <- function(cacheDirPath) {
+    if(!file.exists(cacheDirPath)) {
+        if(tryPath(cacheDirPath)) {
+            return()  
         } else {
-            cache_file_path <- paste0(cacheDir(), '/AnnotatedBCGEData')
+            stop("The filepath is invalid! Are you sure the path exists?")
         }
-    } else {
-        cache_file_path <- tempdir()
-    }
-    
-    if(!file.exists(cache_file_path)) {
-        bfc <- BiocFileCache(cache_file_path, ask=FALSE)
-        return()
     } else {
         return()
     }
@@ -141,14 +105,8 @@ seConstructor <- function(exp_path, meta_path) {
 
 
 ## helper called for downloading specified version of Zenodo file
-chooseVersion <- function(datasetID, v, zen, version, conceptDOI) {
-    if (interactive()) {
-        cache_dir <- loadCache()    
-    } else {
-        cache_dir <- tempdir()
-    }
-    
-    dir_path <- paste0(cache_dir, '/', datasetID, 'v', v)
+chooseVersion <- function(datasetID, cacheDirPath, v, zen, version, conceptDOI) {
+    dir_path <- paste0(cacheDirPath, '/', datasetID, 'v', v)
     if (!dir.exists(dir_path)) {
         dir.create(dir_path)
         message(paste0("Either the data was not found in the cache or a ",
@@ -156,9 +114,9 @@ chooseVersion <- function(datasetID, v, zen, version, conceptDOI) {
         downloadZenFile(conceptDOI, dir_path, zen, v)
     }
     
-    exp_filepath <- paste0(cache_dir, '/', datasetID, 'v', v, '/', 
+    exp_filepath <- paste0(cacheDirPath, '/', datasetID, 'v', v, '/', 
                            datasetID, '.tsv.gz')
-    meta_filepath <- paste0(cache_dir, '/', datasetID, 'v', v, '/', 
+    meta_filepath <- paste0(cacheDirPath, '/', datasetID, 'v', v, '/', 
                             datasetID, '_metadata.tsv')
     se <- seConstructor(exp_filepath, meta_filepath)
     return(se)

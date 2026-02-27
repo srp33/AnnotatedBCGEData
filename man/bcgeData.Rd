@@ -2,28 +2,41 @@
 % Please edit documentation in R/make-data.R
 \name{bcgeData}
 \alias{bcgeData}
-\title{Function that creates a SummarizedExperiment object
+\title{Function that creates a SummarizedExperiment object with breast cancer gene
+expression data.
 
-Takes a name of a data set and an optional version of the data, passes
-the identifier vector to get concept DOI for specified data set.}
+Takes a name of the desired data set as a string, an optional file path for
+the data to be saved to, and an optional version number. The function
+looks for the data either in the specified location or in a temporary
+directory. If the data is not found, it is downloaded. Returns the desired
+data set in the form of a SummarizedExperiment object.}
 \usage{
-bcgeData(datasetID, identifier = identifiers, zen = zenodom, v = NULL)
+bcgeData(
+  datasetID,
+  cacheDirPath = tempdir(),
+  identifier = identifiers,
+  v = NULL
+)
 }
 \arguments{
-\item{datasetID}{the name of the data set, passed as a string}
+\item{datasetID}{the name of the data set, passed as a string.}
 
-\item{identifier}{list of identifiers, defaults to list included}
+\item{cacheDirPath}{the optional file path to where the cache should be saved.}
 
-\item{zen}{ZenodoManager object}
+\item{identifier}{list of identifiers, defaults to list included.}
 
-\item{v}{version of data to download, default to most recent}
+\item{v}{version of data to download, default to most recent.}
 }
 \value{
-a SummarizedExperiment object for the data set
+a SummarizedExperiment object for the data set.
 }
 \description{
-Function that creates a SummarizedExperiment object
+Function that creates a SummarizedExperiment object with breast cancer gene
+expression data.
 
-Takes a name of a data set and an optional version of the data, passes
-the identifier vector to get concept DOI for specified data set.
+Takes a name of the desired data set as a string, an optional file path for
+the data to be saved to, and an optional version number. The function
+looks for the data either in the specified location or in a temporary
+directory. If the data is not found, it is downloaded. Returns the desired
+data set in the form of a SummarizedExperiment object.
 }
