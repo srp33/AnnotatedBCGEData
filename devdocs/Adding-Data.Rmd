@@ -1,0 +1,58 @@
+---
+title: "AnnotatedBCGEData Developer Guide"
+output: BiocStyle::html_document
+author:
+  - name: "Heidi Steadman"
+    affiliation:
+      - &id "Brigham Young University"
+  - name: "Shu-Fei Lo"
+    affiliation: *id
+  - name: "Stephen Piccolo"
+    affiliation: *id
+---
+
+
+# Intro
+The AnnotateBCGEData package relies heavily on Zenodo as its primary data store. Zenodo's REST API functionality has made it easy for developers to access data in Zenodo from code. All data that is accessed by AnnotatedBCGEData should be stored in the [Zenodo Repository](https://zenodo.org/communities/annnotatedbcgedata/records?q=&l=list&p=1&s=10&sort=newest). All code related to the project should be saved in the [GitHub Repository](https://github.com/srp33/AnnotatedBCGEData). <br><br>
+
+There are several files to be aware of when attempting to modify AnnotatedBCGEData. The first of these files is, of course, the gene expression data and metadata files stored in Zenodo. These are .tsv files that can be uploaded directly by anyone given permission to the community. Next are the ontology files. The NCIT Definitions file contains a table of terms that are used in the ontology and their definitions. This is searched by the searchDefs function, allowing the user to see what terms are included in the package. The mapped ontology file contains all the terms that are associated with each data set. It is a table with columns for the name of the dataset, the name of the term, its associated values, and what the terms and values are in the original data. The next file is the dataset metadata file, which was generated from pephub data. It contains the metadata about the GEO accession or other database where the data came from. This is accessed when the user calls searchForDatasets, along with the mapping file. See below for more detailed information about the specific files. <br><br>
+
+There is a detailed process outlined below for adding more and updating the data in the package. There are several aspects of the package that should be updated regularly as new versions of the data are published and uploaded. See below for more information. 
+
+# R and Bioconductor Package Structure
+R packages that are developed for public use and published on Bioconductor are required to follow several guidelines related to included files and general structure. If these guidelines are not met, it can cause problems for users who already have the package downloaded, as well as prohibit updates from being published on Bioconductor. The following sections provide information about various file types that are found in the general package structure and what they are for. 
+
+## Vignettes and README
+The README file is automatically generated from GitHub. This file should be a general overview of the package, but the main information will be contained in the vignettes. The vignettes are generated from RMarkdown files in the vignettes/ directory. The vignettes are essentially a user guide for the package. These can be found via functions included with Bioconductor, as well as linked on the Bioconductor page where the package is published. A detailed vignette allows all aspects of the package to be well understood by the users. When new functions are added to the package, it should be reflected in the vignettes. <br><br>
+
+The vignettes contain several fields that are necessary for proper generation of the html document and for the code blocks to run. We ask that future developers do not remove or tamper with these sections as it could unknowingly break other code below. The code in the vignette is run as one long script. Thus, a library() statement at the top of the vignette would still affect code at the bottom. <br><br>
+
+For changes made to the vignettes to be reflected in the html document, the .Rmd file has to knit. This will run all blocks of code and generate the updated version of the document. This can be viewed after the window opens when rendering is complete. 
+
+## DESCRIPTION
+The DESCRIPTION file contains the information required for the user to set up the package, as well as some metadata related to the package. The biocViews field contains keywords that are associated with the package. This allows users to find the package when searching on Bioconductor. The Suggests fields are packages that are recommended for developers who are adding to the package. The most important field is imports, which are the packages that the actual code depends on. These are packages that must be installed to run the package. These include packages that are necessary for the vignette to run. 
+
+## NAMESPACE and man
+The NAMESPACE file contains all the imports and exports for the package. Functions and objects that are accessible by the user must be exported and written to the NAMESPACE file. Along with the imports section of DESCRIPTION, the imports used in the actual code will be recorded in the NAMESPACE. This file cannot be edited by hand. To edit the file, add roxygen2 notation above the functions or files that you want to document. See R/ directory for examples. <br>
+The functions and objects that are exported by the package will have a .Rd file associated with them. This file will be saved to the man directory, where the package will look for the exported functions when it is loaded on the user's machine. The man directory also contains plots and images that are created for the vignettes. These files are also not edited by hand. These are generated from roxygen2 notation and subsequently running devtools::document().
+
+## .Rbuildignore and .gitignore
+The .Rbuildignore contains files that should be excluded from the package when it is built on the user's machine. This includes our devdocs/ directory since it is specific to developers, for example. Any files that are not needed for the user to access the package should be included in .Rbuildignore. <br>
+The .gitignore contains files that should not be pushed to GitHub but are contained in the package. This includes the .Rproj files since this file is intended to establish a workspace as an R project, and should not be pushed to GitHub. Any files that are too big and not necessary to be saved within the package structure should also not be pushed to GitHub. If the files are needed by other developers, they should be uploaded to Zenodo. 
+
+## R
+The R/ directory contains all R code that is used to make the package. This includes helpers, exported functions, and any kind of classes that were created. All code in this directory should have roxygen2 documentation at the top to specify the imports and exports. All code included is necessary for building the package. Code that was written to edit other files should be in the devdocs/ directory, like datameta_pephub.R and ontology_xl_edit.py. This code was used to generate the dataset metadata and the edited mapping ontology, which were uploaded to Zenodo. 
+
+# Ontology
+An ontology is a set of terms that are associated with each other within a specific field. In our case, these are terms related to breast cancer and how they relate to the data. This can include Estrogen Receptor Status or Patient Age. Defining these terms and allowing the user to access them through the package lets them filter datasets based on properties they are interested in. 
+
+## NCIT Definitions
+All ontology terms and values included in this package came from the [National Cancer Institute Thesaurus](https://evsexplore.semantics.cancer.gov/evsexplore/welcome). These are the official definitions of all the terms included. If terms are added, their definitions should come from this website. 
+
+## Mapped Ontology
+
+# Dataset Metadata
+
+# Adding Data to Zenodo
+
+# Updating Existing Data

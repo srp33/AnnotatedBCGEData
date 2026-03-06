@@ -15,16 +15,19 @@ NCIT_identifiers <- c("10.5281/zenodo.17488901",
                       "NCIT_definitions_filtered.tsv.gz")
 
 
-#' Function that searches NCIT definitions file
+#' Function that searches NCIT definitions file. 
 #' 
-#' Takes a search term and the column of the defs file to search by
-#' Returns a dataframe with all matches to the parameters
+#' Takes a term to search by and the type of the term. This could be the name of
+#'  the term itself, the associated code, the URI, or the general definition.
+#'  The function searches a data frame containing all terms and returns matches
+#'   to the search with the name of the term, the URI, the code, and the 
+#'  definition. 
 #' 
-#' @param term string to search df by
-#' @param term_type column to search in df, default Name
-#' @return a dataframe with matching rows to search term
+#' @param term string to search df by.
+#' @param term_type type of term; Name, URI, Code, or Definition.
+#' @return a data frame with rows that match search term.
 #' @export 
-searchDefs <- function(term, term_type="Name") {
+searchNCITerms <- function(term, term_type="Name") {
     zen <- ZenodoManager$new()
     acceptable_terms <- c("Name", "URI", "Code", "Definition")
     

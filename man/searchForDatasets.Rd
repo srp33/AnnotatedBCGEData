@@ -2,21 +2,26 @@
 % Please edit documentation in R/search-mapped-ontology.R
 \name{searchForDatasets}
 \alias{searchForDatasets}
-\title{Function that searches mapped ontology data}
+\title{Function that searches breast cancer ontology mapped to data sets.}
 \usage{
 searchForDatasets(code, term_type = "field")
 }
 \arguments{
-\item{code}{NCIT code that was found from searching defs}
+\item{code}{NCIT code that was found from searchNCITerms.}
 
-\item{term_type}{field or value}
-
-\item{zen}{arg for ZenodoManager object}
+\item{term_type}{"field" (the column) or "value" (the data).}
 }
 \value{
-a data frame from the searched file with dataset metadata
+a data frame from the searched file with data set metadata.
 }
 \description{
-Takes a search code and column to search by
-Returns data frame joined with dataset metadata
+Takes a search code and whether to search terms (columns of a particular data
+set) or values (values in columns of particular data set). Searches a data
+frame that contains data sets, the term associated with it, the values
+associated with it, and the terms and values as they were originally found in
+the actual data.
+Returns a data frame joined with the data set metadata. This shows the name
+of the data set, the terms and values, and some metadata about where the data
+came from. Users can then pass the names of the data sets to getBCGEData to
+get the SummarizedExperiment objects.
 }

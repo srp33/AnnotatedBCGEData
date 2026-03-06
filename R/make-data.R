@@ -16,7 +16,7 @@ NULL
 #' @param v version of data to download, default to most recent.
 #' @return a SummarizedExperiment object for the data set.
 #' @export
-bcgeData <- function(datasetID, cacheDirPath=tempdir(), identifier=identifiers, v=NULL) {
+getBCGEData <- function(datasetID, cacheDirPath=tempdir(), identifier=identifiers, v=NULL) {
     if (cacheDirPath != tempdir()) {
         makeCache(cacheDirPath)
     }

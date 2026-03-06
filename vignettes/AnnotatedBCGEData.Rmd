@@ -67,15 +67,15 @@ library(SummarizedExperiment)
 ```
 
 #TODO: Make this more clear that we are searching for ontology terms based on strings.
-This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchDefs`. `searchDefs` was created with the intention of helping users become more familiar with the ontology included in this package. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. The function returns a tibble with information about the term searched, including a code unique to each term. The code can then be passed to the `searchForDatasets`function, which returns all data sets that were associated with that term. <br>
+This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchNCITerms`. `searchNCITerms` was created with the intention of helping users become more familiar with the ontology included in this package. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. The function returns a tibble with information about the term searched, including a code unique to each term. The code can then be passed to the `searchForDatasets`function, which returns all data sets that were associated with that term. <br>
 <br>
-`searchForDatasets` takes two parameters: the code to search by and the type of term it is. The options are field or value. If no term is specified, it defaults to field. A field refers to the actual NCIT term code. This would be the code associated with a term such as "ER status" or "Patient age". A value refers to the particular values in the data. This could be "Positive", "Negative", or a range of values in some cases. All codes are accessible with the `searchDefs` function. `searchForDatasets` returns a tibble with all the data sets that are associated with the ontology code, as well as data set-level metadata. The names of the data sets can then be passed to another helper function to create the SummarizedExperiment object available for further analysis. The following examples show how to use the functions. 
+`searchForDatasets` takes two parameters: the code to search by and the type of term it is. The options are field or value. If no term is specified, it defaults to field. A field refers to the actual NCIT term code. This would be the code associated with a term such as "ER status" or "Patient age". A value refers to the particular values in the data. This could be "Positive", "Negative", or a range of values in some cases. All codes are accessible with the `searchNCITerms` function. `searchForDatasets` returns a tibble with all the data sets that are associated with the ontology code, as well as data set-level metadata. The names of the data sets can then be passed to another helper function to create the SummarizedExperiment object available for further analysis. The following examples show how to use the functions. 
 
 ## Example: Searching for a data set by ontology term name
-In this first example of using the `searchDefs` function, we search for a particular ontology term, "Progesterone Receptor Status". 
+In this first example of using the `searchNCITerms` function, we search for a particular ontology term, "Progesterone Receptor Status". 
 
 ```{r PR_example}
-defs <- searchDefs("Progesterone Receptor Status")
+defs <- searchNCITerms("Progesterone Receptor Status")
 ```
 
 The output of calling this function is a tibble containing the URI, the name of the term, synonyms, the definition, and the NCIT code associated with it. When the correct term is identified, the user can then pass the code to the `searchForDatasets` function, which identifies data sets that contain the chosen ontology term.
@@ -88,11 +88,11 @@ datasets <- searchForDatasets("C16149", "field")
 In this example, we search for the ontology term by an associated definition. Because the definitions are more vague, this may identify several similar terms. It is important that the user is able to identify the exact term they are looking for.
 
 ```{r PR_example2}
-searchDefs("Progesterone receptor", "Definition")
+searchNCITerms("Progesterone receptor", "Definition")
 
 ```
 
-Again, when the chosen term is identified, it can be passed to the `searchForDatasets` function. When desired datasets are found, they can then be passed to `bcgeData` to download the data and access the SummarizedExperiment object.
+Again, when the chosen term is identified, it can be passed to the `searchForDatasets` function. When desired datasets are found, they can then be passed to `getBCGEData` to download the data and access the SummarizedExperiment object.
 
 ```{r PR_example2_p2}
 searchForDatasets("C16149", "field")
@@ -101,7 +101,7 @@ searchForDatasets("C16149", "field")
 
 # Making SummarizedExperiment Objects
 
-Downloading this package does not download the data sets onto the user's machine. To load the SummarizedExperiment object for a data set included in AnnotatedBCGEData, the user chooses the name of the data set and passes it as string to the function bcgeData. This function downloads the data and creates the SummarizedExperiment object that is accessible to the user. <br>
+Downloading this package does not download the data sets onto the user's machine. To load the SummarizedExperiment object for a data set included in AnnotatedBCGEData, the user chooses the name of the data set and passes it as string to the function getBCGEData. This function downloads the data and creates the SummarizedExperiment object that is accessible to the user. <br>
 <br>
 The SummarizedExperiment object for each data set includes 3 matrices. The first, which we load as expression_data, is a matrix with the samples as columns and genes as rows. The Ensembl gene ID is used as the row names. The data in the actual matrix is the expression level of the gene for the sample. <br>
 <br>
@@ -109,17 +109,17 @@ The second matrix we load as sample_metadata. This is information about the samp
 <br>
 The third matrix we load as feature_data. This is the information about the genes that were tested for each sample. This includes information like the chromosome the gene is located on, the Entrez gene ID, and the gene name. The genes are the rows and the information about the samples is in the columns.
 
-## bcgeData
-The `bcgeData` function returns the SummarizedExperiment object for the requested data set. The function creates a cache (using BiocFileCache) on the user's machine. All downloaded files are saved to this cache so that files do not need to be redownloaded every time the R session is restarted. By default, the most recent version of the data that is found in the Zenodo repository is downloaded. When called for the first time, the user will be prompted to select or enter a location for the cache to be saved.<br> 
+## getBCGEData
+The `getBCGEData` function returns the SummarizedExperiment object for the requested data set. The function creates a cache (using BiocFileCache) on the user's machine. All downloaded files are saved to this cache so that files do not need to be redownloaded every time the R session is restarted. By default, the most recent version of the data that is found in the Zenodo repository is downloaded. When called for the first time, the user will be prompted to select or enter a location for the cache to be saved.<br> 
 <br>
-We understand the importance of data versioning and reproducibility. For that reason, there is additional functionality included in the bcgeData function that will allow the user to specify which version of the data they want to download or use. The argument `v` to the function takes an integer that is used to find the specified version. If that version does not exist or needs to be downloaded, the user will see a message in the R console. If `v` is not specified, the most recent version is downloaded and used. <br>
+We understand the importance of data versioning and reproducibility. For that reason, there is additional functionality included in the getBCGEData function that will allow the user to specify which version of the data they want to download or use. The argument `v` to the function takes an integer that is used to find the specified version. If that version does not exist or needs to be downloaded, the user will see a message in the R console. If `v` is not specified, the most recent version is downloaded and used. <br>
 <br>
-While the actual files are stored in the AnnotatedBCGEData cache that is created, for reasons of data version checks, the SummarizedExperiment objects are not stored in the cache and need to be created again when the R session is restarted. This is a fairly quick process as the data already exists. This requires nothing more than calling `bcgeData` on the desired data set at the beginning of every session.<br>
+While the actual files are stored in the AnnotatedBCGEData cache that is created, for reasons of data version checks, the SummarizedExperiment objects are not stored in the cache and need to be created again when the R session is restarted. This is a fairly quick process as the data already exists. This requires nothing more than calling `getBCGEData` on the desired data set at the beginning of every session.<br>
 <br>
 The following is a simple example of creating an object and accessing the data.
 
 ```{r example, eval = requireNamespace('AnnotatedBCGEData')}
-GSE41197_SE = bcgeData("GSE41197")
+GSE41197_SE = getBCGEData("GSE41197")
 GSE41197_expression_data = assay(GSE41197_SE)
 sample_metadata = colData(GSE41197_SE)
 feature_data = rowData(GSE41197_SE)
@@ -127,7 +127,7 @@ feature_data = rowData(GSE41197_SE)
 
 Similarly, if the user wanted to access an older version of the same dataset, the function could be used as follows;
 ``` {r version_example}
-GSE41197_v2 = bcgeData("GSE41197", v=2)
+GSE41197_v2 = getBCGEData("GSE41197", v=2)
 GSE41197_v2_expressions = assay(GSE41197_v2)
 v2_metadata = colData(GSE41197_v2)
 v2_feature_data = rowData(GSE41197_v2)
@@ -154,8 +154,8 @@ In this example, we combine using both the metadata and the expression data to c
 First, we load the data sets, turn them into tibbles, and extract both the metadata and expression data. We then filter the expression to only include the samples that are identified as stroma cells. Finally, we create two vectors with all the gene names in each tibble to set them up for comparison. 
 
 ``` {r heat_map, message=FALSE, warning=FALSE}
-GSE10797_SE <- bcgeData("GSE10797")
-GSE59772_SE <- bcgeData("GSE59772")
+GSE10797_SE <- getBCGEData("GSE10797")
+GSE59772_SE <- getBCGEData("GSE59772")
 
 
 GSE59772_exp <- assay(GSE59772_SE)
