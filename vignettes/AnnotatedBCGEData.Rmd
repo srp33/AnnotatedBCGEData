@@ -55,7 +55,6 @@ Attempting to store all of the data within this package would not be feasible du
 
 # Filtering datasets by ontology terms
 
-################## TODO: Please put the other packages back in (SummarizedExperiment, BiocFileCache).
 ```{r load_packages, include = FALSE}
 library(ggplot2)
 library(dplyr)
@@ -96,7 +95,6 @@ Again, when the chosen term is identified, it can be passed to the `searchForDat
 
 ```{r PR_example2_p2}
 searchForDatasets("C16149", "field")
-
 ```
 
 # Making SummarizedExperiment Objects

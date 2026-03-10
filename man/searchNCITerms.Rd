@@ -17,7 +17,7 @@ a data frame with rows that match search term.
 \description{
 Takes a term to search by and the type of the term. This could be the name of
 the term itself, the associated code, the URI, or the general definition.
-The function searches a data frame containing all terms and returns matches
+The function searches across all terms and returns matches
 to the search with the name of the term, the URI, the code, and the
 definition.
 }

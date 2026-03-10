@@ -20,7 +20,6 @@ getBCGEData <- function(datasetID, cacheDirPath=tempdir(), identifier=identifier
     if (cacheDirPath != tempdir()) {
         makeCache(cacheDirPath)
     }
-    zen = ZenodoManager$new() 
     
     identifier_vec <- identifier[[datasetID]]
     

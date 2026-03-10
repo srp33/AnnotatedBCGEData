@@ -2,7 +2,7 @@
 % Please edit documentation in R/search-mapped-ontology.R
 \name{searchForDatasets}
 \alias{searchForDatasets}
-\title{Function that searches breast cancer ontology mapped to data sets.}
+\title{Function that searches breast cancer ontology terms mapped to data sets.}
 \usage{
 searchForDatasets(code, term_type = "field")
 }
@@ -16,8 +16,8 @@ a data frame from the searched file with data set metadata.
 }
 \description{
 Takes a search code and whether to search terms (columns of a particular data
-set) or values (values in columns of particular data set). Searches a data
-frame that contains data sets, the term associated with it, the values
+set) or values (values in columns of particular data set). Searches across
+data sets, the term associated with it, the values
 associated with it, and the terms and values as they were originally found in
 the actual data.
 Returns a data frame joined with the data set metadata. This shows the name
