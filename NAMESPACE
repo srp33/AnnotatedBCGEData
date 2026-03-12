@@ -2,7 +2,7 @@
 
 export(getBCGEData)
 export(searchForDatasets)
-export(searchNCITerms)
+export(searchOntologyTerms)
 importFrom(BiocFileCache,BiocFileCache)
 importFrom(SummarizedExperiment,SummarizedExperiment)
 importFrom(dplyr,"%>%")

@@ -40,3 +40,6 @@ looks for the data either in the specified location or in a temporary
 directory. If the data is not found, it is downloaded. Returns the desired
 data set in the form of a SummarizedExperiment object.
 }
+\examples{
+getBCGEData("GSE41197")
+}

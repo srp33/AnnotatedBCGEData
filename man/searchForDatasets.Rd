@@ -7,7 +7,7 @@
 searchForDatasets(code, term_type = "field")
 }
 \arguments{
-\item{code}{NCIT code that was found from searchNCITerms.}
+\item{code}{NCIT code that was found from searchOntologyTerms.}
 
 \item{term_type}{"field" (the column) or "value" (the data).}
 }
@@ -24,4 +24,7 @@ Returns a data frame joined with the data set metadata. This shows the name
 of the data set, the terms and values, and some metadata about where the data
 came from. Users can then pass the names of the data sets to getBCGEData to
 get the SummarizedExperiment objects.
+}
+\examples{
+searchForDatasets("C16149")
 }

@@ -32,26 +32,33 @@ Get the latest stable `R` release from [CRAN](http://cran.r-project.org/).
 Then install `AnnotatedBCGEData` from [Bioconductor](http://bioconductor.org/) using the following code:
 
 ```{r install, eval = FALSE}
+## TODO: need to verify that this code is accurate for downloading from Bioconductor when it is available
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
 
-# BiocManager::install("magick") # TODO: Not sure if we need this. Need to try a fresh install.
 BiocManager::install("AnnotatedBCGEData")
 ```
-
-This code installs BiocManager if it is not already installed. Running the if statement is required to install the package as it is dependent on BiocManager to load. 
 
 Download the development version from [GitHub](https://github.com/srp33/AnnotatedBCGEData) with:
 
 ```{r install_dev, eval = FALSE}
-#BiocManager::install("remotes") #TODO: not sure if need this.
 BiocManager::install("srp33/AnnotatedBCGEData")
 ```
 
-# Technical note
+Finally, to load the package, the following code is required:
 
-Attempting to store all of the data within this package would not be feasible due to the data's size. Thus, we are using the [ExperimentHub](https://bioconductor.org/packages/release/bioc/html/ExperimentHub.html) infrastructure to store details about the data. Once a user has identified dataset(s) to work with, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. If they prefer, users can access the files directly on Zenodo in TSV format. They can also find details about the data by exploring our Zenodo repository.
+```{r load_example, eval = FALSE}
+library(AnnotatedBCGEData)
+```
+
+
+# Data Persistence
+Attempting to store all of the data within this package would not be feasible due to the data's size. Thus, we are storing the data remotely and accessing it when requested. The data can optionally be stored in a persistent cache on the user's machine if desired. Once a user has identified dataset(s) to work with, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. If they prefer, users can access the files directly on Zenodo in TSV format. They can also find details about the data by exploring our Zenodo repository. <br><br>
+
+The package will allow the persistent storage of data across R sessions if the user specifies a filepath to save the data to when calling `getBCGEData`. If no filepath is specified, the data will be saved to a temporary directory that will refresh when the R session is restarted. <br><br>
+
+It should be noted that at the time of package development, Zenodo API limitations reduce the number of requests per minute to 30. Because of this, it has been found necessary to allow breaks between successive calls of `getBCGEData`. The API limitations should not cause problems for the user, but users should be aware of an increased amount of time when downloading large amounts of data.
 
 # Filtering datasets by ontology terms
 
@@ -65,16 +72,15 @@ library(AnnotatedBCGEData)
 library(SummarizedExperiment)
 ```
 
-#TODO: Make this more clear that we are searching for ontology terms based on strings.
-This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchNCITerms`. `searchNCITerms` was created with the intention of helping users become more familiar with the ontology included in this package. This function takes two parameters: the term to search by and the type of term it is. The options for terms are Name, URI, Code, and Definition. If no term type is specified, the function defaults to Name. The function returns a tibble with information about the term searched, including a code unique to each term. The code can then be passed to the `searchForDatasets`function, which returns all data sets that were associated with that term. <br>
+This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchOntologyTerms`. `searchOntologyTerms` was created with the intention of helping users become more familiar with the ontology included in this package. This function takes two parameters: the term to search by and the type of term it is. The term to search by is specified as a string; either the term itself, a code, a URI, or a definition/description. The options for terms are Name, URI, Code, and Definition, also passed as a string. If no term type is specified, the function defaults to Name. The function returns a tibble with information about the term searched, including a code unique to each term. The code can then be passed to the `searchForDatasets`function, which returns all data sets that were associated with that term. <br>
 <br>
-`searchForDatasets` takes two parameters: the code to search by and the type of term it is. The options are field or value. If no term is specified, it defaults to field. A field refers to the actual NCIT term code. This would be the code associated with a term such as "ER status" or "Patient age". A value refers to the particular values in the data. This could be "Positive", "Negative", or a range of values in some cases. All codes are accessible with the `searchNCITerms` function. `searchForDatasets` returns a tibble with all the data sets that are associated with the ontology code, as well as data set-level metadata. The names of the data sets can then be passed to another helper function to create the SummarizedExperiment object available for further analysis. The following examples show how to use the functions. 
+`searchForDatasets` takes two parameters: the code to search by and the type of term it is. The options are field or value. If no term is specified, it defaults to field. A field refers to the actual NCIT term code. This would be the code associated with a term such as "ER status" or "Patient age". A value refers to the particular values in the data. This could be "Positive", "Negative", or a range of values in some cases. All codes are accessible with the `searchOntologyTerms` function. `searchForDatasets` returns a tibble with all the data sets that are associated with the ontology code, as well as data set-level metadata. The names of the data sets can then be passed to another helper function to create the SummarizedExperiment object available for further analysis. The following examples show how to use the functions. 
 
 ## Example: Searching for a data set by ontology term name
-In this first example of using the `searchNCITerms` function, we search for a particular ontology term, "Progesterone Receptor Status". 
+In this first example of using the `searchOntologyTerms` function, we search for a particular ontology term, "Progesterone Receptor Status". 
 
 ```{r PR_example}
-defs <- searchNCITerms("Progesterone Receptor Status")
+defs <- searchOntologyTerms("Progesterone Receptor Status")
 ```
 
 The output of calling this function is a tibble containing the URI, the name of the term, synonyms, the definition, and the NCIT code associated with it. When the correct term is identified, the user can then pass the code to the `searchForDatasets` function, which identifies data sets that contain the chosen ontology term.
@@ -87,7 +93,7 @@ datasets <- searchForDatasets("C16149", "field")
 In this example, we search for the ontology term by an associated definition. Because the definitions are more vague, this may identify several similar terms. It is important that the user is able to identify the exact term they are looking for.
 
 ```{r PR_example2}
-searchNCITerms("Progesterone receptor", "Definition")
+searchOntologyTerms("Progesterone receptor", "Definition")
 
 ```
 

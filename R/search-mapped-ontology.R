@@ -18,9 +18,10 @@ utils::globalVariables(c(
 #'  came from. Users can then pass the names of the data sets to getBCGEData to 
 #' get the SummarizedExperiment objects. 
 #' 
-#' @param code NCIT code that was found from searchNCITerms.
+#' @param code NCIT code that was found from searchOntologyTerms.
 #' @param term_type "field" (the column) or "value" (the data).
 #' @return a data frame from the searched file with data set metadata.
+#' @examples searchForDatasets("C16149")
 #' @export
 searchForDatasets <- function(code, term_type="field") {
     acceptable_terms <- c("field", "value", "Field", "Value", "FIELD", "VALUE")

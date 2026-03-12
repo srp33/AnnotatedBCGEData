@@ -50,4 +50,4 @@ combined <- bind_rows(all_data) %>%
 
 
 
-write_tsv(combined, "C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs/combined_data.tsv")
+write_tsv(combined, "combined_data.tsv")

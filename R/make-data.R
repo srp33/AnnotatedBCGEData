@@ -15,6 +15,7 @@ NULL
 #' @param identifier list of identifiers, defaults to list included.
 #' @param v version of data to download, default to most recent.
 #' @return a SummarizedExperiment object for the data set.
+#' @examples getBCGEData("GSE41197")
 #' @export
 getBCGEData <- function(datasetID, cacheDirPath=tempdir(), identifier=identifiers, v=NULL) {
     if (cacheDirPath != tempdir()) {

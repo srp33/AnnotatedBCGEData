@@ -1,9 +1,11 @@
 library(tidyverse)
 library(yaml)
 
-tar_file <- "C:/Users/heidi/Downloads/geo_2025_04_28.tar"
+tar_file_url = "https://pephub.databio.org/geo?view=archive"
 
-extract <- "C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs"
+tar_file <- "../devdocs/geo_2025_04_28.tar"
+
+extract <- "../devdocs"
 
 #untar(tar_file, exdir=extract)
 
@@ -41,8 +43,8 @@ find_values <- function(len, strt, id_vec) {
     return (matching_ids)
 }
 
-gse1000s_dir <- "C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs/peps/gse1nnn"
-target <- "C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs/pepsZipUsed"
+gse1000s_dir <- "../devdocs/peps/gse1nnn"
+target <- "../devdocs/pepsZipUsed"
 
 copy_files <- function(id_vec, target_dir) {
     for (id in id_vec) {
@@ -50,19 +52,19 @@ copy_files <- function(id_vec, target_dir) {
             id_nums <- substr(id, 4, str_length(id))
             thousand <- substr(id_nums, 1, 1)
             lower_id <- str_to_lower(id)
-            source_dir <- paste0("C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs/peps/gse", thousand, "nnn/", lower_id, ".zip")
+            source_dir <- paste0("../devdocs/peps/gse", thousand, "nnn/", lower_id, ".zip")
             file.copy(source_dir, target_dir, overwrite=TRUE)
         } else if (str_length(id)==8){
             id_nums <- substr(id, 4, str_length(id))
             thousand <- substr(id_nums, 1,2)
             lower_id <- str_to_lower(id)
-            source_dir <- paste0("C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs/peps/gse", thousand, "nnn/", lower_id, ".zip")
+            source_dir <- paste0("../devdocs/peps/gse", thousand, "nnn/", lower_id, ".zip")
             file.copy(source_dir, target_dir, overwrite=TRUE)
         } else if (str_length(id)==9) {
             id_nums <- substr(id, 4, str_length(id))
             thousand <- substr(id_nums, 1,3)
             lower_id <- str_to_lower(id)
-            source_dir <- paste0("C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs/peps/gse", thousand, "nnn/", lower_id, ".zip")
+            source_dir <- paste0("../devdocs/peps/gse", thousand, "nnn/", lower_id, ".zip")
             file.copy(source_dir, target_dir, overwrite=TRUE)
         }
         zipped <- list.files(target_dir)
@@ -248,4 +250,4 @@ meta_tib <- add_row(meta_tib,
                     publishing_platform="ICGC",
                     title="ICGC_KR")
 
-write_tsv(meta_tib, "C:/Users/heidi/Desktop/bioconductor_package/AnnotatedBCGEData/devdocs/dataset_meta.tsv")
+write_tsv(meta_tib, "../devdocs/dataset_meta.tsv")

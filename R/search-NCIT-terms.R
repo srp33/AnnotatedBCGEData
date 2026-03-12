@@ -26,8 +26,9 @@ NCIT_identifiers <- c("10.5281/zenodo.17488901",
 #' @param term string to search df by.
 #' @param term_type type of term; Name, URI, Code, or Definition.
 #' @return a data frame with rows that match search term.
+#' @examples searchOntologyTerms("Progesterone Receptor Status")
 #' @export 
-searchNCITerms <- function(term, term_type="Name") {
+searchOntologyTerms <- function(term, term_type="Name") {
     acceptable_terms <- c("Name", "URI", "Code", "Definition")
     
     if (!(term_type %in% acceptable_terms)) {
