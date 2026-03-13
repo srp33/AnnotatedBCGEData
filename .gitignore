@@ -9,7 +9,9 @@ dev/
 inst/doc
 vignettes/*.html
 vignettes/*.R
+vignettes/AnnotatedBCGEData_files
 .quarto
 .DS_Store
 .httr-oauth
 dev
+
