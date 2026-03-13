@@ -1,14 +1,6 @@
 ---
 title: "AnnotatedBCGEData Developer Guide"
-output: BiocStyle::html_document
-author:
-  - name: "Heidi Steadman"
-    affiliation:
-      - &id "Brigham Young University"
-  - name: "Shu-Fei Lo"
-    affiliation: *id
-  - name: "Stephen Piccolo"
-    affiliation: *id
+output: github_document
 ---
 
 
@@ -44,10 +36,10 @@ The .gitignore contains files that should not be pushed to GitHub but are contai
 The R/ directory contains all R code that is used to make the package. This includes helpers, exported functions, and any kind of classes that were created. All code in this directory should have roxygen2 documentation at the top to specify the imports and exports. All code included is necessary for building the package. Code that was written to edit other files should be in the devdocs/ directory, like datameta_pephub.R and ontology_xl_edit.py. This code was used to generate the dataset metadata and the edited mapping ontology, which were uploaded to Zenodo. 
 
 # Ontology
-An ontology is a set of terms that are associated with each other within a specific field. In our case, these are terms related to breast cancer and how they relate to the data. This can include Estrogen Receptor Status or Patient Age. Defining these terms and allowing the user to access them through the package lets them filter datasets based on properties they are interested in. 
+An ontology is a set of terms that are associated with each other within a specific field. In our case, these are terms related to breast cancer and how they relate to the data. This can include Estrogen Receptor Status or Patient Age. Defining these terms and allowing the user to access them through the package lets them filter datasets based on properties they are interested in. We collected the terms in the ontology from the metadata collected by the researchers. Thus, each dataset is associated with the ontology that the researchers collected. If researchers recorded Estrogen Receptor Status in the sample metadata, then the term was mapped to that dataset along with the values they recorded.
 
 ## NCIT Definitions
-All ontology terms and values included in this package came from the [National Cancer Institute Thesaurus](https://evsexplore.semantics.cancer.gov/evsexplore/welcome). These are the official definitions of all the terms included. If terms are added, their definitions should come from this website. 
+All ontology terms and values included in this package came from the [National Cancer Institute Thesaurus](https://evsexplore.semantics.cancer.gov/evsexplore/welcome). These are the official definitions of all the terms included. If terms are added, their definitions should come from this website. This ensures the most correct definition according to other researchers and doctors in the field. The NCIT definitions file contains the URI, the term name, a definition of the term, and the NCIT code that is associated with the term. The users are able to search this table by any of these fields, and the result will be a shortened table with matching rows. From here, the user can confirm which term is closest to the term they are searching for, and record the code. The code can then be passed to the function for searching the mapped ontology, which then returns related datasets. 
 
 ## Mapped Ontology
 
