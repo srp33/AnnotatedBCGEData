@@ -9,6 +9,13 @@ NULL
 #'  looks for the data either in the specified location or in a temporary 
 #'  directory. If the data is not found, it is downloaded. Returns the desired
 #'  data set in the form of a SummarizedExperiment object. 
+#' 
+#' This function provides the ability for users to save the data to a cache so
+#'  it persists between R sessions. This can be done by passing a directory path
+#'  to the function every time it is called. All data will be stored in this 
+#' directory. Each dataset will have a subdirectory containing the data. If no 
+#' filepath is provided for the cache, the data will be stored in a temporary 
+#' directory that refreshes with each R session.
 #'  
 #' @param datasetID the name of the data set, passed as a string.
 #' @param cacheDirPath the optional file path to where the cache should be saved.

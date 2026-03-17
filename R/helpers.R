@@ -150,7 +150,6 @@ downloadZenFile <- function(conceptDOI, filepath, v=NULL) {
     }
     
     record$downloadFiles(path=filepath, quiet=TRUE)
-    print(paste0("record is a ", class(record), ". recCheck is ", recCheck))
     return()
 }
 

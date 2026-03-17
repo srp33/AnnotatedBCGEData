@@ -109,6 +109,13 @@ searchForDatasets("C16149")
 searchForDatasets("C15496", term_type = "value")
 ```
 
+## Filtering data by dataset-level metadata
+In addition to the ontology, users can also decide which data sets to use based on the metadata about the collection of the data. This is accessible with the function `getDatasetMetadata` and passing a vector of data set IDs. Below is an example of using this function.
+
+```{r get_datameta}
+getDatasetMetadata(c("GSE41197", "GSE59772", "GSE10797"))
+```
+
 # Making SummarizedExperiment Objects
 
 Downloading this package does not download the data sets onto the user's machine. To load the SummarizedExperiment object for a data set included in AnnotatedBCGEData, the user chooses the name of the data set and passes it as string to the function getBCGEData. This function downloads the data and creates the SummarizedExperiment object that is accessible to the user. <br>

@@ -3,23 +3,20 @@
 \name{getDatasetMetadata}
 \alias{getDatasetMetadata}
 \title{A function that takes a vector of dataset IDs and returns a tibble with
-information about how the data was collected and the overall study.
-
-@param datasets is a vector of strings of the dataset IDs to search for.
-@return A tibble with information about the dataset's source, experiment,
-title, a summary of the experiment, and the overall experimental design.
-@examples getDatasetMetadata(c("GSE41197", "GSE10797"))
-@export}
+information about how the data was collected and the overall study.}
 \usage{
 getDatasetMetadata(datasets)
+}
+\arguments{
+\item{datasets}{is a vector of strings of the dataset IDs to search for.}
+}
+\value{
+Tibble with information about the experiment that produced the data.
 }
 \description{
 A function that takes a vector of dataset IDs and returns a tibble with
 information about how the data was collected and the overall study.
-
-@param datasets is a vector of strings of the dataset IDs to search for.
-@return A tibble with information about the dataset's source, experiment,
-title, a summary of the experiment, and the overall experimental design.
-@examples getDatasetMetadata(c("GSE41197", "GSE10797"))
-@export
+}
+\examples{
+getDatasetMetadata(c("GSE41197", "GSE10797"))
 }
