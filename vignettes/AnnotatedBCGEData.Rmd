@@ -23,7 +23,7 @@ library(pkg, character.only = TRUE)
 
 # Abstract
 
-`AnnotatedBCGEData` is an R/[Bioconductor](https://bioconductor.org) package that provides access to more than 100 gene-expression datasets (generated using microarray and RNA-Sequencing technologies). We collected these datasets from public repositories, including [Gene Expression Omnibus](http://www.ncbi.nlm.nih.gov/geo/), [ArrayExpress](https://www.ebi.ac.uk/biostudies/arrayexpress), and [The Cancer Genome Atlas](https://www.cancer.gov/ccg/research/genome-sequencing/tcga). Where feasible, we obtained and reprocessed the raw data using computational pipelines and annotations that are standardized and more updated than those used to process the data originally. Additionally, we annotated the sample metadata using ontology terms from the [National Cancer Institute Thesaurus](https://evsexplore.semantics.cancer.gov/evsexplore/welcome). This was necessary because different data submitters used different terminology to describe the samples. Mapping the metadata to ontology terms makes it possible for users to search our data using these standardized terms.
+`AnnotatedBCGEData` is an [R](https://r-project.org)/[Bioconductor](https://bioconductor.org) package that provides access to more than 100 gene-expression datasets generated using microarray and RNA-Sequencing technologies. We collected these datasets from public repositories, including [Gene Expression Omnibus](http://www.ncbi.nlm.nih.gov/geo/), [ArrayExpress](https://www.ebi.ac.uk/biostudies/arrayexpress), and [The Cancer Genome Atlas](https://www.cancer.gov/ccg/research/genome-sequencing/tcga). Where feasible, we obtained and reprocessed the raw data using computational pipelines and annotations that are standardized and more updated than those used to process the data originally. Additionally, we annotated the sample metadata using ontology terms from the [National Cancer Institute Thesaurus](https://evsexplore.semantics.cancer.gov/evsexplore/welcome). This was necessary because different data submitters use different terminology to describe breast-cancer patients and samples. Mapping the metadata to ontology terms makes it possible for users to search our data using these standardized terms.
 
 # Installation instructions
 
@@ -32,7 +32,6 @@ Get the latest stable `R` release from [CRAN](http://cran.r-project.org/).
 Then install `AnnotatedBCGEData` from [Bioconductor](http://bioconductor.org/) using the following code:
 
 ```{r install, eval = FALSE}
-## TODO: need to verify that this code is accurate for downloading from Bioconductor when it is available
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
@@ -40,25 +39,21 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("AnnotatedBCGEData")
 ```
 
-Download the development version from [GitHub](https://github.com/srp33/AnnotatedBCGEData) with:
+Or download the development version:
 
 ```{r install_dev, eval = FALSE}
 BiocManager::install("srp33/AnnotatedBCGEData")
 ```
 
-Finally, to load the package, the following code is required:
+Finally, load the package:
 
 ```{r load_example, eval = FALSE}
 library(AnnotatedBCGEData)
 ```
 
+# Data retrieval
 
-# Data Persistence
-Attempting to store all of the data within this package would not be feasible due to the data's size. Thus, we are storing the data remotely and accessing it when requested. The data can optionally be stored in a persistent cache on the user's machine if desired. Once a user has identified dataset(s) to work with, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. If they prefer, users can access the files directly on Zenodo in TSV format. They can also find details about the data by exploring our Zenodo repository. <br><br>
-
-The package will allow the persistent storage of data across R sessions if the user specifies a filepath to save the data to when calling `getBCGEData`. If no filepath is specified, the data will be saved to a temporary directory that will refresh when the R session is restarted. <br><br>
-
-It should be noted that at the time of package development, Zenodo API limitations reduce the number of requests per minute to 30. Because of this, it has been found necessary to allow breaks between successive calls of `getBCGEData`. The API limitations should not cause problems for the user, but users should be aware of an increased amount of time when downloading large amounts of data.
+Attempting to store all of the data within this package would be infeasible due to the data's size. Thus, we are storing the data remotely and accessing it when requested. Once a user has identified dataset(s) to work with, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. Alternatively, if they prefer, users can access the files directly from Zenodo in TSV format. They can also find details about the data by exploring our Zenodo repository.
 
 # Filtering datasets by ontology terms
 
@@ -72,35 +67,46 @@ library(AnnotatedBCGEData)
 library(SummarizedExperiment)
 ```
 
-This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function is `searchOntologyTerms`. `searchOntologyTerms` was created with the intention of helping users become more familiar with the ontology included in this package. This function takes two parameters: the term to search by and the type of term it is. The term to search by is specified as a string; either the term itself, a code, a URI, or a definition/description. The options for terms are Name, URI, Code, and Definition, also passed as a string. If no term type is specified, the function defaults to Name. The function returns a tibble with information about the term searched, including a code unique to each term. The code can then be passed to the `searchForDatasets`function, which returns all data sets that were associated with that term. <br>
-<br>
-`searchForDatasets` takes two parameters: the code to search by and the type of term it is. The options are field or value. If no term is specified, it defaults to field. A field refers to the actual NCIT term code. This would be the code associated with a term such as "ER status" or "Patient age". A value refers to the particular values in the data. This could be "Positive", "Negative", or a range of values in some cases. All codes are accessible with the `searchOntologyTerms` function. `searchForDatasets` returns a tibble with all the data sets that are associated with the ontology code, as well as data set-level metadata. The names of the data sets can then be passed to another helper function to create the SummarizedExperiment object available for further analysis. The following examples show how to use the functions. 
+This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function that researchers typically use is `searchOntologyTerms`. Its purpose is to help users identify ontology terms that have been used to annotate the data. It accepts two parameters: a string to search by and what should be searched. The second parameter allows the user to indicate whether the string is expected to match the "Name" (default), "Definition", "URI", or "Code" of the ontology term(s). The function returns a tibble with information about the matching terms. The user reviews the matching term(s) and retrieves the corresponding ontology code(s), which can then be passed to the `searchForDatasets`function, which returns all datasets associated with the term(s).
 
-## Example: Searching for a data set by ontology term name
-In this first example of using the `searchOntologyTerms` function, we search for a particular ontology term, "Progesterone Receptor Status". 
+## Searching for ontology terms
+
+In this example, we are using the `searchOntologyTerms` function to search for ontology terms that match the string, "Progesterone Receptor Status". 
 
 ```{r PR_example}
-defs <- searchOntologyTerms("Progesterone Receptor Status")
+searchOntologyTerms("Progesterone Receptor Status")
 ```
 
-The output of calling this function is a tibble containing the URI, the name of the term, synonyms, the definition, and the NCIT code associated with it. When the correct term is identified, the user can then pass the code to the `searchForDatasets` function, which identifies data sets that contain the chosen ontology term.
+This function returns a tibble containing details about ontology terms with a name that matches this string. Subsequently, the user can pass any or all of the ontology term codes in this tibble to the `searchForDatasets` function.
+
+In this similar example, we search for ontology terms that match the shorter (and lowercase) string, "receptor status". 
+
+```{r RS_example}
+searchOntologyTerms("receptor status")
+```
+
+The function returns a tibble containing details about ontology terms related to both progesterone receptor status and estrogen receptor status.
+
+Alternatively, we can search the text within ontology term *definitions*. In this example, we are searching for definitions matching the string, "progesterone". 
+
+```{r P_example}
+searchOntologyTerms("progesterone", term_type = "Definition")
+```
+
+The function returns a tibble containing details about ontology terms related to progesterone, including those related to progesterone receptor status and breast-cancer subtypes that are determined based on progesterone receptor status (Basal-Like Breast Carcinoma and Triple-Negative Breast Carcinoma).
+
+## Identifying datasets associated with specific ontology terms
+
+After we have identified ontology terms for the research topic we are interested in, we can identify datasets associated with those terms. The `searchForDatasets` function accepts two parameters: ontology term code(s) and where to search for mappings between the code(s) and the data. The codes are unique identifiers associated with ontology terms (typically found using the `searchOntologyTerms` function). For the second parameter, the options are "field" (default) or "value". When "field" is specified, the function searches for fields (column names) that have been mapped to the specified code(s). When "value" is specified, the function searches for particular values in any column in a dataset that have been mapped to the specified code(s). The `searchForDatasets` function returns a tibble with metadata about data sets that are associated with the ontology code(s). The names of these datasets can then be passed to the `getBCGEData` function to retrieve the actual data.
+
+In the previous examples, we searched for ontology terms related to progesterone receptor status. One of the matching terms had a name of "Progesterone Receptor Status" and a code of "C16149". In the following example, we are searching for datasets with a column (field) name that has been mapped to this ontology term. This will help us identify datasets where the researchers who shared the data have recorded this information. We specify the term's code when invoking the `searchForDatasets` function. We leave the `term_type` parameter out because the default is "field".
 
 ```{r PR_example_p2}
-datasets <- searchForDatasets("C16149", "field")
+searchForDatasets("C16149")
 ```
 
-## Example: Searching for a data set by ontology term definition
-In this example, we search for the ontology term by an associated definition. Because the definitions are more vague, this may identify several similar terms. It is important that the user is able to identify the exact term they are looking for.
-
-```{r PR_example2}
-searchOntologyTerms("Progesterone receptor", "Definition")
-
-```
-
-Again, when the chosen term is identified, it can be passed to the `searchForDatasets` function. When desired datasets are found, they can then be passed to `getBCGEData` to download the data and access the SummarizedExperiment object.
-
-```{r PR_example2_p2}
-searchForDatasets("C16149", "field")
+```{r PR_example_p3}
+searchForDatasets("C15496", term_type = "value")
 ```
 
 # Making SummarizedExperiment Objects
@@ -122,22 +128,27 @@ While the actual files are stored in the AnnotatedBCGEData cache that is created
 <br>
 The following is a simple example of creating an object and accessing the data.
 
-```{r example, eval = requireNamespace('AnnotatedBCGEData')}
+```{r example, eval = requireNamespace('AnnotatedBCGEData')}'
 GSE41197_SE = getBCGEData("GSE41197")
 GSE41197_expression_data = assay(GSE41197_SE)
 sample_metadata = colData(GSE41197_SE)
 feature_data = rowData(GSE41197_SE)
 ```
 
+TODO: if the user specifies a filepath to save the data to when calling `getBCGEData`. If no filepath is specified, the data will be saved to a temporary directory that will refresh when the R session is restarted.
+TODO: The data can optionally be stored in a persistent cache on the user's machine. This caching process avoids having to re-download the data across R sessions.
+TODO: At the time of package development, the Zenodo API limits the number of requests per minute to 30. Because of this, we have found it necessary to allow breaks between successive calls to `getBCGEData`. The API limitations should not cause problems for the user, but users should be aware that this may cause delays when downloading large amounts of data.
+
 Similarly, if the user wanted to access an older version of the same dataset, the function could be used as follows;
 ``` {r version_example}
 GSE41197_v2 = getBCGEData("GSE41197", v=2)
+
 GSE41197_v2_expressions = assay(GSE41197_v2)
 v2_metadata = colData(GSE41197_v2)
 v2_feature_data = rowData(GSE41197_v2)
-
 ```
 ## Example 1: Plotting Expression Values
+
 In the following example, we demonstrate data exploration that can be done easily with the package. We first access the matrix of gene expression values. To make it easier to analyze, we convert it into a tibble and select the first 10 rows. We then used ggplot() to create a bar plot showing the gene expression levels for one sample across 10 genes.
 
 ```{r plot_example_part_2}
@@ -152,8 +163,8 @@ exp_tib = as_tibble(GSE41197_expression_data,
 exp_tib
 ```
 
-
 ## Example 2: Using Metadata
+
 In this example, we combine using both the metadata and the expression data to create a heat map of gene expression levels.<br>
 First, we load the data sets, turn them into tibbles, and extract both the metadata and expression data. We then filter the expression to only include the samples that are identified as stroma cells. Finally, we create two vectors with all the gene names in each tibble to set them up for comparison. 
 
@@ -207,7 +218,6 @@ GSE10797_stroma_expressions = GSE10797_exp %>%
     as_tibble(rownames = 'Ensembl_Gene_ID') %>%
     select(Ensembl_Gene_ID, all_of(GSE10797_stroma_samples)) %>% 
     filter(Ensembl_Gene_ID %in% common_genes)
-
 ```
 
 Finally, we combine the data into one tibble called combined_data. We make a new row called variance that calculates the variance across the 5 samples. We select the top 10 rows, those with greatest variance. We then use ggplot to create a heat map of the genes with the top variance, displayed below. 
@@ -235,10 +245,10 @@ top_variance_map = top_variance_genes %>%
     theme(axis.text.x = element_text(angle = 45, hjust = 1), 
           plot.title = element_text(hjust = 0.5, face = "bold"))
 top_variance_map
-
 ```
 
 ## Example 4: Using Feature Data
+
 In this final example, we use aspects of the feature data along with the expression data. <br> <br>
 
 First, we get the feature data and convert it to a tibble. We then filter this data for each data set to only include genes on chromosome 16. Similar to the last example, we also make a vector with the gene names the data sets have in common. 
@@ -267,7 +277,6 @@ GSE10797_gene_names = GSE10797_exp %>%
     as_tibble(rownames="Ensembl_Gene_ID") %>%
     pull(Ensembl_Gene_ID)
 
-
 common_genes = c()
 for (gene in GSE59772_gene_names) {
     if (gene %in% GSE10797_gene_names) {
@@ -276,7 +285,8 @@ for (gene in GSE59772_gene_names) {
 }
 ```
 
-Next, we filter the expression data to include only genes on chromosome 16, then filter again to only include genes the data sets have in common. We pivot and mutate to make the data ready for the boxplot. 
+Next, we filter the expression data to include only genes on chromosome 16, then filter again to only include genes the data sets have in common. We pivot and mutate to make the data ready for the boxplot.
+
 ``` {r chr16_boxplot_2}
 GSE10797_chr16_common = GSE10797_exp %>%
     as_tibble(rownames = 'Ensembl_Gene_ID') %>%
@@ -297,7 +307,8 @@ GSE59772_chr16_common = GSE59772_exp %>%
     mutate(Dataset = 'GSE59772')
 ```
 
-Finally, we combine the data sets using bind_rows() and read it into a ggplot. 
+Finally, we combine the data sets using bind_rows() and read it into a ggplot.
+
 ``` {r chr16_boxplot_3}
 combined_data = bind_rows(GSE10797_chr16_common, GSE59772_chr16_common) %>%
     ggplot(aes(x = Dataset, y = Expression_Level, fill = Dataset)) +
@@ -307,7 +318,6 @@ combined_data = bind_rows(GSE10797_chr16_common, GSE59772_chr16_common) %>%
          title = 'Gene Expression Levels in Chromosome 16') 
 combined_data
 ```
-
 
 # Session Info 
 

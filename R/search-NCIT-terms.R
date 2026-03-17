@@ -18,23 +18,22 @@ NCIT_identifiers <- c("10.5281/zenodo.17488901",
 #' Function that searches NCIT definitions file. 
 #' 
 #' Takes a term to search by and the type of the term. This could be the name of
-#'  the term itself, the associated code, the URI, or the general definition.
+#'  the term itself, the ontology's definition, the associated code, or the URI.
 #'  The function searches across all terms and returns matches
-#'   to the search with the name of the term, the URI, the code, and the 
-#'  definition. 
+#'   to the search with the term name, URI, code, and definition. 
 #' 
-#' @param term string to search df by.
-#' @param term_type type of term; Name, URI, Code, or Definition.
-#' @return a data frame with rows that match search term.
+#' @param String to search by.
+#' @param Ontology field to search: Name, URI, Code, or Definition.
+#' @return A tibble with a row for each matching ontology term.
 #' @examples searchOntologyTerms("Progesterone Receptor Status")
 #' @export 
 searchOntologyTerms <- function(term, term_type="Name") {
-    acceptable_terms <- c("Name", "URI", "Code", "Definition")
+    acceptable_terms <- c("Name", "Definition", "URI", "Code")
     
     if (!(term_type %in% acceptable_terms)) {
         stop(paste0(term_type, 
                     " is not an acceptable search term.",
-                    " Try: Name, URI, Code, or Definition"))
+                    " Try: ", paste(acceptable_terms, collapse=", ")))
     }
     
     def_path <- file.path(tempdir(), NCIT_identifiers[2])

@@ -1,14 +1,14 @@
 #' @importFrom zen4R ZenodoManager
 NULL
 
-#'  Function that creates a SummarizedExperiment object with breast cancer gene
+#' Function that creates a SummarizedExperiment object with breast cancer gene
 #'  expression data.
 #'  
-#'  Takes a name of the desired data set as a string, an optional file path for
-#'   the data to be saved to, and an optional version number. The function 
-#'   looks for the data either in the specified location or in a temporary 
-#'   directory. If the data is not found, it is downloaded. Returns the desired
-#'   data set in the form of a SummarizedExperiment object. 
+#' Accepts the ID of a desired dataset, an optional file path for
+#'  the data to be saved to, and an optional version number. The function 
+#'  looks for the data either in the specified location or in a temporary 
+#'  directory. If the data is not found, it is downloaded. Returns the desired
+#'  data set in the form of a SummarizedExperiment object. 
 #'  
 #' @param datasetID the name of the data set, passed as a string.
 #' @param cacheDirPath the optional file path to where the cache should be saved.

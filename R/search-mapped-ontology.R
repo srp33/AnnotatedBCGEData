@@ -6,21 +6,19 @@ utils::globalVariables(c(
     "NCIT_value_code"
 ))
 
-#' Function that searches breast cancer ontology terms mapped to data sets. 
+#' Function that retrieves breast cancer datasets based on mapped  ontology terms.
 #' 
-#' Takes a search code and whether to search terms (columns of a particular data
-#'  set) or values (values in columns of particular data set). Searches across 
-#' data sets, the term associated with it, the values 
-#' associated with it, and the terms and values as they were originally found in
-#'  the actual data. 
-#' Returns a data frame joined with the data set metadata. This shows the name 
-#' of the data set, the terms and values, and some metadata about where the data
-#'  came from. Users can then pass the names of the data sets to getBCGEData to 
-#' get the SummarizedExperiment objects. 
+#' Accepts ontology term code(s) and identifies datasets that have been annotated
+#'  with the code(s). The term code(s) may correspond either to a column within
+#'  a dataset or to value(s) in a column of a particular dataset.
+#'  Returns a tibble containing the datasets' metadata, including the name 
+#'  of the dataset, the ontology terms and values, and information about the
+#'  original data source. Users can then pass the dataset name(s) to the
+#'  getBCGEData function to obtain the data. 
 #' 
-#' @param code NCIT code that was found from searchOntologyTerms.
-#' @param term_type "field" (the column) or "value" (the data).
-#' @return a data frame from the searched file with data set metadata.
+#' @param code Ontology term code(s) to search for. These can be identied using the searchOntologyTerms function.
+#' @param term_type Either "field" (the column) or "value" (data value within a column).
+#' @return A tibble containing metadata about the identified datasets.
 #' @examples searchForDatasets("C16149")
 #' @export
 searchForDatasets <- function(code, term_type="field") {
