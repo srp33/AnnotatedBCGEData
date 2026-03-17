@@ -128,7 +128,7 @@ While the actual files are stored in the AnnotatedBCGEData cache that is created
 <br>
 The following is a simple example of creating an object and accessing the data.
 
-```{r example, eval = requireNamespace('AnnotatedBCGEData')}'
+```{r example, eval = requireNamespace('AnnotatedBCGEData')}
 GSE41197_SE = getBCGEData("GSE41197")
 GSE41197_expression_data = assay(GSE41197_SE)
 sample_metadata = colData(GSE41197_SE)

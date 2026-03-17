@@ -149,9 +149,6 @@ downloadZenFile <- function(conceptDOI, filepath, v=NULL) {
         
     }
     
-    if (!inherits(record, "ZenodoRecord")) {
-        stop(paste0("record is not a ZenodoRecord. it is a ", class(record), ". recCheck: ", recCheck))
-    }
     record$downloadFiles(path=filepath, quiet=TRUE)
     print(paste0("record is a ", class(record), ". recCheck is ", recCheck))
     return()
@@ -532,3 +529,7 @@ identifiers <- list(
                  'METABRIC_metadata.tsv')
     
 )
+
+get_identifiers <- function(identify=identifiers) {
+    return(identify)
+}

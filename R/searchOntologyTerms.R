@@ -44,17 +44,18 @@ searchOntologyTerms <- function(term, term_type="Name") {
     
     if (term_type == "Name") {
         df <- searchNames(term, NCIT_defs)
-        return(df)
     } else if (term_type == "URI") {
         df <- searchURIs(term, NCIT_defs) 
-        return(df)
     } else if (term_type == "Code") {
         df <- searchCodes(term, NCIT_defs)
-        return(df)
     } else {
         df <- searchDefinition(term, NCIT_defs)
-        return(df)
     }
+    
+    df <- df %>%
+        rename(Name = `Preferred Label`) %>%
+        rename(Code = code)
+    return(df)
 }
 
 

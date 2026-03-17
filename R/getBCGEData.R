@@ -12,16 +12,15 @@ NULL
 #'  
 #' @param datasetID the name of the data set, passed as a string.
 #' @param cacheDirPath the optional file path to where the cache should be saved.
-#' @param identifier list of identifiers, defaults to list included.
 #' @param v version of data to download, default to most recent.
 #' @return a SummarizedExperiment object for the data set.
 #' @examples getBCGEData("GSE41197")
 #' @export
-getBCGEData <- function(datasetID, cacheDirPath=tempdir(), identifier=identifiers, v=NULL) {
+getBCGEData <- function(datasetID, cacheDirPath=tempdir(), v=NULL) {
     if (cacheDirPath != tempdir()) {
         makeCache(cacheDirPath)
     }
-    
+    identifier <- get_identifiers()
     identifier_vec <- identifier[[datasetID]]
     
     version <- checkVersions(identifier_vec[1])
