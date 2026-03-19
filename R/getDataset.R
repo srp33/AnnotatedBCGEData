@@ -21,9 +21,9 @@ NULL
 #' @param cacheDirPath the optional file path to where the cache should be saved.
 #' @param v version of data to download, default to most recent.
 #' @return a SummarizedExperiment object for the data set.
-#' @examples getBCGEData("GSE41197")
+#' @examples getDataset("GSE41197")
 #' @export
-getBCGEData <- function(datasetID, cacheDirPath=tempdir(), v=NULL) {
+getDataset <- function(datasetID, cacheDirPath=tempdir(), v=NULL) {
     if (cacheDirPath != tempdir()) {
         makeCache(cacheDirPath)
     }

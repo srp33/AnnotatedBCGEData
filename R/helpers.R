@@ -1,4 +1,4 @@
-#' @importFrom dplyr %>% filter select distinct pull
+#' @importFrom dplyr %>% filter select distinct pull rename
 #' @importFrom BiocFileCache BiocFileCache
 #' @importFrom zen4R ZenodoManager ZenodoRecord
 #' @importFrom readr read_tsv
@@ -15,7 +15,13 @@ utils::globalVariables(c(
     'Ensembl_Gene_ID',
     'Entrez_Gene_ID',
     'Gene_Biotype',
-    'HGNC_Symbol'
+    'HGNC_Symbol',
+    'accession_id',
+    "NCIT_field_code",
+    "NCIT_value_code",
+    "NCIT_field",
+    "NCIT_values",
+    "dataset"
 ))
 
 
@@ -304,6 +310,30 @@ makeSummarizedExperiment <- function(expressions, features, meta) {
     )
     
     return(se)
+}
+
+## helper function that searches just the field codes
+searchFields <- function(code, df) {
+    df_searched <- filter(df, NCIT_field_code %in% code) %>%
+        select(dataset, NCIT_field, NCIT_field_code) %>%
+        rename(Dataset_ID=dataset) %>%
+        rename(Field=NCIT_field) %>%
+        rename(Field_Code=NCIT_field_code) %>%
+        distinct()
+    return (df_searched)
+}
+
+## helper function that searches just the value codes
+searchValues <- function(code, df) {
+    df_searched <- filter(df, NCIT_value_code %in% code) %>%
+        select(dataset, NCIT_field, NCIT_field_code, NCIT_values, NCIT_value_code) %>%
+        rename(Dataset_ID=dataset) %>%
+        rename(Field=NCIT_field) %>%
+        rename(Field_Code=NCIT_field_code) %>%
+        rename(Values=NCIT_values) %>%
+        rename(Value_Code=NCIT_value_code) %>%
+        distinct()
+    return (df_searched)
 }
 
 ## make list of identifiers

@@ -22,6 +22,11 @@ getDatasetMetadata <- function(datasets) {
     if (!file.exists(dataset_meta_path)) {
         downloadZenFile('10.5281/zenodo.17780657', tempdir())
     }
+    for (i in 1:length(datasets)) {
+        data <- datasets[i]
+        result <- ifelse(grepl("_", data), sub("_.*", "", data), data)
+        datasets <- c(datasets, result)
+    }
     dataset_meta <- read_tsv(dataset_meta_path) %>%
         select(accession_id, 
                publishing_platform, 

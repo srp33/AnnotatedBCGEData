@@ -67,7 +67,7 @@ library(AnnotatedBCGEData)
 library(SummarizedExperiment)
 ```
 
-This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function that researchers typically use is `searchOntologyTerms`. Its purpose is to help users identify ontology terms that have been used to annotate the data. It accepts two parameters: a string to search by and what should be searched. The second parameter allows the user to indicate whether the string is expected to match the "Name" (default), "Definition", "URI", or "Code" of the ontology term(s). The function returns a tibble with information about the matching terms. The user reviews the matching term(s) and retrieves the corresponding ontology code(s), which can then be passed to the `searchForDatasets`function, which returns all datasets associated with the term(s).
+This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function that researchers typically use is `searchOntologyTerms`. Its purpose is to help users identify ontology terms that have been used to annotate the data. It accepts two parameters: a string to search by and what should be searched. The second parameter allows the user to indicate whether the string is expected to match the "Name" (default), "Definition", "URI", or "Code" of the ontology term(s). The function returns a tibble with information about the matching terms. The user reviews the matching term(s) and retrieves the corresponding ontology code(s), which can then be passed to the `searchForDatasetFields`function or `searchForDatasetValues` function, which returns all datasets associated with the term(s).
 
 ## Searching for ontology terms
 
@@ -77,7 +77,7 @@ In this example, we are using the `searchOntologyTerms` function to search for o
 searchOntologyTerms("Progesterone Receptor Status")
 ```
 
-This function returns a tibble containing details about ontology terms with a name that matches this string. Subsequently, the user can pass any or all of the ontology term codes in this tibble to the `searchForDatasets` function.
+This function returns a tibble containing details about ontology terms with a name that matches this string. Subsequently, the user can pass any or all of the ontology term codes in this tibble to the `searchForDatasetFields` or `searchForDatasetValues` functions.
 
 In this similar example, we search for ontology terms that match the shorter (and lowercase) string, "receptor status". 
 
@@ -97,16 +97,18 @@ The function returns a tibble containing details about ontology terms related to
 
 ## Identifying datasets associated with specific ontology terms
 
-After we have identified ontology terms for the research topic we are interested in, we can identify datasets associated with those terms. The `searchForDatasets` function accepts two parameters: ontology term code(s) and where to search for mappings between the code(s) and the data. The codes are unique identifiers associated with ontology terms (typically found using the `searchOntologyTerms` function). For the second parameter, the options are "field" (default) or "value". When "field" is specified, the function searches for fields (column names) that have been mapped to the specified code(s). When "value" is specified, the function searches for particular values in any column in a dataset that have been mapped to the specified code(s). The `searchForDatasets` function returns a tibble with metadata about data sets that are associated with the ontology code(s). The names of these datasets can then be passed to the `getBCGEData` function to retrieve the actual data.
+After we have identified ontology terms for the research topic we are interested in, we can identify datasets associated with those terms. The `searchForDatasetFields` function accepts the code for the ontology term(s) to search by to find  mappings between the code(s) and the data. The codes are unique identifiers associated with ontology terms (typically found using the `searchOntologyTerms` function). The `searchForDatasetFields` function returns a tibble with the names of the associated datasets, the terms that were searched, and the associated codes. The names of these datasets can then be passed to the `getDataset` function to retrieve the actual data.
 
-In the previous examples, we searched for ontology terms related to progesterone receptor status. One of the matching terms had a name of "Progesterone Receptor Status" and a code of "C16149". In the following example, we are searching for datasets with a column (field) name that has been mapped to this ontology term. This will help us identify datasets where the researchers who shared the data have recorded this information. We specify the term's code when invoking the `searchForDatasets` function. We leave the `term_type` parameter out because the default is "field".
+Similarly, the `searchDatasetValues` function accepts the code for the ontology term(s) that map to values that can be found within the data, like "Progesterone Receptor Positive". This function searches across the datasets and returns a tibble with matching datasets, the field that was associated with that value and its code, and the searched value and code. The datasets can then be passed to `getDataset` to retrieve the data.
+
+In the previous examples, we searched for ontology terms related to progesterone receptor status. One of the matching terms had a name of "Progesterone Receptor Status" and a code of "C16149". In the following example, we are searching for datasets with a column (field) name that has been mapped to this ontology term. This will help us identify datasets where the researchers who shared the data have recorded this information. We specify the term's code when invoking the `searchForDatasetFields` function. We then use `searchForDatasetValues` to search for the datasets that are associated with the related value. 
 
 ```{r PR_example_p2}
-searchForDatasets("C16149")
+searchForDatasetFields(c("C16149"))
 ```
 
 ```{r PR_example_p3}
-searchForDatasets("C15496", term_type = "value")
+searchForDatasetValues(c("C15496"))
 ```
 
 ## Filtering data by dataset-level metadata
@@ -118,7 +120,7 @@ getDatasetMetadata(c("GSE41197", "GSE59772", "GSE10797"))
 
 # Making SummarizedExperiment Objects
 
-Downloading this package does not download the data sets onto the user's machine. To load the SummarizedExperiment object for a data set included in AnnotatedBCGEData, the user chooses the name of the data set and passes it as string to the function getBCGEData. This function downloads the data and creates the SummarizedExperiment object that is accessible to the user. <br>
+Downloading this package does not download the data sets onto the user's machine. To load the SummarizedExperiment object for a data set included in AnnotatedBCGEData, the user chooses the name of the data set and passes it as string to the function getDataset. This function downloads the data and creates the SummarizedExperiment object that is accessible to the user. <br>
 <br>
 The SummarizedExperiment object for each data set includes 3 matrices. The first, which we load as expression_data, is a matrix with the samples as columns and genes as rows. The Ensembl gene ID is used as the row names. The data in the actual matrix is the expression level of the gene for the sample. <br>
 <br>
@@ -126,29 +128,29 @@ The second matrix we load as sample_metadata. This is information about the samp
 <br>
 The third matrix we load as feature_data. This is the information about the genes that were tested for each sample. This includes information like the chromosome the gene is located on, the Entrez gene ID, and the gene name. The genes are the rows and the information about the samples is in the columns.
 
-## getBCGEData
-The `getBCGEData` function returns the SummarizedExperiment object for the requested data set. The function creates a cache (using BiocFileCache) on the user's machine. All downloaded files are saved to this cache so that files do not need to be redownloaded every time the R session is restarted. By default, the most recent version of the data that is found in the Zenodo repository is downloaded. When called for the first time, the user will be prompted to select or enter a location for the cache to be saved.<br> 
+## getDataset
+The `getDataset` function returns the SummarizedExperiment object for the requested data set. The function creates a cache (using BiocFileCache) on the user's machine. All downloaded files are saved to this cache so that files do not need to be redownloaded every time the R session is restarted. By default, the most recent version of the data that is found in the Zenodo repository is downloaded. When called for the first time, the user will be prompted to select or enter a location for the cache to be saved.<br> 
 <br>
-We understand the importance of data versioning and reproducibility. For that reason, there is additional functionality included in the getBCGEData function that will allow the user to specify which version of the data they want to download or use. The argument `v` to the function takes an integer that is used to find the specified version. If that version does not exist or needs to be downloaded, the user will see a message in the R console. If `v` is not specified, the most recent version is downloaded and used. <br>
+We understand the importance of data versioning and reproducibility. For that reason, there is additional functionality included in the getDataset function that will allow the user to specify which version of the data they want to download or use. The argument `v` to the function takes an integer that is used to find the specified version. If that version does not exist or needs to be downloaded, the user will see a message in the R console. If `v` is not specified, the most recent version is downloaded and used. <br>
 <br>
-While the actual files are stored in the AnnotatedBCGEData cache that is created, for reasons of data version checks, the SummarizedExperiment objects are not stored in the cache and need to be created again when the R session is restarted. This is a fairly quick process as the data already exists. This requires nothing more than calling `getBCGEData` on the desired data set at the beginning of every session.<br>
+While the actual files are stored in the AnnotatedBCGEData cache that is created, for reasons of data version checks, the SummarizedExperiment objects are not stored in the cache and need to be created again when the R session is restarted. This is a fairly quick process as the data already exists. This requires nothing more than calling `getDataset` on the desired data set at the beginning of every session.<br>
 <br>
 The following is a simple example of creating an object and accessing the data.
 
 ```{r example, eval = requireNamespace('AnnotatedBCGEData')}
-GSE41197_SE = getBCGEData("GSE41197")
+GSE41197_SE = getDataset("GSE41197")
 GSE41197_expression_data = assay(GSE41197_SE)
 sample_metadata = colData(GSE41197_SE)
 feature_data = rowData(GSE41197_SE)
 ```
 
-TODO: if the user specifies a filepath to save the data to when calling `getBCGEData`. If no filepath is specified, the data will be saved to a temporary directory that will refresh when the R session is restarted.
+TODO: if the user specifies a filepath to save the data to when calling `getDataset`. If no filepath is specified, the data will be saved to a temporary directory that will refresh when the R session is restarted.
 TODO: The data can optionally be stored in a persistent cache on the user's machine. This caching process avoids having to re-download the data across R sessions.
-TODO: At the time of package development, the Zenodo API limits the number of requests per minute to 30. Because of this, we have found it necessary to allow breaks between successive calls to `getBCGEData`. The API limitations should not cause problems for the user, but users should be aware that this may cause delays when downloading large amounts of data.
+TODO: At the time of package development, the Zenodo API limits the number of requests per minute to 30. Because of this, we have found it necessary to allow breaks between successive calls to `getDataset`. The API limitations should not cause problems for the user, but users should be aware that this may cause delays when downloading large amounts of data.
 
 Similarly, if the user wanted to access an older version of the same dataset, the function could be used as follows;
 ``` {r version_example}
-GSE41197_v2 = getBCGEData("GSE41197", v=2)
+GSE41197_v2 = getDataset("GSE41197", v=2)
 
 GSE41197_v2_expressions = assay(GSE41197_v2)
 v2_metadata = colData(GSE41197_v2)
@@ -176,8 +178,8 @@ In this example, we combine using both the metadata and the expression data to c
 First, we load the data sets, turn them into tibbles, and extract both the metadata and expression data. We then filter the expression to only include the samples that are identified as stroma cells. Finally, we create two vectors with all the gene names in each tibble to set them up for comparison. 
 
 ``` {r heat_map, message=FALSE, warning=FALSE}
-GSE10797_SE <- getBCGEData("GSE10797")
-GSE59772_SE <- getBCGEData("GSE59772")
+GSE10797_SE <- getDataset("GSE10797")
+GSE59772_SE <- getDataset("GSE59772")
 
 
 GSE59772_exp <- assay(GSE59772_SE)
