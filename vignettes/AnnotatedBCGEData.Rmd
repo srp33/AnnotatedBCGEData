@@ -39,7 +39,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("AnnotatedBCGEData")
 ```
 
-Or download the development version:
+Or install the development version:
 
 ```{r install_dev, eval = FALSE}
 BiocManager::install("srp33/AnnotatedBCGEData")
@@ -53,7 +53,7 @@ library(AnnotatedBCGEData)
 
 # Data retrieval
 
-Attempting to store all of the data within this package would be infeasible due to the data's size. Thus, we are storing the data remotely and accessing it when requested. Once a user has identified dataset(s) to work with, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. Alternatively, if they prefer, users can access the files directly from Zenodo in TSV format. They can also find details about the data by exploring our Zenodo repository.
+Attempting to store all of the data within this package would be infeasible due to the data's size. Thus, we store the data remotely. Once a user has identified dataset(s) to work with, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. (Alternatively, if they prefer, users can access the files directly from Zenodo in TSV format.) They can also find details about the data by exploring our Zenodo repository.
 
 # Filtering datasets by ontology terms
 
@@ -67,19 +67,19 @@ library(AnnotatedBCGEData)
 library(SummarizedExperiment)
 ```
 
-This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function that researchers typically use is `searchOntologyTerms`. Its purpose is to help users identify ontology terms that have been used to annotate the data. It accepts two parameters: a string to search by and what should be searched. The second parameter allows the user to indicate whether the string is expected to match the "Name" (default), "Definition", "URI", or "Code" of the ontology term(s). The function returns a tibble with information about the matching terms. The user reviews the matching term(s) and retrieves the corresponding ontology code(s), which can then be passed to the `searchForDatasets`function, which returns all datasets associated with the term(s).
-
 ## Searching for ontology terms
 
-In this example, we are using the `searchOntologyTerms` function to search for ontology terms that match the string, "Progesterone Receptor Status". 
+This package contains functions designed to help users filter the included datasets based on ontology terms we have associated with them. The first function that researchers typically use is `searchOntologyTerms`. Its purpose is to help users identify ontology terms with which the data have been annotated. It accepts two parameters: a string to search for and what should be searched. The second parameter allows the user to indicate whether the string is expected to match the "Name" (default), "Definition", "URI", or "Code" of the ontology term(s). The function returns a tibble with information about the matching ontology terms. The user reviews the matching term(s) and retrieves the corresponding ontology code(s) from the tibble; these can then be passed to the `searchForDatasetsByField` or `searchForDatasetsByValue` functions.
+
+In the following example, we are using the `searchOntologyTerms` function to search for ontology terms that match the string, "Progesterone Receptor Status". Because we did not specify a value for the `term_type` argument, the default of "Name" is used.
 
 ```{r PR_example}
 searchOntologyTerms("Progesterone Receptor Status")
 ```
 
-This function returns a tibble containing details about ontology terms with a name that matches this string. Subsequently, the user can pass any or all of the ontology term codes in this tibble to the `searchForDatasets` function.
+This function returns a tibble containing details about ontology terms having a name that matches the search string.
 
-In this similar example, we search for ontology terms that match the shorter (and lowercase) string, "receptor status". 
+In this similar example, we are searching for ontology terms that match the shorter (and lowercase) string, "receptor status".
 
 ```{r RS_example}
 searchOntologyTerms("receptor status")
@@ -87,13 +87,19 @@ searchOntologyTerms("receptor status")
 
 The function returns a tibble containing details about ontology terms related to both progesterone receptor status and estrogen receptor status.
 
-Alternatively, we can search the text within ontology term *definitions*. In this example, we are searching for definitions matching the string, "progesterone". 
+The National Cancer Institute Thesaurus provides synonyms for most terms. When a user searches by "Name" with the `searchOntologyTerms` function, it automatically checks against synonyms as well. This is helpful when the search text does not match the "preferred name" of an ontology term but instead matches a synonym. For example, we could use the following code to search for ontology terms related to progesterone receptor status using a synonym that is commonly used in medical contexts.
 
 ```{r P_example}
-searchOntologyTerms("progesterone", term_type = "Definition")
+searchOntologyTerms("PgR Status")
 ```
 
-The function returns a tibble containing details about ontology terms related to progesterone, including those related to progesterone receptor status and breast-cancer subtypes that are determined based on progesterone receptor status (Basal-Like Breast Carcinoma and Triple-Negative Breast Carcinoma).
+Another alternative is to search the text within ontology term *definitions*. In this example, we are searching for definitions matching the string, "immunohistochemical". Searching by definitions is helpful when you don’t know the exact term but understand the concept you’re looking for. It lets you find the right match based on meaning rather than specific words.
+
+```{r P_example}
+searchOntologyTerms("immunohistochemical", term_type = "Definition")
+```
+
+In this case, the function returns a tibble containing details about ontology terms for concepts that use immunohistochemical methods for profiling. This includes terms related to progesterone receptor status as well as other cell-surface markers.
 
 ## Identifying datasets associated with specific ontology terms
 
@@ -110,6 +116,7 @@ searchForDatasets("C15496", term_type = "value")
 ```
 
 ## Filtering data by dataset-level metadata
+
 In addition to the ontology, users can also decide which data sets to use based on the metadata about the collection of the data. This is accessible with the function `getDatasetMetadata` and passing a vector of data set IDs. Below is an example of using this function.
 
 ```{r get_datameta}
