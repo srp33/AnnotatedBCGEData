@@ -9,12 +9,11 @@ utils::globalVariables(c(
     "overall_design")
 )
 
-
-#' A function that takes a vector of dataset IDs and returns a tibble with 
-#'  information about how the data was collected and the overall study.
+#' A function that accepts a vector of dataset IDs and returns a tibble with 
+#'  information about the overall study.
 #'  
-#' @param datasets is a vector of strings of the dataset IDs to search for.
-#' @return Tibble with information about the experiment that produced the data.
+#' @param datasets A vector of strings consisting of dataset identifier(s).
+#' @return Tibble with metadata.
 #' @examples getDatasetMetadata(c("GSE41197", "GSE10797"))
 #' @export 
 getDatasetMetadata <- function(datasets) {
