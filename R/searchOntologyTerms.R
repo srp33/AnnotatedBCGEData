@@ -14,16 +14,19 @@ utils::globalVariables(c(
 NCIT_identifiers <- c("10.5281/zenodo.17488901", 
                       "NCIT_definitions_filtered.tsv.gz")
 
-
-#' Function that searches NCIT definitions file. 
+#' Function that searches for ontology terms.
 #' 
-#' Takes a term to search by and the type of the term. This could be the name of
-#'  the term itself, the ontology's definition, the associated code, or the URI.
-#'  The function searches across all terms and returns matches
-#'   to the search with the term name, URI, code, and definition. 
+#' Accepts a string to search by and which ontology field to search 
+#'   ontology terms associated with that string. This could
+#'   be the name of the term itself, the term's definition,
+#'   the unique identifier (code) associated with that term,
+#'   or its URL. The function returns a tibble with information
+#'   about the matching ontology term(s).
 #' 
-#' @param String to search by.
-#' @param Ontology field to search: Name, URI, Code, or Definition.
+#' @param term String to search by.
+#' @param term_type Ontology field to search: Name, URI, Code, or
+#'   Definition. When Name (default) is provided, it also searches
+#'   based on synonyms.
 #' @return A tibble with a row for each matching ontology term.
 #' @examples searchOntologyTerms("Progesterone Receptor Status")
 #' @export 
