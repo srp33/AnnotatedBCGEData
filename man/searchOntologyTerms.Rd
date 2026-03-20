@@ -2,23 +2,27 @@
 % Please edit documentation in R/searchOntologyTerms.R
 \name{searchOntologyTerms}
 \alias{searchOntologyTerms}
-\title{Function that searches NCIT definitions file.}
+\title{Function that searches for ontology terms.}
 \usage{
 searchOntologyTerms(term, term_type = "Name")
 }
 \arguments{
-\item{String}{to search by.}
+\item{term}{String to search by.}
 
-\item{Ontology}{field to search: Name, URI, Code, or Definition.}
+\item{term_type}{Ontology field to search: Name, URI, Code, or
+Definition. When Name (default) is provided, it also searches
+based on synonyms.}
 }
 \value{
 A tibble with a row for each matching ontology term.
 }
 \description{
-Takes a term to search by and the type of the term. This could be the name of
-the term itself, the ontology's definition, the associated code, or the URI.
-The function searches across all terms and returns matches
-to the search with the term name, URI, code, and definition.
+Accepts a string to search by and which ontology field to search
+ontology terms associated with that string. This could
+be the name of the term itself, the term's definition,
+the unique identifier (code) associated with that term,
+or its URL. The function returns a tibble with information
+about the matching ontology term(s).
 }
 \examples{
 searchOntologyTerms("Progesterone Receptor Status")

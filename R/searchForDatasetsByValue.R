@@ -8,7 +8,7 @@
 #' 
 #' @param code is an ontology term code retrieved using the searchOntologyTerms function.
 #' @return a tibble providing information about any identified datasets.
-#' @examples searchForDatasetsByValue("C16149")
+#' @examples searchForDatasetsByValue("C15496")
 #' @export
 searchForDatasetsByValue <- function(code) {
     filtered_path <- file.path(tempdir(), 'filtered_mapped_data.tsv.gz')

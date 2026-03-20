@@ -3,32 +3,29 @@
 \name{getDataset}
 \alias{getDataset}
 \title{Function that creates a SummarizedExperiment object with breast cancer gene
-expression data.
-
-Accepts the ID of a desired dataset, an optional file path for
+expression data. Accepts the identifier of a desired dataset, an optional file path for
 the data to be saved to, and an optional version number. The function
 looks for the data either in the specified location or in a temporary
-directory. If the data is not found, it is downloaded. Returns the desired
-data set in the form of a SummarizedExperiment object.}
+directory. If the data is not found, it is downloaded. It returns the desired
+dataset in the form of a SummarizedExperiment object.}
 \usage{
 getDataset(datasetID, cacheDirPath = tempdir(), v = NULL)
 }
 \arguments{
-\item{datasetID}{the name of the data set, passed as a string.}
+\item{datasetID}{The identifier of the data set.}
 
-\item{cacheDirPath}{the optional file path to where the cache should be saved.}
+\item{cacheDirPath}{The optional directory path to where the cache should be saved.}
 
-\item{v}{version of data to download, default to most recent.}
+\item{v}{Version of data to download. Defaults to most recent.}
 }
 \value{
-a SummarizedExperiment object for the data set.
+A SummarizedExperiment object for the dataset.
 }
 \description{
 This function provides the ability for users to save the data to a cache so
 it persists between R sessions. This can be done by passing a directory path
-to the function every time it is called. All data will be stored in this
-directory. Each dataset will have a subdirectory containing the data. If no
-filepath is provided for the cache, the data will be stored in a temporary
+to the function every time it is called. All data are stored in this
+directory. If no path is provided for the cache, the data is stored in a temporary
 directory that refreshes with each R session.
 }
 \examples{

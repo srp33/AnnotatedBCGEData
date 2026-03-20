@@ -2,20 +2,20 @@
 % Please edit documentation in R/getDatasetMetadata.R
 \name{getDatasetMetadata}
 \alias{getDatasetMetadata}
-\title{A function that takes a vector of dataset IDs and returns a tibble with
-information about how the data was collected and the overall study.}
+\title{A function that accepts a vector of dataset IDs and returns a tibble with
+information about the overall study.}
 \usage{
 getDatasetMetadata(datasets)
 }
 \arguments{
-\item{datasets}{is a vector of strings of the dataset IDs to search for.}
+\item{datasets}{A vector of strings consisting of dataset identifier(s).}
 }
 \value{
-Tibble with information about the experiment that produced the data.
+Tibble with metadata.
 }
 \description{
-A function that takes a vector of dataset IDs and returns a tibble with
-information about how the data was collected and the overall study.
+A function that accepts a vector of dataset IDs and returns a tibble with
+information about the overall study.
 }
 \examples{
 getDatasetMetadata(c("GSE41197", "GSE10797"))
