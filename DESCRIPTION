@@ -1,5 +1,5 @@
 Package: AnnotatedBCGEData
-Title: 100+ Breast Cancer Gene Expression Data sets
+Title: 100+ Curated Breast Cancer Gene Expression Data sets
 Version: 0.99.0
 Date: 2025-10-16
 Authors@R: 
@@ -13,7 +13,8 @@ Authors@R:
         email = "stephen_piccolo@byu.edu", 
         role = "cre")
     )
-Description: Package that gives users access to 100+ tidied data sets from 
+Description: Package that provides easy access to 100+ tidied 
+    and curated gene-expression datasets obtained from 
     public data repositories in the form of SummarizedExperiment objects. 
 License: file LICENSE
 URL: https://github.com/srp33/AnnotatedBCGEData

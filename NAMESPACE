@@ -2,8 +2,8 @@
 
 export(getDataset)
 export(getDatasetMetadata)
-export(searchForDatasetFields)
-export(searchForDatasetValues)
+export(searchForDatasetsByField)
+export(searchForDatasetsByValue)
 export(searchOntologyTerms)
 importFrom(BiocFileCache,BiocFileCache)
 importFrom(SummarizedExperiment,SummarizedExperiment)

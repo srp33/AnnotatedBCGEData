@@ -53,9 +53,9 @@ library(AnnotatedBCGEData)
 
 # Data retrieval
 
-Attempting to store all of the data within this package would be infeasible due to the data's size. Thus, we store the data remotely. Once a user has identified dataset(s) to work with, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. (Alternatively, if they prefer, users can access the files directly from Zenodo in TSV format.) They can also find details about the data by exploring our Zenodo repository.
+Attempting to store all of the data within this package would be infeasible due to the data's size. Thus, we store the data remotely. Once a user has identified dataset(s) to analyze, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. (If they prefer, researchers can find details about the data and access the files directly by exploring our Zenodo repository.)
 
-# Filtering datasets by ontology terms
+## Searching for ontology terms
 
 ```{r load_packages, include = FALSE}
 library(ggplot2)
@@ -67,12 +67,9 @@ library(AnnotatedBCGEData)
 library(SummarizedExperiment)
 ```
 
-<<<<<<< HEAD
-=======
-This package contains functions designed to help users filter the included data sets based on their associated ontology terms. The first function that researchers typically use is `searchOntologyTerms`. Its purpose is to help users identify ontology terms that have been used to annotate the data. It accepts two parameters: a string to search by and what should be searched. The second parameter allows the user to indicate whether the string is expected to match the "Name" (default), "Definition", "URI", or "Code" of the ontology term(s). The function returns a tibble with information about the matching terms. The user reviews the matching term(s) and retrieves the corresponding ontology code(s), which can then be passed to the `searchForDatasetFields`function or `searchForDatasetValues` function, which returns all datasets associated with the term(s).
+This package contains functions designed to help users filter the included datasets based on their associated ontology terms. The first function that researchers typically use is `searchOntologyTerms`. Its purpose is to help users identify ontology terms mapped to the data. It accepts two parameters: a string to search by and what should be searched. The second parameter allows the user to indicate whether the string is expected to match the "Name" (default), "Definition", "URI", or "Code" of the ontology term(s). The function returns a tibble with information about the matching terms. The user reviews the matching term(s) and retrieves the corresponding ontology code(s), which can then be passed to the `searchForDatasetsByField` function or `searchForDatasetsByValue` function, which returns all datasets associated with the term(s).
 
->>>>>>> 44827543fd4bba8aa9621d115747da3e87e18591
-## Searching for ontology terms
+
 
 This package contains functions designed to help users filter the included datasets based on ontology terms we have associated with them. The first function that researchers typically use is `searchOntologyTerms`. Its purpose is to help users identify ontology terms with which the data have been annotated. It accepts two parameters: a string to search for and what should be searched. The second parameter allows the user to indicate whether the string is expected to match the "Name" (default), "Definition", "URI", or "Code" of the ontology term(s). The function returns a tibble with information about the matching ontology terms. The user reviews the matching term(s) and retrieves the corresponding ontology code(s) from the tibble; these can then be passed to the `searchForDatasetsByField` or `searchForDatasetsByValue` functions.
 
