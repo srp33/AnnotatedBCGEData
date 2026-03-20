@@ -53,7 +53,7 @@ library(AnnotatedBCGEData)
 
 # Data retrieval
 
-Attempting to store all of the data within this package would be infeasible due to the data's size. Thus, we store the data remotely. Once a user has identified dataset(s) to analyze, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. (If they prefer, researchers can find details about the data and access the files directly by exploring our Zenodo repository.)
+Attempting to store all of the data within this package would be infeasible due to the data's size. Thus, we store the data remotely. Once a user has identified dataset(s) to analyze, our package retrieves the data from a public [Zenodo](https://zenodo.org/communities/annnotatedbcgedata/records) repository. (If they prefer, researchers can find details about the data and access the files directly by exploring our Zenodo repository with a Web browser.)
 
 ## Searching for ontology terms
 
@@ -67,7 +67,7 @@ library(AnnotatedBCGEData)
 library(SummarizedExperiment)
 ```
 
-This package contains functions designed to help users filter the included datasets based on their associated ontology terms. The first function that researchers typically use is `searchOntologyTerms`. Its purpose is to help users identify ontology terms mapped to the data. It accepts two parameters: a string to search by and what should be searched. The second parameter allows the user to indicate whether the string is expected to match the "Name" (default), "Definition", "URI", or "Code" of the ontology term(s). The function returns a tibble with information about the matching terms. The user reviews the matching term(s) and retrieves the corresponding ontology code(s), which can then be passed to the `searchForDatasetsByField` function or `searchForDatasetsByValue` function, which return information about datasets associated with the term(s).
+This package contains functions designed to help users filter the included datasets based on their associated ontology terms. The first function that researchers typically use is `searchOntologyTerms`. Its purpose is to help users identify ontology terms mapped to the data. It accepts two parameters: a string to search by and what should be searched. The second parameter allows the user to indicate whether the string is expected to match the "Name" (default), "Definition", "URI", or "Code" of the ontology term(s). The function returns a tibble with information about the matching terms. The user reviews the matching term(s) and retrieves the corresponding ontology code(s), which can then be passed to the `searchForDatasetsByField` or `searchForDatasetsByValue` functions, which return information about datasets associated with the term(s).
 
 In the following example, we are using the `searchOntologyTerms` function to search for ontology terms that match the string, "Progesterone Receptor Status". Because we did not specify a value for the `term_type` argument, the default of "Name" is used.
 
@@ -75,7 +75,7 @@ In the following example, we are using the `searchOntologyTerms` function to sea
 searchOntologyTerms("Progesterone Receptor Status")
 ```
 
-In this similar example, we are searching for ontology terms that match the shorter (and lowercase) string, "receptor status".
+In the following similar example, we are searching for ontology terms that match the shorter (and lowercase) string, "receptor status".
 
 ```{r RS_example}
 searchOntologyTerms("receptor status")
@@ -89,21 +89,21 @@ The National Cancer Institute Thesaurus provides synonyms for most terms. When a
 searchOntologyTerms("PgR Status")
 ```
 
-Another alternative is to search ontology term *definitions*. Searching by definitions is helpful when you don’t know the exact term but understand the concept you’re looking for. In this example, we are searching for definitions matching the string, "immunohistochemical". 
+Another alternative is to search ontology term *definitions*. This is helpful when you don’t know the exact term but understand the concept you’re looking for. In this example, we are searching for definitions matching the string, "immunohistochemical". 
 
 ```{r P_example}
 searchOntologyTerms("immunohistochemical", term_type = "Definition")
 ```
 
-In this case, the function returns a tibble containing details about ontology terms for concepts that use immunohistochemical methods for profiling. This includes terms related to progesterone receptor status as well as other cell-surface markers.
+In this case, the function returns a tibble containing details about ontology terms for concepts related to using immunohistochemical methods for profiling. This includes terms related to progesterone receptor status as well as other cell-surface markers.
 
 ## Identifying datasets associated with specific ontology terms
 
-After we have identified ontology terms for the research topic we wish to study, we can identify datasets associated with those terms. The `searchForDatasetsByField` function accepts the code for an ontology term to search by. This code is the unique identifier associated with an ontology terms (typically found using the `searchOntologyTerms` function). The `searchForDatasetsByField` function checks the ontology terms associated with metadata columns (fields) returns a tibble with the identifier(s) of the associated dataset(s), the terms that were searched, and the associated codes. The  dataset identifiers can then be passed to the `getDataset` function to retrieve the data.
+After we have identified ontology terms for the research topic we wish to study, we can identify datasets associated with those terms. The `searchForDatasetsByField` function accepts codes for ontology terms. Each of these codes should be a unique identifier associated with an ontology term (typically found using the `searchOntologyTerms` function). The `searchForDatasetsByField` function checks the ontology terms associated with metadata columns (fields) and returns a tibble with the identifier(s) of the associated dataset(s), the names of columns that have been mapped to any of the terms, and the associated codes. The  dataset identifiers can then be passed to the `getDataset` function to retrieve the data.
 
-Similarly, the `searchForDatasetsByValue` function accepts the code for an ontology term that maps to values within a given column (field). The function searches across the datasets and returns a tibble with information about the matching datasets. The dataset identifiers can then be passed to the `getDataset` function to retrieve the data.
+Similarly, the `searchForDatasetsByValue` function accepts codes for ontology terms that have been mapped to values within a given column (field). The function searches across the datasets and returns a tibble with information about the matching datasets. The dataset identifiers can then be passed to the `getDataset` function to retrieve the data.
 
-In the previous examples, we searched for ontology terms related to progesterone receptor status. One of the matching terms had a name of "Progesterone Receptor Status" and a code of "C16149". We also identified "C16150" as the code associated with the "Estrogen Receptor Status" ontology term. In the following example, we are using the `searchForDatasetsByField` function to search for datasets with a column (field) that has been mapped to either of these ontology terms. This function returns a tibble indicating the dataset identifier, 
+In the previous examples, we searched for ontology terms related to progesterone receptor status. One of the matching terms used "Progesterone Receptor Status" as its name "C16149" as its code. We also identified "C16150" as the code associated with "Estrogen Receptor Status." In the following example, we are using the `searchForDatasetsByField` function to search for datasets with a column (field) that has been mapped to either of these ontology terms.
 
 ```{r PR_example_p2}
 searchForDatasetsByField(c("C16149", "C16150"))
@@ -117,7 +117,7 @@ searchForDatasetsByValue("C15496")
 
 ## Obtaining dataset-level metadata
 
-In addition to the ontology, users can decide which datasets to analyze based on metadata about the datasets. This is possible using the `getDatasetMetadata` function, which accepts a vector of dataset identifiers. Below is an example.
+In addition to using the ontology, users can decide which datasets to analyze based on metadata about the datasets. This is possible using the `getDatasetMetadata` function, which accepts a vector of dataset identifiers. Below is an example.
 
 ```{r get_datameta}
 getDatasetMetadata(c("GSE41197", "GSE59772", "GSE10797"))
@@ -125,10 +125,10 @@ getDatasetMetadata(c("GSE41197", "GSE59772", "GSE10797"))
 
 # Obtaining gene-expression data (as SummarizedExperiment objects)
 
-Installing our package does not download the datasets themselves. The data files are stored in a Zenodo repository and retrieved on demand. To obtain data, use the getDataset function, which stores the data and metadata in a SummarizedExperiment object.
+Installing our package does not download the datasets themselves. The data files are stored in a Zenodo repository and retrieved on demand. To obtain data, use the `getDataset` function, which stores the data and metadata in a `SummarizedExperiment` object.
 <br>
 <br>
-The SummarizedExperiment object for each dataset includes 3 items. One is the gene-expression data, a matrix with samples as columns and genes as rows. Ensembl gene identifiers are used as row names. Each data value is the expression level for its respective sample and gene. Second is the sample metadata, such as patient demographics and sample details. Each row represents a sample, and each column represents a different metadata variable. Third is feature data—information about the genes that were profiled for each sample. Each row represents a gene, providing information like the Entrez gene ID, gene symbol, and chromosome identifier.
+The `SummarizedExperiment` object for each dataset includes 3 items. One is the gene-expression data, a numeric matrix with samples as columns and genes as rows. Ensembl gene identifiers are used as row names. Each data value is the expression level for its respective sample and gene. Second is the sample metadata, which often includes patient demographics and sample details. Each row represents a sample, and each column represents a different metadata variable. Third is feature metadata: information about the genes that were profiled for each sample. Each row represents a gene and provides information like the Entrez gene ID, gene symbol, and chromosome identifier.
 
 ```{r example, eval = requireNamespace('AnnotatedBCGEData')}
 GSE41197_SE = getDataset("GSE41197")
@@ -138,13 +138,13 @@ sample_metadata = colData(GSE41197_SE)
 feature_data = rowData(GSE41197_SE)
 ```
 
-The `getDataset` function creates a cache (using BiocFileCache) on the user's machine. All downloaded files are saved to this cache so that files do not need to be re-downloaded every time an R session is restarted. If a new R session is started and the cached files are still present, the SummarizedExperiment objects are recreated using the cached files. The `cacheDirPath` parameter allows the user to customize this location.
+The `colData` and `rowData` functions of the `SummarizedExperiment` class return specialized data structures. These can be easily converted to data frames using `as.data.frame`. However, converting directly to the `tibble` type is undesirable because it removes the row names.
 
-In some cases, multiple versions of a given dataset are available on Zenodo. The `getDataset` function allows the user to specify which version of the data to use. By default, the most recent version of the data is downloaded. The `v` argument accepts an integer specifying the version. If that version does not exist or needs to be downloaded, a message will be displayed.
+The `getDataset` function creates a cache (using `BiocFileCache`) on the user's machine. All downloaded files are saved to this cache so that files do not need to be re-downloaded when the same dataset is retrieved. By default, the cache location is set using `tempdir()`. This directory is removed when the R session ends. Therefore, the user may specify an alternative cache directory if they wish to ensure the cached files persist between R sessions.
+
+In some cases, multiple versions of a given dataset are available on Zenodo. The `getDataset` function allows the user to specify which version of the data to use. By default, the most recent version is downloaded. The `v` argument accepts an integer specifying the version. The following example illustrates retrieving a specific version of a dataset.
 <br>
 <br>
-
-The following example illustrates retrieving a specific version of a dataset.
 
 ``` {r version_example}
 GSE41197_v2 = getDataset("GSE41197", v=2)
@@ -154,7 +154,9 @@ v2_metadata = colData(GSE41197_v2)
 v2_feature_data = rowData(GSE41197_v2)
 ```
 
-The `getDataset` function accepts a vector that can include multiple dataset identifiers. However, at the time of package development, the Zenodo API limits the number of requests per minute to 30. Because of this, we found it necessary to allow breaks between successive calls to Zenodo (performed by the `getDataset` function). These API limits should not cause problems for the user, but users should be aware that this may cause delays when downloading large amounts of data.
+If the specified version does not exist or needs to be downloaded, a message will be displayed.
+
+The `getDataset` function accepts a vector of dataset identifiers. At the time of package development, the Zenodo API limits the number of requests per minute to 30. Because of this, we found it necessary to pause execution between successive calls to Zenodo. These API limits should not cause problems for the user, but users should be aware that this may cause delays when downloading large amounts of data.
 
 ## Example 1: Plotting Expression Values
 

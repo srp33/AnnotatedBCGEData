@@ -1,18 +1,15 @@
 #' @importFrom zen4R ZenodoManager
 NULL
 
-#' Function that creates a SummarizedExperiment object with breast cancer gene
-#'  expression data. Accepts the identifier of a desired dataset, an optional file path for
-#'  the data to be saved to, and an optional version number. The function 
-#'  looks for the data either in the specified location or in a temporary 
-#'  directory. If the data is not found, it is downloaded. It returns the desired
-#'  dataset in the form of a SummarizedExperiment object.
-#' 
-#' This function provides the ability for users to save the data to a cache so
-#'  it persists between R sessions. This can be done by passing a directory path
-#'  to the function every time it is called. All data are stored in this 
-#'  directory. If no path is provided for the cache, the data is stored in a temporary 
-#'  directory that refreshes with each R session.
+#' Function that retrieves a breast cancer gene expression dataset.
+
+#' Accepts the identifier of a desired dataset, an optional directory path for
+#'   the data to be cached in, and an optional version number. The function 
+#'   looks for the data in the cache. If the data is not found, it is downloaded
+#'   and cached. The data are packaged as SummarizedExperiment objects. If the
+#'   user specifies a cache directory, downloaded files are stored in this
+#'   location so they don't need to be re-downloaded. The default is to use the
+#'   R session's temporary directory, which is removed after the session ends.
 #'  
 #' @param datasetID The identifier of the data set.
 #' @param cacheDirPath The optional directory path to where the cache should be saved.

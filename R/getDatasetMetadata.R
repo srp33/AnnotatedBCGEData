@@ -10,7 +10,7 @@ utils::globalVariables(c(
 )
 
 #' A function that accepts a vector of dataset IDs and returns a tibble with 
-#'  information about the overall study.
+#'  metadata about the overall study.
 #'  
 #' @param datasets A vector of strings consisting of dataset identifier(s).
 #' @return Tibble with metadata.
