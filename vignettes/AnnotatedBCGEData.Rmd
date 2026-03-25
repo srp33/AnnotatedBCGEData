@@ -85,13 +85,13 @@ The function returns a tibble containing details about ontology terms related to
 
 The National Cancer Institute Thesaurus provides synonyms for most terms. When a user searches by "Name" with the `searchOntologyTerms` function, it automatically checks against synonyms as well. This is helpful when the search text does not match the "preferred name" of an ontology term but instead matches a synonym. For example, we could use the following code to search for ontology terms related to progesterone receptor status using a synonym that is commonly used in medical contexts.
 
-```{r P_example}
+```{r P_example3}
 searchOntologyTerms("PgR Status")
 ```
 
 Another alternative is to search ontology term *definitions*. This is helpful when you don’t know the exact term but understand the concept you’re looking for. In this example, we are searching for definitions matching the string, "immunohistochemical". 
 
-```{r P_example}
+```{r P_example4}
 searchOntologyTerms("immunohistochemical", term_type = "Definition")
 ```
 
@@ -158,176 +158,122 @@ If the specified version does not exist or needs to be downloaded, a message wil
 
 The `getDataset` function accepts a vector of dataset identifiers. At the time of package development, the Zenodo API limits the number of requests per minute to 30. Because of this, we found it necessary to pause execution between successive calls to Zenodo. These API limits should not cause problems for the user, but users should be aware that this may cause delays when downloading large amounts of data.
 
-## Example 1: Plotting Expression Values
+## Example 1: Plotting gene-expression values
 
-In the following example, we demonstrate examples of data exploration that can be done easily with the package. We first access the matrix of gene-expression values. To make it easier to analyze, we convert it into a tibble and select the first 10 rows. We then used ggplot() to create a bar plot showing the gene expression levels for one sample across 10 genes.
+In this example, we demonstrate simple data exploration. We first access the gene-expression matrix. To make the data easier to plot, we then convert the matrix into a tibble and pivot the data. We use *ggplot2* functions to create a box plot showing the gene expression levels across the samples for 10 genes. (The values are centered at zero, which explains why some values are negative.)
 
-```{r plot_example_part_2}
-exp_tib = as_tibble(expression_data, 
-                    rownames='Ensembl_Gene_ID')[1:10,] %>%
-    ggplot(aes(x=Ensembl_Gene_ID, y=GSM1010328)) +
-    geom_col() +
-    labs(x='Ensembl Gene ID',y='Sample ID GSM1010328') +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```{r plot_example_1}
+# Set the random seed so the graph is reproducible.
+set.seed(0)
 
-exp_tib
+as_tibble(expression_data, rownames='Ensembl_Gene_ID') %>%
+  head(n = 10) %>%
+  pivot_longer(-Ensembl_Gene_ID, names_to = "Sample_ID", values_to = "Expression_Level") %>%
+  ggplot(aes(x=Ensembl_Gene_ID, y=Expression_Level)) +
+  geom_boxplot() +
+  geom_jitter(color = "red", alpha = 0.2) +
+  labs(x='Ensembl Gene ID', y='Expression level') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-## Example 2: Using Metadata
+## Example 2: Using metadata to create a heatmap
 
-In this example, we combine using both the metadata and the expression data to create a heat map of gene expression levels.<br>
-First, we load the data sets, turn them into tibbles, and extract both the metadata and expression data. We then filter the expression to only include the samples that are identified as stroma cells. Finally, we create two vectors with all the gene names in each tibble to set them up for comparison. 
+In this example, we download the data and metadata with the eventual goal of creating a heatmap of gene-expression levels. First, we load two datasets, convert them into tibbles, and identify samples from stromal cells. Then we limit the SummarizedExperiment data to those samples.
 
 ``` {r heat_map, message=FALSE, warning=FALSE}
+# Retrieve the data from Zenodo
 GSE10797_SE <- getDataset("GSE10797")
 GSE59772_SE <- getDataset("GSE59772")
 
+# Retrieve stroma sample IDs as vectors
+GSE10797_stroma_sample_ids = colData(GSE10797_SE) %>%
+  as_tibble(rownames = 'Sample_ID') %>%
+  filter(tissue_source == 'stromal cells from breast cancer patient') %>%
+  pull(Sample_ID)
 
-GSE59772_exp <- assay(GSE59772_SE)
-GSE10797_exp <- assay(GSE10797_SE)
+GSE59772_stroma_sample_ids = colData(GSE59772_SE) %>%
+  as_tibble(rownames = 'Sample_ID') %>%
+  filter(tissue == 'Stroma') %>%
+  pull(Sample_ID)
 
-GSE59772_metadata = colData(GSE59772_SE) %>%
-    as_tibble(rownames = 'Sample_ID')
-
-GSE59772_stroma_samples = filter(GSE59772_metadata, tissue == 'Stroma') %>%
-    pull(Sample_ID)
-
-GSE59772_gene_names = GSE59772_exp %>%
-    as_tibble(rownames="Ensembl_Gene_ID") %>%
-    pull(Ensembl_Gene_ID)
-
-
-GSE10797_metadata = colData(GSE10797_SE) %>%
-    as_tibble(rownames = 'Sample_ID')
-
-GSE10797_gene_names = GSE10797_exp %>%
-    as_tibble(rownames="Ensembl_Gene_ID") %>%
-    pull(Ensembl_Gene_ID)
-
-GSE10797_stroma_samples = filter(GSE10797_metadata, 
-                tissue_source == 'stromal cells from breast cancer patient')%>%
-    pull(Sample_ID)
+GSE10797_SE = GSE10797_SE[,colnames(GSE10797_SE) %in% GSE10797_stroma_sample_ids]
+GSE59772_SE = GSE59772_SE[,colnames(GSE59772_SE) %in% GSE59772_stroma_sample_ids]
 ```
 
-Next, we create a vector that has only the names of the genes the data sets have in common. We use this vector to filter the expression tibbles again to only include rows with genes in the vector. 
+Now we filter the data to genes that both data sets have in common.
 
 ``` {r heat_map_2}
-common_genes = c()
-for (gene in GSE59772_gene_names) {
-    if (gene %in% GSE10797_gene_names) {
-        common_genes = c(common_genes, gene)
-    }
-}
+common_genes <- intersect(rownames(GSE10797_SE), rownames(GSE59772_SE))
 
-GSE59772_stroma_expressions = GSE59772_exp %>%
-    as_tibble(rownames= 'Ensembl_Gene_ID') %>%
-    select(Ensembl_Gene_ID, all_of(GSE59772_stroma_samples)) %>%
-    filter(Ensembl_Gene_ID %in% common_genes)
-    
-GSE10797_stroma_expressions = GSE10797_exp %>%
-    as_tibble(rownames = 'Ensembl_Gene_ID') %>%
-    select(Ensembl_Gene_ID, all_of(GSE10797_stroma_samples)) %>% 
-    filter(Ensembl_Gene_ID %in% common_genes)
+GSE10797_SE <- GSE10797_SE[common_genes,]
+GSE59772_SE <- GSE59772_SE[common_genes,]
+# This also has the benefit that the genes will be in the same order in both.
 ```
 
-Finally, we combine the data into one tibble called combined_data. We make a new row called variance that calculates the variance across the 5 samples. We select the top 10 rows, those with greatest variance. We then use ggplot to create a heat map of the genes with the top variance, displayed below. 
+Finally, we create a tibble with the data from both sources. After doing so, we calculate the variance across the 5 samples. We then select the 10 genes with the highest variance and create a heatmap of those. *Please note that this analysis is simplified. In an actual data analysis, we would need to account for systematic biases due to combining datasets from disparate sources.*
 
 ``` {r heat_map_3}
-combined_data = full_join(GSE10797_stroma_expressions, 
-                          GSE59772_stroma_expressions)
-top_variance_genes = combined_data %>%
-    rowwise() %>%
-    mutate(variance = var(c_across(starts_with('GSM')))) %>%
-    ungroup() %>%
-    arrange(desc(variance)) %>%
-    slice_head(n=10)
+combined_data = cbind(assay(GSE10797_SE), assay(GSE59772_SE)) %>%
+  as_tibble(rownames = 'Gene_ID') %>%
+  pivot_longer(-Gene_ID, names_to = 'Sample_ID', values_to = 'Expression_Level')
 
-top_variance_map = top_variance_genes %>%
-    select(-variance) %>%
-    pivot_longer(cols = starts_with('GSM'), 
-                 names_to = 'Sample_ID', 
-                 values_to = 'Expression') %>%
-    ggplot(aes(x = Sample_ID, y = Ensembl_Gene_ID, fill = Expression)) +
-    geom_tile()+
-    labs(x = 'Sample', y = 'Gene', fill = 'Expression', 
-         title = 'Top 10 Genes in Stroma Samples with Highest Variance') + 
-    theme_bw() + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1), 
-          plot.title = element_text(hjust = 0.5, face = "bold"))
-top_variance_map
+top_variance_genes = group_by(combined_data, Gene_ID) %>%
+  summarize(Variance = var(Expression_Level)) %>%
+  arrange(desc(Variance)) %>%
+  head(n = 10) %>%
+  pull(Gene_ID)
+
+combined_data = filter(combined_data, Gene_ID %in% top_variance_genes)
+
+ggplot(combined_data, aes(x = Sample_ID, y = Gene_ID, fill = Expression_Level)) +
+  geom_tile() +
+  labs(x = 'Sample', y = 'Gene', fill = 'Expression level', 
+       title = 'Genes in stromal samples with highest variance') + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        plot.title = element_text(hjust = 0.5, face = "bold"))
 ```
 
-## Example 4: Using Feature Data
+## Example 3: Using Feature Data
 
-In this final example, we use aspects of the feature data along with the expression data. <br> <br>
-
-First, we get the feature data and convert it to a tibble. We then filter this data for each data set to only include genes on chromosome 16. Similar to the last example, we also make a vector with the gene names the data sets have in common. 
+In this final example, we use gene annotations to identify which genes to plot. We  filter each dataset to only include lncRNA genes on either chromosome 1 or 2. Because we previously limited the genes to those present in both datasets, we only need to use one of the datasets to identify the relevant genes.
 
 ``` {r chr16_boxplot, warning=FALSE}
-GSE59772_featuredata = rowData(GSE59772_SE) %>%
-    as_tibble(rownames = 'Ensembl_Gene_ID')
+gene_ids = rowData(GSE10797_SE) %>%
+  as_tibble(rownames = 'Ensembl_Gene_ID') %>%
+  filter(Chromosome %in% 1:2 & Gene_Biotype == "lncRNA") %>%
+  pull(Ensembl_Gene_ID)
 
-GSE59772_chr16 = GSE59772_featuredata %>%
-    filter(Chromosome == '16') %>%
-    pull(Ensembl_Gene_ID)
-
-GSE59772_gene_names = GSE59772_exp %>%
-    as_tibble(rownames="Ensembl_Gene_ID") %>%
-    pull(Ensembl_Gene_ID)
-
-
-GSE10797_featuredata = rowData(GSE10797_SE) %>%
-    as_tibble(rownames = 'Ensembl_Gene_ID')
-
-GSE10797_chr16 = GSE10797_featuredata %>%
-    filter(Chromosome == '16') %>%
-    pull(Ensembl_Gene_ID)
-
-GSE10797_gene_names = GSE10797_exp %>%
-    as_tibble(rownames="Ensembl_Gene_ID") %>%
-    pull(Ensembl_Gene_ID)
-
-common_genes = c()
-for (gene in GSE59772_gene_names) {
-    if (gene %in% GSE10797_gene_names) {
-        common_genes = c(common_genes, gene)
-    }
-}
+GSE10797_SE <- GSE10797_SE[gene_ids,]
+GSE59772_SE <- GSE59772_SE[gene_ids,]
 ```
 
-Next, we filter the expression data to include only genes on chromosome 16, then filter again to only include genes the data sets have in common. We pivot and mutate to make the data ready for the boxplot.
+Next, we extract the expression values, put them into tibbles, and pivot them.
 
 ``` {r chr16_boxplot_2}
-GSE10797_chr16_common = GSE10797_exp %>%
-    as_tibble(rownames = 'Ensembl_Gene_ID') %>%
-    filter(Ensembl_Gene_ID %in% GSE10797_chr16) %>%
-    filter(Ensembl_Gene_ID %in% common_genes) %>%
-    pivot_longer(cols=-Ensembl_Gene_ID,
-                 names_to='Sample_ID',
-                 values_to='Expression_Level')%>%
-    mutate(Dataset = 'GSE10797')
+gse10797_data = assay(GSE10797_SE) %>%
+  as_tibble(rownames = 'Gene_ID') %>%
+  pivot_longer(-Gene_ID, names_to = 'Sample_ID', values_to = 'Expression_Level') %>%
+  mutate(Dataset_ID = "GSE10797")
 
-GSE59772_chr16_common = GSE59772_exp %>%
-    as_tibble(rownames = 'Ensembl_Gene_ID') %>%
-    filter(Ensembl_Gene_ID %in% GSE59772_chr16) %>%
-    filter(Ensembl_Gene_ID %in% common_genes) %>%
-    pivot_longer(cols=-Ensembl_Gene_ID,
-                 names_to='Sample_ID',
-                 values_to='Expression_Level')%>%
-    mutate(Dataset = 'GSE59772')
+gse59772_data = assay(GSE59772_SE) %>%
+  as_tibble(rownames = 'Gene_ID') %>%
+  pivot_longer(-Gene_ID, names_to = 'Sample_ID', values_to = 'Expression_Level') %>%
+  mutate(Dataset_ID = "GSE59772")
+
+combined_data = bind_rows(gse10797_data, gse59772_data)
 ```
 
 Finally, we combine the data sets using bind_rows() and read it into a ggplot.
 
 ``` {r chr16_boxplot_3}
-combined_data = bind_rows(GSE10797_chr16_common, GSE59772_chr16_common) %>%
-    ggplot(aes(x = Dataset, y = Expression_Level, fill = Dataset)) +
-    geom_boxplot() +
-    theme_bw() +
-    labs(x = 'Dataset', y='Gene Expression Level', 
-         title = 'Gene Expression Levels in Chromosome 16') 
-combined_data
+ggplot(combined_data, aes(x = Gene_ID, y = Expression_Level, fill = Dataset_ID)) +
+  geom_boxplot() +
+  theme_bw() +
+  labs(x = 'Gene', y='Expression Level', 
+       title = 'lncRNA expression levels on chromosomes 1 & 2') +
+  coord_flip()
 ```
 
 # Session Info 
