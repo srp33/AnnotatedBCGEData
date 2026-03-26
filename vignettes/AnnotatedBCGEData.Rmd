@@ -156,7 +156,7 @@ v2_feature_data = rowData(GSE41197_v2)
 
 If the specified version does not exist or needs to be downloaded, a message will be displayed.
 
-The `getDataset` function accepts a vector of dataset identifiers. At the time of package development, the Zenodo API limits the number of requests per minute to 30. Because of this, we found it necessary to pause execution between successive calls to Zenodo. These API limits should not cause problems for the user, but users should be aware that this may cause delays when downloading large amounts of data.
+The `getDataset` function accepts a single dataset identifier. At the time of package development, the Zenodo API limits the number of requests per minute to 30. Because of this, we found it necessary to pause execution between successive calls to this function. These API limits should not cause problems in most cases, but users should be aware that this may cause delays when downloading large amounts of data.
 
 ## Example 1: Plotting gene-expression values
 
