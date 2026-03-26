@@ -317,7 +317,7 @@ searchFields <- function(code, df) {
     df_searched <- filter(df, NCIT_field_code %in% code) %>%
         select(dataset, orig_field, NCIT_field_code) %>%
         rename(Dataset_ID=dataset) %>%
-        rename(Original_Field=orig_field) %>%
+        rename(Field=orig_field) %>%
         rename(Code=NCIT_field_code) %>%
         distinct()
     return (df_searched)
@@ -328,10 +328,10 @@ searchValues <- function(code, df) {
     df_searched <- filter(df, NCIT_value_code %in% code) %>%
         select(dataset, orig_field, NCIT_field_code, orig_values, NCIT_value_code) %>%
         rename(Dataset_ID=dataset) %>%
-        rename(Original_Field=orig_field) %>%
+        rename(Field=orig_field) %>%
         rename(Field_Code=NCIT_field_code) %>%
         rename(Original_Value=orig_values) %>%
-        rename(Value_Code=NCIT_value_code) %>%
+        rename(Code=NCIT_value_code) %>%
         distinct()
     return (df_searched)
 }
