@@ -39,7 +39,8 @@ Suggests:
     RefManageR,
     rmarkdown,
     sessioninfo,
-    tidyverse
+    tidyverse,
+    ggplot2
 VignetteBuilder: knitr
 Depends: 
     R (>= 4.5)

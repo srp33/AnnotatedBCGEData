@@ -3,7 +3,7 @@
 \name{getDatasetMetadata}
 \alias{getDatasetMetadata}
 \title{A function that accepts a vector of dataset IDs and returns a tibble with
-information about the overall study.}
+metadata about the overall study.}
 \usage{
 getDatasetMetadata(datasets)
 }
@@ -15,7 +15,7 @@ Tibble with metadata.
 }
 \description{
 A function that accepts a vector of dataset IDs and returns a tibble with
-information about the overall study.
+metadata about the overall study.
 }
 \examples{
 getDatasetMetadata(c("GSE41197", "GSE10797"))

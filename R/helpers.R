@@ -21,7 +21,9 @@ utils::globalVariables(c(
     "NCIT_value_code",
     "NCIT_field",
     "NCIT_values",
-    "dataset"
+    "dataset", 
+    "orig_field",
+    "orig_values"
 ))
 
 
@@ -78,6 +80,25 @@ tryRequestRecord <- function(recDOI) {
 }
 
 
+# trycatch block for getVersions
+tryGetVersions <- function(rec) {
+    tryCatch(
+        {
+            version_attempt <- rec$getVersions()
+            if(inherits(version_attempt, "ZenodoException")) {
+                stop()
+            }
+            return(list(version_attempt, TRUE))
+        },
+        
+        error = function(cond) {
+            noRec <- "not a version list"
+            return(list(noRec, FALSE))
+        }
+    )
+}
+
+
 ## creates file cache on user's machine
 makeCache <- function(cacheDirPath) {
     if(!file.exists(cacheDirPath)) {
@@ -117,7 +138,27 @@ downloadZenFile <- function(conceptDOI, filepath, v=NULL) {
     }
     
     if (!is.null(v)) {
-        versions <- record$getVersions()
+        version_attempt <- tryGetVersions(record)
+        version_CHECK <- version_attempt[[2]]
+        versions <- version_attempt[[1]]
+        sleep_time <- 0
+        
+        while (version_CHECK != TRUE) {
+            if (sleep_time >= 60) {
+                stop("Maximum sleep time exceeded")
+            }
+            Sys.sleep(15)
+            message(paste0("####################################\n",
+                           "Please wait...\n", "Due to Zenodo limitations, we are",
+                           " only allowed to submit a certain number of requests ",
+                           "per minute. To avoid exceeding those limits, we are ",
+                           "pausing for 15 seconds.\n",
+                           "####################################"))
+            sleep_time <- sleep_time + 15
+            version_attempt <- tryGetVersions(record)
+            version_CHECK <- version_attempt[[2]]
+            versions <- version_attempt[[1]]
+        }
         recDOIs <- versions %>%
             dplyr::pull(doi)
         
@@ -196,24 +237,6 @@ chooseVersion <- function(datasetID, cacheDirPath, v, version, conceptDOI) {
     return(se)
 }
 
-
-# trycatch block for getVersions
-tryGetVersions <- function(rec) {
-    tryCatch(
-        {
-            version_attempt <- rec$getVersions()
-            if(!inherits(version_attempt, "data.frame")) {
-                stop()
-            }
-            return(list(version_attempt, TRUE))
-        },
-        
-        error = function(cond) {
-            noRec <- "not a version list"
-            return(list(noRec, FALSE))
-        }
-    )
-}
 
 ## function for checking most recent version of zen file
 checkVersions <- function(conceptDOI) {
