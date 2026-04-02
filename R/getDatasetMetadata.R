@@ -23,6 +23,13 @@ getDatasetMetadata <- function(datasets) {
     }
     for (i in 1:length(datasets)) {
         data <- datasets[i]
+        if (data == "ICGC_KR") {
+            next
+        }
+        if (data == "E_TABM_158") {
+            datasets <- c(datasets, "E-TABM-158")
+            next
+        }
         result <- ifelse(grepl("_", data), sub("_.*", "", data), data)
         datasets <- c(datasets, result)
     }
