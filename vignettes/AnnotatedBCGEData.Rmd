@@ -47,7 +47,7 @@ BiocManager::install("srp33/AnnotatedBCGEData")
 
 Finally, load the package:
 
-```{r load_example, eval = FALSE}
+```{r load_this_package, eval = FALSE}
 library(AnnotatedBCGEData)
 ```
 
@@ -57,7 +57,7 @@ Attempting to store all of the data within this package would be infeasible due 
 
 ## Searching for ontology terms
 
-```{r load_packages, include = FALSE}
+```{r load_other_packages, include = FALSE}
 library(ggplot2)
 library(dplyr)
 library(tibble)
@@ -71,13 +71,13 @@ This package contains functions designed to help users filter the included datas
 
 In the following example, we are using the `searchOntologyTerms` function to search for ontology terms that match the string, "Progesterone Receptor Status". Because we did not specify a value for the `term_type` argument, the default of "Name" is used.
 
-```{r PR_example}
+```{r search_PRS}
 searchOntologyTerms("Progesterone Receptor Status")
 ```
 
 In the following similar example, we are searching for ontology terms that match the shorter (and lowercase) string, "receptor status".
 
-```{r RS_example}
+```{r search_RS}
 searchOntologyTerms("receptor status")
 ```
 
@@ -85,13 +85,13 @@ The function returns a tibble containing details about ontology terms related to
 
 The National Cancer Institute Thesaurus provides synonyms for most terms. When a user searches by "Name" with the `searchOntologyTerms` function, it automatically checks against synonyms as well. This is helpful when the search text does not match the "preferred name" of an ontology term but instead matches a synonym. For example, we could use the following code to search for ontology terms related to progesterone receptor status using a synonym that is commonly used in medical contexts.
 
-```{r P_example3}
+```{r search_PgR}
 searchOntologyTerms("PgR Status")
 ```
 
 Another alternative is to search ontology term *definitions*. This is helpful when you don’t know the exact term but understand the concept you’re looking for. In this example, we are searching for definitions matching the string, "immunohistochemical". 
 
-```{r P_example4}
+```{r search_ihc}
 searchOntologyTerms("immunohistochemical", term_type = "Definition")
 ```
 
@@ -105,13 +105,13 @@ Similarly, the `searchForDatasetsByValue` function accepts codes for ontology te
 
 In the previous examples, we searched for ontology terms related to progesterone receptor status. One of the matching terms used "Progesterone Receptor Status" as its name "C16149" as its code. We also identified "C16150" as the code associated with "Estrogen Receptor Status." In the following example, we are using the `searchForDatasetsByField` function to search for datasets with a column (field) that has been mapped to either of these ontology terms.
 
-```{r PR_example_p2}
+```{r search_by_field}
 searchForDatasetsByField(c("C16149", "C16150"))
 ```
 
 Alternatively (or instead), we can use the `searchForDatasetsByValue` function to search for the datasets with values in any column that have been associated with a specified ontology term. For example, if we wanted to identify datasets with samples that had been indicated as positive for the progesterone receptor, we could use the code "C15496" for the Progesterone Receptor Positive term.
 
-```{r PR_example_p3}
+```{r search_by_value}
 searchForDatasetsByValue("C15496")
 ```
 
@@ -119,7 +119,7 @@ searchForDatasetsByValue("C15496")
 
 In addition to using the ontology, users can decide which datasets to analyze based on metadata about the datasets. This is possible using the `getDatasetMetadata` function, which accepts a vector of dataset identifiers. Below is an example.
 
-```{r get_datameta}
+```{r get_metadata}
 getDatasetMetadata(c("GSE41197", "GSE59772", "GSE10797"))
 ```
 
@@ -130,7 +130,7 @@ Installing our package does not download the datasets themselves. The data files
 <br>
 The `SummarizedExperiment` object for each dataset includes 3 items. One is the gene-expression data, a numeric matrix with samples as columns and genes as rows. Ensembl gene identifiers are used as row names. Each data value is the expression level for its respective sample and gene. Second is the sample metadata, which often includes patient demographics and sample details. Each row represents a sample, and each column represents a different metadata variable. Third is feature metadata: information about the genes that were profiled for each sample. Each row represents a gene and provides information like the Entrez gene ID, gene symbol, and chromosome identifier.
 
-```{r example, eval = requireNamespace('AnnotatedBCGEData')}
+```{r get_dataset, eval = requireNamespace('AnnotatedBCGEData')}
 GSE41197_SE = getDataset("GSE41197")
 
 expression_data = assay(GSE41197_SE)
@@ -146,7 +146,7 @@ In some cases, multiple versions of a given dataset are available on Zenodo. The
 <br>
 <br>
 
-``` {r version_example}
+``` {r get_dataset_version}
 GSE41197_v2 = getDataset("GSE41197", v=2)
 
 v2_expression_data = assay(GSE41197_v2)
@@ -162,7 +162,7 @@ The `getDataset` function accepts a single dataset identifier. At the time of pa
 
 In this example, we demonstrate simple data exploration. We first access the gene-expression matrix. To make the data easier to plot, we then convert the matrix into a tibble and pivot the data. We use *ggplot2* functions to create a box plot showing the gene expression levels across the samples for 10 genes. (The values are centered at zero, which explains why some values are negative.)
 
-```{r plot_example_1}
+```{r boxplot}
 # Set the random seed so the graph is reproducible.
 set.seed(0)
 
@@ -181,7 +181,7 @@ as_tibble(expression_data, rownames='Ensembl_Gene_ID') %>%
 
 In this example, we download the data and metadata with the eventual goal of creating a heatmap of gene-expression levels. First, we load two datasets, convert them into tibbles, and identify samples from stromal cells. Then we limit the SummarizedExperiment data to those samples.
 
-``` {r heat_map, message=FALSE, warning=FALSE}
+``` {r heatmap_1, message=FALSE, warning=FALSE}
 # Retrieve the data from Zenodo
 GSE10797_SE <- getDataset("GSE10797")
 GSE59772_SE <- getDataset("GSE59772")
@@ -203,7 +203,7 @@ GSE59772_SE = GSE59772_SE[,colnames(GSE59772_SE) %in% GSE59772_stroma_sample_ids
 
 Now we filter the data to genes that both data sets have in common.
 
-``` {r heat_map_2}
+``` {r heatmap_2}
 common_genes <- intersect(rownames(GSE10797_SE), rownames(GSE59772_SE))
 
 GSE10797_SE <- GSE10797_SE[common_genes,]
@@ -213,7 +213,7 @@ GSE59772_SE <- GSE59772_SE[common_genes,]
 
 Finally, we create a tibble with the data from both sources. After doing so, we calculate the variance across the 5 samples. We then select the 10 genes with the highest variance and create a heatmap of those. *Please note that this analysis is simplified. In an actual data analysis, we would need to account for systematic biases due to combining datasets from disparate sources.*
 
-``` {r heat_map_3}
+``` {r heatmap_3}
 combined_data = cbind(assay(GSE10797_SE), assay(GSE59772_SE)) %>%
   as_tibble(rownames = 'Gene_ID') %>%
   pivot_longer(-Gene_ID, names_to = 'Sample_ID', values_to = 'Expression_Level')
@@ -239,7 +239,7 @@ ggplot(combined_data, aes(x = Sample_ID, y = Gene_ID, fill = Expression_Level)) 
 
 In this final example, we use gene annotations to identify which genes to plot. We  filter each dataset to only include lncRNA genes on either chromosome 1 or 2. Because we previously limited the genes to those present in both datasets, we only need to use one of the datasets to identify the relevant genes.
 
-``` {r chr16_boxplot, warning=FALSE}
+``` {r boxplot2_1, warning=FALSE}
 gene_ids = rowData(GSE10797_SE) %>%
   as_tibble(rownames = 'Ensembl_Gene_ID') %>%
   filter(Chromosome %in% 1:2 & Gene_Biotype == "lncRNA") %>%
@@ -251,7 +251,7 @@ GSE59772_SE <- GSE59772_SE[gene_ids,]
 
 Next, we extract the expression values, put them into tibbles, and pivot them.
 
-``` {r chr16_boxplot_2}
+``` {r boxplot2_2}
 gse10797_data = assay(GSE10797_SE) %>%
   as_tibble(rownames = 'Gene_ID') %>%
   pivot_longer(-Gene_ID, names_to = 'Sample_ID', values_to = 'Expression_Level') %>%
@@ -267,7 +267,7 @@ combined_data = bind_rows(gse10797_data, gse59772_data)
 
 Finally, we combine the data sets using bind_rows() and read it into a ggplot.
 
-``` {r chr16_boxplot_3}
+``` {r boxplot2_3}
 ggplot(combined_data, aes(x = Gene_ID, y = Expression_Level, fill = Dataset_ID)) +
   geom_boxplot() +
   theme_bw() +
