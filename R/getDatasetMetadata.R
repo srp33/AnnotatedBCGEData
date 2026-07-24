@@ -21,7 +21,7 @@ getDatasetMetadata <- function(datasets) {
     if (!file.exists(dataset_meta_path)) {
         downloadZenFile('10.5281/zenodo.17780657', tempdir())
     }
-    for (i in 1:length(datasets)) {
+    for (i in seq_along(datasets)) {
         data <- datasets[i]
         if (data == "ICGC_KR") {
             next

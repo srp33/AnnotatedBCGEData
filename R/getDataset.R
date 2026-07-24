@@ -42,8 +42,8 @@ getDataset <- function(datasetID, cacheDirPath=tempdir(), v=NULL) {
     
     if (!file.exists(exp_filepath)) {
         conceptDOI <- identifier_vec[1]
-        message(paste0("Either the data was not found in the cache or a newer",
-                       " version of the data was identified. Downloading now."))
+        message("Either the data was not found in the cache or a newer",
+                       " version of the data was identified. Downloading now.")
         downloadZenFile(conceptDOI, dir_filepath)
     }
     

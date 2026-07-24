@@ -125,12 +125,12 @@ downloadZenFile <- function(conceptDOI, filepath, v=NULL) {
             stop("Maximum sleep exceeded")
         }
         Sys.sleep(15)
-        message(paste0("####################################\n",
+        message("####################################\n",
                        "Please wait...\n", "Due to Zenodo limitations, we are",
                        " only allowed to submit a certain number of requests ",
                        "per minute. To avoid exceeding those limits, we are ",
                        "pausing for 15 seconds.\n",
-                       "####################################"))
+                       "####################################")
         sleep_time <- sleep_time + 15
         recCheck <- tryRequestConcept(conceptDOI)
         record <- recCheck[[1]]
@@ -148,12 +148,12 @@ downloadZenFile <- function(conceptDOI, filepath, v=NULL) {
                 stop("Maximum sleep time exceeded")
             }
             Sys.sleep(15)
-            message(paste0("####################################\n",
+            message("####################################\n",
                            "Please wait...\n", "Due to Zenodo limitations, we are",
                            " only allowed to submit a certain number of requests ",
                            "per minute. To avoid exceeding those limits, we are ",
                            "pausing for 15 seconds.\n",
-                           "####################################"))
+                           "####################################")
             sleep_time <- sleep_time + 15
             version_attempt <- tryGetVersions(record)
             version_CHECK <- version_attempt[[2]]
@@ -163,9 +163,9 @@ downloadZenFile <- function(conceptDOI, filepath, v=NULL) {
             dplyr::pull(doi)
         
         if (v>length(recDOIs)) {
-            stop(paste0("Either the requested version of the data does not",
+            stop("Either the requested version of the data does not",
                         " exist, or there was a syntax error. Try passing the",
-                        " version as an int."))
+                        " version as an int.")
         }
         
         newDOI <- recDOIs[v]
@@ -179,12 +179,12 @@ downloadZenFile <- function(conceptDOI, filepath, v=NULL) {
                 stop("Maximum sleep exceeded")
             }
             Sys.sleep(15)
-            message(paste0("####################################\n",
+            message("####################################\n",
                            "Please wait...\n", "Due to Zenodo limitations, we are",
                            " only allowed to submit a certain number of requests ",
                            "per minute. To avoid exceeding those limits, we are ",
                            "pausing for 15 seconds.\n",
-                           "####################################"))
+                           "####################################")
             sleep_time <- sleep_time + 15
             recAttempt <- tryRequestRecord(newDOI)
             new_rec <- recAttempt[[1]]
@@ -224,8 +224,8 @@ chooseVersion <- function(datasetID, cacheDirPath, v, version, conceptDOI) {
     dir_path <- paste0(cacheDirPath, '/', datasetID, 'v', v)
     if (!dir.exists(dir_path)) {
         dir.create(dir_path)
-        message(paste0("Either the data was not found in the cache or a ",
-                    "different version was requested. Downloading now."))
+        message("Either the data was not found in the cache or a ",
+                    "different version was requested. Downloading now.")
         downloadZenFile(conceptDOI, dir_path, v)
     }
     
@@ -250,12 +250,12 @@ checkVersions <- function(conceptDOI) {
             stop("Maximum sleep exceeded")
         }
         Sys.sleep(15)
-        message(paste0("####################################\n",
+        message("####################################\n",
                        "Please wait...\n", "Due to Zenodo limitations, we are",
                        " only allowed to submit a certain number of requests ",
                        "per minute. To avoid exceeding those limits, we are ",
                        "pausing for 15 seconds.\n",
-                       "####################################"))
+                       "####################################")
         sleep_time <- sleep_time + 15
         recCheck <- tryRequestConcept(conceptDOI)
         rec <- recCheck[[1]]
@@ -272,12 +272,12 @@ checkVersions <- function(conceptDOI) {
             stop("Maximum sleep time exceeded")
         }
         Sys.sleep(15)
-        message(paste0("####################################\n",
+        message("####################################\n",
                        "Please wait...\n", "Due to Zenodo limitations, we are",
                        " only allowed to submit a certain number of requests ",
                        "per minute. To avoid exceeding those limits, we are ",
                        "pausing for 15 seconds.\n",
-                       "####################################"))
+                       "####################################")
         sleep_time <- sleep_time + 15
         version_attempt <- tryGetVersions(rec)
         version_CHECK <- version_attempt[[2]]

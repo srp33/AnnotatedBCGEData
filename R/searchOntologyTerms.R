@@ -34,9 +34,9 @@ searchOntologyTerms <- function(term, term_type="Name") {
     acceptable_terms <- c("Name", "Definition", "URI", "Code")
     
     if (!(term_type %in% acceptable_terms)) {
-        stop(paste0(term_type, 
+        stop(term_type, 
                     " is not an acceptable search term.",
-                    " Try: ", paste(acceptable_terms, collapse=", ")))
+                    " Try: ", paste(acceptable_terms, collapse=", "))
     }
     
     def_path <- file.path(tempdir(), NCIT_identifiers[2])

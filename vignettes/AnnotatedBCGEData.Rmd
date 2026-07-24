@@ -42,7 +42,7 @@ BiocManager::install("AnnotatedBCGEData")
 Or install the development version:
 
 ```{r install_dev, eval = FALSE}
-BiocManager::install("srp33/AnnotatedBCGEData")
+BiocManager::install("AnnotatedBCGEData", version="devel")
 ```
 
 Finally, load the package:

@@ -23,3 +23,30 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 Our research lab has curated over 100 breast cancer gene expression data sets. We uniformly reprocessed and associated the metadata with ontology terms, which formally define data attributes. These improved versions of the data are publicly available, but analysis remained challenging: files needed to be downloaded manually, and custom computer code needed to be written to search the data and ontology mapping. We created this package to address this problem. This package contains functions that allow users to search the ontology terms and further use those results to filter available datasets. The dataset returned by the package are are ready for analysis using Bioconductor's SummarizedExperiment class. Data source files are stored remotely, but we have provided logic to cache data locally, removing the need for repeated downloads. Using the data, researchers can ask questions such as, “Across all the data, which genes in tumor samples have the highest variance compared to normal samples?” or "Expression levels for which genes are correlated with HER2 positive status in early-diagnosed women?"
+
+
+# Installation instructions
+
+Get the latest stable `R` release from [CRAN](http://cran.r-project.org/).
+
+Then install `AnnotatedBCGEData` from [Bioconductor](http://bioconductor.org/) using the following code:
+
+```{r install, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+
+BiocManager::install("AnnotatedBCGEData")
+```
+
+Or install the development version:
+
+```{r install_dev, eval = FALSE}
+BiocManager::install("srp33/AnnotatedBCGEData")
+```
+
+Finally, load the package:
+
+```{r load_this_package, eval = FALSE}
+library(AnnotatedBCGEData)
+```

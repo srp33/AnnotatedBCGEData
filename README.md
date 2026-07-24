@@ -14,30 +14,44 @@ pulls](https://img.shields.io/github/issues-pr/srp33/AnnotatedBCGEData)](https:/
 Our research lab has curated over 100 breast cancer gene expression data
 sets. We uniformly reprocessed and associated the metadata with ontology
 terms, which formally define data attributes. These improved versions of
-the data are publicly available, but analysis remains challenging: files
-must be downloaded manually, and custom computer code must be written to
-search the data, making the analysis process analysis tedious, labor
-intensive, and impractical on a large scale. To fix this problem, we are
-leading an effort to simplify research analyses, leading to more
-replicable results and greater efficiency, which are essential for
-advancements in cancer research. We are working to include these data in
-R and Python software packages that are freely available to everyone,
-including publishing our R package through Bioconductor, a free open
-source bioinformatics ecosystem. Although packages that feature datasets
-are not uncommon, none unite ontology terms with their respective data.
-The packages will contain functions that allow users to search the
-ontology terms and further use those results to filter available data
-sets. The data set objects returned by the package functions will be
-ready for data analysis using either the tidyverse or pandas packages.
-Additionally, added functionality allows the chosen downloaded data to
-persist through sessions in a cache, removing the need for repeated
-downloads and excessive time and memory usage. Making it easier to
-access and analyze these data and metadata will facilitate research
-questions such as, “Across all the data, which genes in tumor samples
-have the highest variance compared to normal samples?” or “Expression
-levels for which genes are correlated with HER2 positive status in
-early-diagnosed women?” We hope that this project will help establish a
-precedent in the field of bioinformatics research for effective data
-reuse and advance the fields of breast cancer research and
-bioinformatics in new ways, enabling reproducible results and ease of
-use.
+the data are publicly available, but analysis remained challenging:
+files needed to be downloaded manually, and custom computer code needed
+to be written to search the data and ontology mapping. We created this
+package to address this problem. This package contains functions that
+allow users to search the ontology terms and further use those results
+to filter available datasets. The dataset returned by the package are
+are ready for analysis using Bioconductor’s SummarizedExperiment class.
+Data source files are stored remotely, but we have provided logic to
+cache data locally, removing the need for repeated downloads. Using the
+data, researchers can ask questions such as, “Across all the data, which
+genes in tumor samples have the highest variance compared to normal
+samples?” or “Expression levels for which genes are correlated with HER2
+positive status in early-diagnosed women?”
+
+# Installation instructions
+
+Get the latest stable `R` release from
+[CRAN](http://cran.r-project.org/).
+
+Then install `AnnotatedBCGEData` from
+[Bioconductor](http://bioconductor.org/) using the following code:
+
+``` r
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+
+BiocManager::install("AnnotatedBCGEData")
+```
+
+Or install the development version:
+
+``` r
+BiocManager::install("srp33/AnnotatedBCGEData")
+```
+
+Finally, load the package:
+
+``` r
+library(AnnotatedBCGEData)
+```

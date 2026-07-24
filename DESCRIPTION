@@ -1,6 +1,6 @@
 Package: AnnotatedBCGEData
 Title: 100+ Curated Breast Cancer Gene Expression Data sets
-Version: 0.99.4
+Version: 0.99.5
 Date: 2025-10-16
 Authors@R: 
     c(person("Heidi", "Steadman", 
@@ -11,12 +11,15 @@ Authors@R:
         role = "aut"),
     person("Stephen", "Piccolo", 
         email = "stephen_piccolo@byu.edu", 
-        role = "cre")
+        role = "cre",
+        comment = c(ORCID = "0000-0003-2001-5640")),
+    person("BYU", "College Undergraduate Research Award",
+        role = "fnd")
     )
 Description: Package that provides easy access to 100+ tidied 
     and curated gene-expression datasets obtained from 
     public data repositories in the form of SummarizedExperiment objects. 
-License: file LICENSE
+License: CC0
 URL: https://github.com/srp33/AnnotatedBCGEData
 BugReports: https://github.com/srp33/AnnotatedBCGEData//issues
 biocViews: 
@@ -36,14 +39,15 @@ RoxygenNote: 7.3.3
 Suggests: 
     BiocStyle,
     knitr,
-    RefManageR,
     rmarkdown,
     sessioninfo,
-    tidyverse,
-    ggplot2
+    dplyr,
+    ggplot2,
+    tibble,
+    tidyr
 VignetteBuilder: knitr
 Depends: 
-    R (>= 4.5)
+    R (>= 4.5.1)
 Imports: 
     SummarizedExperiment,
     stringr,
