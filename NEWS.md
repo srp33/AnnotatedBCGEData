@@ -10,3 +10,7 @@
  
 # AnnotatedBCGEData 0.99.6
 * Updated DESCRIPTION to resolve build warning
+
+# AnnotatedBCGEData 0.99.7
+* Included list of dataset DOIs in Zenodo and integrated into code for easier dataset updates
+* Fixed build warning regarding R version dependency
