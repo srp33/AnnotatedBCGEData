@@ -21,34 +21,34 @@ getDataset <- function(datasetID, cacheDirPath=tempdir(), v=NULL) {
     if (cacheDirPath != tempdir()) {
         makeCache(cacheDirPath)
     }
-    identifier <- get_identifiers()
-    identifier_vec <- identifier[[datasetID]]
     
-    version <- checkVersions(identifier_vec[1])
+    identifier_vec <- getIdentifiers(datasetID)
+    
+    version <- checkVersions(identifier_vec[2])
     
     if (!is.null(v)) {
-        conceptDOI <- identifier_vec[1]
+        conceptDOI <- identifier_vec[2]
         se <- (chooseVersion(datasetID, cacheDirPath, v, version, conceptDOI))
         return(se)
     }
     
     dir_filepath <- paste0(cacheDirPath, '/', datasetID, 'v', version)
     exp_filepath <- paste0(cacheDirPath, '/', 
-                           datasetID, 'v', version, '/', identifier_vec[2])
+                           datasetID, 'v', version, '/', identifier_vec[3])
     
     if (!dir.exists(dir_filepath)) {
         dir.create(paste0(cacheDirPath, '/', datasetID, 'v', version))
     }
     
     if (!file.exists(exp_filepath)) {
-        conceptDOI <- identifier_vec[1]
+        conceptDOI <- identifier_vec[2]
         message("Either the data was not found in the cache or a newer",
                        " version of the data was identified. Downloading now.")
         downloadZenFile(conceptDOI, dir_filepath)
     }
     
     meta_filepath <- paste0(cacheDirPath, '/', datasetID, 'v', 
-                            version, '/', identifier_vec[3])
+                            version, '/', identifier_vec[4])
     se <- seConstructor(exp_filepath, meta_filepath)
     
     return(se)
