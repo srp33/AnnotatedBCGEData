@@ -1,6 +1,6 @@
 Package: AnnotatedBCGEData
 Title: 100+ Curated Breast Cancer Gene Expression Data sets
-Version: 0.99.6
+Version: 0.99.7
 Date: 2025-10-16
 Authors@R: 
     c(person("Heidi", "Steadman", 
@@ -44,7 +44,7 @@ Suggests:
     ggplot2,
 VignetteBuilder: knitr
 Depends: 
-    R (>= 4.5.1)
+    R (>= 4.5)
 Imports: 
     SummarizedExperiment,
     stringr,
