@@ -1,6 +1,6 @@
 Package: AnnotatedBCGEData
 Title: 100+ Curated Breast Cancer Gene Expression Data sets
-Version: 0.99.7
+Version: 0.99.8
 Date: 2025-10-16
 Authors@R: 
     c(person("Heidi", "Steadman", 
@@ -16,9 +16,18 @@ Authors@R:
     person("BYU", "College Undergraduate Research Award",
         role = "fnd")
     )
-Description: Package that provides easy access to 100+ tidied 
-    and curated gene-expression datasets obtained from 
-    public data repositories in the form of SummarizedExperiment objects. 
+Description: AnnotatedBCGEData is an R Bioconductor package that provides access 
+    to more than 100 gene-expression datasets generated using microarray and RNA-
+    sequencing technologies. We collected these datsets from public repositories, 
+    including Gene Expression Omnibus, ArrayExpress, and The Cancer Genome Atlas.
+    Where feasible, we obtained and reprocessed the raw data using computational 
+    pipelines and annotations that were standardized and more updated than those 
+    used to process the data originally. Additionally, we annotated the sample 
+    metadata using oncology terms from the National Cancer Institute Thesaurus. 
+    This was necessary because different data submitters used different 
+    terminology to describe breast-cancer patients and samples. Mapping the 
+    metadata to ontology terms makes it possible for users to search the data 
+    using these standardized terms.
 License: CC0
 URL: https://github.com/srp33/AnnotatedBCGEData
 BugReports: https://github.com/srp33/AnnotatedBCGEData//issues

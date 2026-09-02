@@ -16,7 +16,8 @@ getDataset(datasetID, cacheDirPath = tempdir(), v = NULL)
 \arguments{
 \item{datasetID}{The identifier of the data set.}
 
-\item{cacheDirPath}{The optional directory path to where the cache should be saved.}
+\item{cacheDirPath}{The optional directory path to where the cache should be
+saved.}
 
 \item{v}{Version of data to download. Defaults to most recent.}
 }

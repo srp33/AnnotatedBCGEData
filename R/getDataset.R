@@ -12,7 +12,8 @@ NULL
 #'   R session's temporary directory, which is removed after the session ends.
 #'  
 #' @param datasetID The identifier of the data set.
-#' @param cacheDirPath The optional directory path to where the cache should be saved.
+#' @param cacheDirPath The optional directory path to where the cache should be
+#'  saved.
 #' @param v Version of data to download. Defaults to most recent.
 #' @return A SummarizedExperiment object for the dataset.
 #' @examples getDataset("GSE41197")
